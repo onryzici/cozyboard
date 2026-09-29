@@ -16,13 +16,16 @@ Shader "CozyBoard/FlatWorkspace" {
  float rounded(float2 p,float2 b,float r){float2 q=abs(p)-b+r;return length(max(q,0))+min(max(q.x,q.y),0)-r;}
  half4 frag(V i):SV_Target {
   float2 p=(i.uv-.5)*float2(21.8,12.2625);
-  half3 surface=_Surface.rgb+pigment(p)*.40;
-  float2 speckCell=floor(p*30);float2 speck=frac(p*30)-.5;
-  float specks=(1-smoothstep(.08,.20,length(speck)))*step(.82,paintHash(speckCell));
-  float peripheral=smoothstep(4.6,8,abs(p.x));surface-=specks*peripheral*.055;
-  float coffee=abs(length((p-float2(6.4,-3.1))*float2(1,.95))-.52);
-  surface-=half3(.07,.055,.045)*(1-smoothstep(.015,.05,coffee))*step(.23,paintNoise(p*9));
-  surface-=smoothstep(.64,.78,paintNoise(p*.72))*peripheral*.035;
+  // A calm, matte walnut worktop. Long low-contrast fibres read as material
+  // without competing with the keyboard and its painted parts.
+  float grainWarp=(paintNoise(p*.23)-.5)*1.7;
+  float grain=sin((p.y+grainWarp)*21)+sin((p.y*.63+grainWarp*.42)*47)*.42;
+  float fibre=(paintNoise(float2(p.x*3.2,p.y*38))- .5);
+  half3 surface=_Surface.rgb*(1+grain*.018+fibre*.025)+pigment(p*.55)*.12;
+  float seamDistance=abs(frac((p.y+6.2)/3.05)-.5);
+  float seam=1-smoothstep(.485,.5,seamDistance);
+  surface*=1-seam*.055;
+  float softVignette=smoothstep(6.0,10.8,abs(p.x));surface*=1-softVignette*.035;
   float2 center=float2(0,-.08),halfSize=float2(5.05,3.45);
   float wobble=(paintNoise(p*3)-.5)*.047+(paintNoise(p*17)-.5)*.009;
   float shadow=1-smoothstep(-.02,.12,rounded(p-center-float2(.08,-.10),halfSize,.20));
@@ -30,7 +33,7 @@ Shader "CozyBoard/FlatWorkspace" {
   float d=rounded(p-center,halfSize,.23)+wobble;
   float aa=max(fwidth(d),.002);
   float mask=1-smoothstep(-aa,aa,d);
-  half3 matColor=_Mat.rgb+pigment(p)*1.2;
+  half3 matColor=_Mat.rgb+pigment(p)*.72;
   float inner=rounded(p-center,halfSize-.38,.015);
   float inside=1-smoothstep(-.005,.004,inner);
   float border=1-smoothstep(.009,.022,abs(inner));

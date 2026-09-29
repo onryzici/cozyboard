@@ -6,10 +6,10 @@ This repository contains only the Unity version. Open this folder in Unity Hub, 
 
 ![Workshop](Verification/unity-completed-4k.png)
 
-## Assemble at your own pace
+## Build the keyboard
 
 - Four open cardboard supply boxes: PCB, plate, switches and keycaps.
-- No forced category or key order. Mix switch and cap placement as you like.
+- Assembly follows the physical dependency order: PCB, plate, all switches, then keycaps.
 - Pick a cap from its box: its width, shape and legend adapt to the destination socket.
 - Hold the left mouse button and sweep over sockets to place successive parts. An occupied socket never consumes another part.
 - Alternatively, drag and release one piece, or click to pick up and click again to place.
@@ -30,12 +30,17 @@ This repository contains only the Unity version. Open this folder in Unity Hub, 
 | Arrow icon | Place parts |
 | Four-arrow icon | Move the keyboard case or tools |
 | Circular arrow icon | Rotate a case/tool by clicking it |
+| Paint-brush icon | Select an installed key, enlarge it in the paint studio, then draw freely |
+| Mouse wheel in paint mode | Change brush size |
+| Alt + left mouse in paint mode | Sample a color from a keycap |
 | Curved arrow icon | Undo the latest placement |
 | Floppy disk icon | Save the current order and assembly |
 | Envelope icon | Open customer order / deliver completed board |
 | Gear icon | Independent music and effect volumes |
 
 The save file is `workshop-save.json` in Unity's `Application.persistentDataPath`. A saved order is restored on launch. Assembly progress is saved explicitly using the disk icon; delivery also saves. Undo history lasts for the current session. Parts use direct manipulation, not rigidbody simulation.
+
+The focused keycap studio uses a 512-pixel drawing surface per key (up to 2048 pixels wide for long keys), with continuous stroke interpolation for detailed lettering and small symbols. Painting replaces the original molded legend so a design can cover the full key face.
 
 ## Art and audio
 
@@ -59,8 +64,8 @@ All are **3840×2160 images rendered by Unity**, not concept mockups:
 ## Verification and build
 
 ```sh
-# 274 checks: mixed order, destination-adaptive caps, continuous sweep,
-# occupied sockets, undo, save/restore, recorded audio and shader compilation.
+# Automated checks: enforced assembly order, destination-adaptive caps, continuous sweep,
+# per-pixel drawing, drawing save/restore, recorded audio and shader compilation.
 unity run . -- -nographics -executeMethod CozyBoard.Editor.WorkshopGameBuild.Verify
 
 # macOS player (output is excluded from Git)

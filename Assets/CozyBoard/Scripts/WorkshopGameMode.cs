@@ -11,6 +11,7 @@ namespace CozyBoard {
         public WorkshopController Controller;
         public WorkshopAudio Audio;
         public WorkshopMenu Menu;
+        public WorkshopKeyPainter Painter;
         public TMP_Text Objective, Progress, StockLabel, CompletionLabel;
         public UnityEngine.UI.Image ProgressFill;
         public UnityEngine.UI.Button TestButton, NewOrderButton;
@@ -23,33 +24,38 @@ namespace CozyBoard {
         public int CurrentStage=>Completed?5:!Controller.Lookup["PCB"].Fitted?1:!Controller.Lookup["Plate"].Fitted?2:Controller.Items.Any(p=>p.Kind=="switch"&&!p.Fitted)?3:4;
         public bool Completed=>Installed==124;
         public int Installed=>Controller.Items.Count(p=>p.Stage>0&&p.Fitted);
-        public WorkshopItem[] Stock=>Enumerable.Range(1,4).SelectMany(stage=>Controller.Items.Where(p=>p.Stage==stage&&!p.Fitted).OrderBy(p=>p.Id).Take(stage<3?1:6)).ToArray();
+        public WorkshopItem[] Stock=>CurrentStage is >=1 and <=4?Controller.Items.Where(p=>p.Stage==CurrentStage&&!p.Fitted).OrderBy(p=>p.Id).Take(CurrentStage<3?1:6).ToArray():Array.Empty<WorkshopItem>();
         public WorkshopItem SupplyItem(int stage)=>Controller.Items.FirstOrDefault(p=>p.Stage==stage&&!p.Fitted&&p!=Controller.Dragged);
         public void BeginSession() {
             if(MusicSlider){MusicSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("CozyBoard.MusicVolume",.32f));MusicSlider.onValueChanged.AddListener(Audio.SetMusic);}
             if(EffectsSlider){EffectsSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("CozyBoard.EffectsVolume",.8f));EffectsSlider.onValueChanged.AddListener(Audio.SetEffects);}
             TestButton.onClick.AddListener(()=>{TypingMode=!TypingMode;Refresh();});
             NewOrderButton.onClick.AddListener(NewOrder);
-            NewOrder();if(Menu)Menu.Bind(this);
+            NewOrder();if(Menu)Menu.Bind(this);if(Painter)Painter.Bind(this);
             if(Application.isPlaying&&File.Exists(SavePath))LoadProgress();
         }
         void StopAnimations(){StopAllCoroutines();pressing.Clear();foreach(var item in Controller.Items){item.Visual.transform.localPosition=Vector3.zero;item.Visual.transform.localRotation=Quaternion.identity;}}
         public void NewOrder() {
-            Controller.CancelDrag();StopAnimations();history.Clear();SessionActive=true;TypingMode=false;
+            Controller.CancelDrag();StopAnimations();history.Clear();SessionActive=true;TypingMode=false;if(Painter)Painter.ResetPaint();
+            if(Menu&&Menu.ToastLabel)Menu.ToastLabel.gameObject.SetActive(false);
             foreach(var item in Controller.Items.OrderByDescending(p=>p.Stage)) {
                 item.transform.SetParent(Controller.PartsRoot,false);item.transform.localRotation=Quaternion.identity;
                 item.transform.localScale=Vector3.one*(item.Stage==0?1:1.22f);item.Fitted=false;
                 if(item.Stage==0){item.transform.localPosition=item.InitialPosition;item.transform.localRotation=Quaternion.Euler(0,item.InitialYaw,0);if(item.Id=="Case")item.transform.localScale=Vector3.one*1.22f;}
                 else item.transform.localPosition=new Vector3(0,-20,0);
             }
-            Controller.Yaw=0;Controller.Pitch=81;Controller.ViewWidth=21;Controller.ViewTarget=Vector3.zero;Controller.UpdateCamera();
+            ActiveSupply=1;Controller.Yaw=0;Controller.Pitch=81;Controller.ViewWidth=21;Controller.ViewTarget=Vector3.zero;Controller.UpdateCamera();
             PresentStock();Refresh();
         }
         public bool CanPick(WorkshopItem item) {
             if(item.Kind=="keycap"&&item.Fitted){Press(item);return false;}
             if(item.Fitted)return false;
+            if(item.Stage>0&&!CanInstall(item)){RejectStage(item.Stage);return false;}
             return item.Stage>0 || item.Id!="Case" || !Menu || Menu.ToolMode!=0;
         }
+        public bool CanInstall(WorkshopItem item)=>item&&item.Stage>0&&!item.Fitted&&item.Stage==CurrentStage;
+        public void RejectStage(int requested){if(Menu)Menu.Toast(requested<CurrentStage?"Bu aşama tamamlandı.":StageInstruction());}
+        public string StageInstruction()=>CurrentStage switch{1=>"Önce PCB'yi kasaya yerleştir.",2=>"Şimdi plakayı PCB'nin üzerine yerleştir.",3=>"Önce bütün switch'leri plakaya tak.",4=>"Switch'ler hazır. Şimdi tuşları yerleştir.",_=>"Klavye tamamlandı."};
         public bool Visible(WorkshopItem item)=>item.Stage==0||item.Fitted||item==Controller.Dragged||Stock.Contains(item);
         public void Picked(WorkshopItem item){if(item.Stage>0)ActiveSupply=item.Stage;Audio.Play(Audio.Pickup,.23f);UpdateTarget(item);}
         public void InstalledPart(WorkshopItem item){InstalledPart(item,item.transform.position+Vector3.up*.22f);}
@@ -88,14 +94,14 @@ namespace CozyBoard {
             if(!SessionActive)return;
             var stock=Stock;
             foreach(var item in Controller.Items){bool visible=item.Stage==0||item.Fitted||item==Controller.Dragged||stock.Contains(item);item.Visual.enabled=visible;item.Hitbox.enabled=visible;}
-            if(Objective)Objective.text=Completed?"Klavyen hazır!":$"Sipariş {OrderNumber:00} · Ece";
+            if(Objective)Objective.text=Completed?"Klavyen hazır!":StageInstruction();
             if(Progress)Progress.text=$"{Controller.Items.Count(p=>p.Kind=="switch"&&p.Fitted)} / 61 switch   ·   {Controller.Items.Count(p=>p.Kind=="keycap"&&p.Fitted)} / 61 tuş";
             if(ProgressFill)ProgressFill.fillAmount=Installed/124f;
             if(StockLabel)StockLabel.gameObject.SetActive(false);
             if(CompletionLabel){CompletionLabel.gameObject.SetActive(Completed);CompletionLabel.text="Tuşları dene · Sipariş kartından teslim et.";}
             if(TestButton)TestButton.interactable=Installed>0;
             if(Controller.StatusLabel)Controller.StatusLabel.gameObject.SetActive(false);
-            if(Controller.HintLabel)Controller.HintLabel.text="Kutudan al · Basılı sürükle: seri yerleştir · Esc: bırak · Sağ fare: bakış";
+            if(Controller.HintLabel)Controller.HintLabel.text=StageInstruction()+"  ·  Basılı sürükle: seri yerleştir  ·  Esc: bırak";
             UpdateTarget(Controller.Dragged);if(Menu)Menu.RefreshOrder();
         }
         void UpdateTarget(WorkshopItem held) {
@@ -121,10 +127,10 @@ namespace CozyBoard {
         public void Press(WorkshopItem item){Audio.Key(.55f);if(Application.isPlaying&&pressing.Add(item.Id))StartCoroutine(PressAnimation(item));}
         IEnumerator PressAnimation(WorkshopItem item){var visual=item.Visual.transform;visual.localPosition=-Vector3.up*.026f;yield return new WaitForSeconds(.07f);visual.localPosition=Vector3.zero;pressing.Remove(item.Id);}
         public void Undo(){Controller.CancelDrag();StopAnimations();if(history.Count==0)return;var item=Controller.Lookup[history.Pop()];item.Fitted=false;item.transform.SetParent(Controller.PartsRoot,true);PresentStock();Refresh();}
-        [Serializable] public class SaveData { public int version=1,order;public string[] fitted;public Vector3 boardPosition;public float boardYaw; }
+        [Serializable] public class SaveData { public int version=4,order;public string[] fitted,paintIds,paintTextures,paintColors;public bool[] legendVisibility;public Vector3 boardPosition;public float boardYaw; }
         public string SavePath=>Path.Combine(Application.persistentDataPath,"workshop-save.json");
-        public string SerializeProgress()=>JsonUtility.ToJson(new SaveData{order=OrderNumber,fitted=Controller.Items.Where(p=>p.Fitted).Select(p=>p.Id).ToArray(),boardPosition=Controller.Lookup["Case"].transform.position,boardYaw=Controller.Lookup["Case"].transform.eulerAngles.y},true);
-        public void RestoreProgress(string json){var save=JsonUtility.FromJson<SaveData>(json);if(save==null||save.version!=1||save.fitted==null)return;NewOrder();OrderNumber=Mathf.Max(1,save.order);Controller.Lookup["Case"].transform.SetPositionAndRotation(save.boardPosition,Quaternion.Euler(0,save.boardYaw,0));foreach(var id in save.fitted)if(Controller.Lookup.TryGetValue(id,out var item)&&item.Stage>0)Controller.Attach(item);PresentStock();Refresh();}
+        public string SerializeProgress()=>JsonUtility.ToJson(new SaveData{order=OrderNumber,fitted=Controller.Items.Where(p=>p.Fitted).Select(p=>p.Id).ToArray(),paintIds=Painter?Painter.PaintIds:null,paintTextures=Painter?Painter.PaintTextures:null,legendVisibility=Painter?Painter.LegendVisibility:null,boardPosition=Controller.Lookup["Case"].transform.position,boardYaw=Controller.Lookup["Case"].transform.eulerAngles.y},true);
+        public void RestoreProgress(string json){var save=JsonUtility.FromJson<SaveData>(json);if(save==null||(save.version<1||save.version>4)||save.fitted==null)return;NewOrder();OrderNumber=Mathf.Max(1,save.order);Controller.Lookup["Case"].transform.SetPositionAndRotation(save.boardPosition,Quaternion.Euler(0,save.boardYaw,0));foreach(var id in save.fitted.Select(id=>Controller.Lookup.TryGetValue(id,out var value)?value:null).Where(item=>item&&item.Stage>0).OrderBy(item=>item.Stage))if(CanInstall(id))Controller.Attach(id);if(Painter&&save.version>=2)Painter.Restore(save.paintIds,save.paintTextures,save.paintColors,save.version>=4?save.legendVisibility:null);PresentStock();Refresh();}
         public void SaveProgress(){Controller.CancelDrag();File.WriteAllText(SavePath,SerializeProgress());if(Menu)Menu.Toast("Atölyen kaydedildi.");}
         public void LoadProgress(){try{RestoreProgress(File.ReadAllText(SavePath));}catch(Exception e){Debug.LogWarning("Save could not load: "+e.Message);}}
         public void Deliver(){if(!Completed)return;OrderNumber++;NewOrder();SaveProgress();if(Menu){Menu.ShowOrder();Menu.Toast("Sipariş teslim edildi. Yeni kart hazır.");}}

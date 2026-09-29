@@ -26,6 +26,9 @@ namespace CozyBoard {
             game.Audio.MusicSource.mute=true;game.Audio.EffectsSource.mute=true;
             var mouse=Mouse.current??InputSystem.AddDevice<Mouse>();
             void Pointer(Vector3 world,bool down){var p=c.ViewCamera.WorldToScreenPoint(world);var state=new MouseState{position=new Vector2(p.x,p.y)};if(down)state=state.WithButton(MouseButton.Left);InputSystem.QueueStateEvent(mouse,state);}
+            Check(!c.PaintAt(4,c.Lookup["Case"].transform.TransformPoint(c.Lookup["Keycap_00"].Slot)),"Runtime blocks keycaps before internal parts");
+            Check(c.PaintAt(1,c.Lookup["Case"].transform.TransformPoint(c.Lookup["PCB"].Slot)),"Runtime installs PCB first");
+            Check(c.PaintAt(2,c.Lookup["Case"].transform.TransformPoint(c.Lookup["Plate"].Slot)),"Runtime installs plate second");
             var box=FindObjectsByType<WorkshopSupply>(FindObjectsSortMode.None).First(b=>b.Stage==3);
             Physics.SyncTransforms();Pointer(box.transform.position+Vector3.up*.25f,false);yield return new WaitForSeconds(.05f);
             Pointer(box.transform.position+Vector3.up*.25f,true);yield return new WaitForSeconds(.05f);
@@ -35,18 +38,19 @@ namespace CozyBoard {
             Pointer(c.Lookup["Case"].transform.TransformPoint(row.Last().Slot),false);yield return new WaitForSeconds(.1f);
             Check(c.Items.Count(p=>p.Kind=="switch"&&p.Fitted)>=row.Length-1,"Held mouse stroke places successive switches");
             Check(!c.Dragged,"Releasing a stroke returns the spare held piece");
+            foreach(var part in c.Items.Where(p=>p.Stage==3&&!p.Fitted).ToArray())c.PaintAt(3,c.Lookup["Case"].transform.TransformPoint(part.Slot));
             box=FindObjectsByType<WorkshopSupply>(FindObjectsSortMode.None).First(b=>b.Stage==4);
             Pointer(box.transform.position+Vector3.up*.25f,false);yield return new WaitForSeconds(.04f);Pointer(box.transform.position+Vector3.up*.25f,true);yield return new WaitForSeconds(.05f);
-            Check(c.Dragged&&c.Dragged.Stage==4,"Mouse picks a keycap without completing all switches");
+            Check(c.Dragged&&c.Dragged.Stage==4,"Mouse picks a keycap after completing all switches");
             foreach(var cap in row.Take(3)){Pointer(c.Lookup["Case"].transform.TransformPoint(cap.Slot)+Vector3.up*.05f,true);yield return new WaitForSeconds(.13f);}
             Pointer(c.Lookup["Case"].transform.TransformPoint(row[2].Slot),false);yield return new WaitForSeconds(.7f);
             Check(row.Take(3).All(p=>p.Fitted),"Swept keycaps acquire the target letters");
             int count=game.Installed;game.Menu.UndoButton.onClick.Invoke();Check(game.Installed==count-1,"Painted undo button reverses one placement");
             game.Menu.OrderButton.onClick.Invoke();Check(game.Menu.InputBlocked&&game.Menu.OrderPanel.activeSelf,"Order icon opens the readable order card");game.Menu.CloseOrder.onClick.Invoke();Check(!game.Menu.InputBlocked,"Order close button restores interaction");
             game.Menu.SettingsButton.onClick.Invoke();Check(game.Menu.SettingsPanel.activeSelf,"Settings icon opens sound controls");game.Menu.CloseSettings.onClick.Invoke();
-            foreach(var part in c.Items.Where(p=>p.Stage>0&&!p.Fitted).ToArray())c.PaintAt(part.Stage,c.Lookup["Case"].transform.TransformPoint(part.Slot));
+            foreach(var part in c.Items.Where(p=>p.Stage>0&&!p.Fitted).OrderBy(p=>p.Stage).ToArray())c.PaintAt(part.Stage,c.Lookup["Case"].transform.TransformPoint(part.Slot));
             yield return new WaitForSeconds(1);
-            Check(game.Completed,"Runtime free assembly completes");
+            Check(game.Completed,"Runtime ordered assembly completes");
             Check(c.Items.All(p=>p.Visual.transform.localPosition.sqrMagnitude<.00001f),"Installation animations settle exactly at rest");
             string json=game.SerializeProgress();game.NewOrder();game.RestoreProgress(json);Check(game.Completed,"Runtime save data restores all placed parts");
             Check(game.Audio.Keys.All(a=>a&&a.loadState==AudioDataLoadState.Loaded),"Recorded clicks are loaded in the player");

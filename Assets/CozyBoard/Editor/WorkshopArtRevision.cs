@@ -64,14 +64,14 @@ namespace CozyBoard.Editor {
                     float a=(corner*90+j*90f/7)*Mathf.Deg2Rad;
                     float x=(corner==0||corner==3?1:-1)*(w/2-r)+Mathf.Cos(a)*r;
                     float z=(corner<2?1:-1)*(h/2-r)+Mathf.Sin(a)*r;
-                    vertices.Add(new Vector3(x,ring.z,z));uv.Add(new Vector2(x,z));
+                    vertices.Add(new Vector3(x,ring.z,z));uv.Add(new Vector2(x/width+.5f,z/depth+.5f));
                 }
             }
             for(int k=0;k<rings.Length-1;k++)for(int j=0;j<count;j++) {
                 int a=k*count+j,b=k*count+(j+1)%count,c=a+count,d=b+count;
                 triangles.AddRange(new[]{a,c,b,b,c,d});
             }
-            int center=vertices.Count;vertices.Add(new Vector3(0,height-.031f,0));uv.Add(Vector2.zero);
+            int center=vertices.Count;vertices.Add(new Vector3(0,height-.031f,0));uv.Add(Vector2.one*.5f);
             for(int j=0;j<count;j++)triangles.AddRange(new[]{center,(rings.Length-1)*count+(j+1)%count,(rings.Length-1)*count+j});
             var mesh=new Mesh{name="Soft sculpted keycap"};mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();normals.AddRange(mesh.normals);
             var subs=new List<int>[original.subMeshCount];subs[body]=triangles;

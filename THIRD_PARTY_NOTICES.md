@@ -1,5 +1,11 @@
 # Third-party notices
 
+## Fredoka typeface
+
+Fredoka is Copyright 2019 The Fredoka Project Authors and is distributed under
+the SIL Open Font License, Version 1.1. The complete license is included at
+`Assets/CozyBoard/Fonts/FREDOKA-OFL.txt`.
+
 ## Recorded keyboard sounds
 
 Eight Cherry MX Red PBT key recordings from MechVibes, by Hai Nguyen, copyright 2021, MIT license. Imported from the user's existing `keyboard/LittleSwitch` Unity project. These are its mono 44.1 kHz WAV slices; no pitch randomization is applied.
@@ -17,7 +23,7 @@ Original MP3: https://opengameart.org/sites/default/files/ChillLofiR_0.mp3
 
 ## Unity and TextMesh Pro
 
-Unity packages retain their own notices. TextMesh Pro / Liberation Sans font license is retained with the font under `Assets/TextMesh Pro/Fonts`.
+Unity packages retain their own notices. TextMesh Pro's bundled Liberation Sans remains under `Assets/TextMesh Pro/Fonts`; the game interface now uses the separately licensed Fredoka source above.
 
 ## Original project art and adaptation
 

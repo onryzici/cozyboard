@@ -20,7 +20,7 @@ namespace CozyBoard.Editor {
             ConfigureAudio(audio);
             var material=AssetDatabase.LoadAssetAtPath<Material>(Root+"/Materials/FlatWorkspace.mat");
             if(!material){material=new Material(Shader.Find("CozyBoard/FlatWorkspace"));AssetDatabase.CreateAsset(material,Root+"/Materials/FlatWorkspace.mat");}
-            material.SetColor("_Surface",new Color(.76f,.48f,.29f));material.SetColor("_Mat",new Color(.50f,.61f,.60f));EditorUtility.SetDirty(material);
+            material.SetColor("_Surface",new Color(.49f,.34f,.25f));material.SetColor("_Mat",new Color(.45f,.57f,.55f));EditorUtility.SetDirty(material);
             var background=GameObject.Find("Desk_Rug_Chair_2D")??GameObject.Find("FlatWorkspace2D");background.name="FlatWorkspace2D";background.GetComponent<MeshRenderer>().sharedMaterial=material;
             controller.Pitch=85;
             foreach(var button in controller.LayerButtons)button.gameObject.SetActive(false);

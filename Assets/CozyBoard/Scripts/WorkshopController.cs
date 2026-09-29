@@ -57,6 +57,11 @@ namespace CozyBoard {
         void Update() {
             var mouse=Mouse.current;var keyboard=Keyboard.current;if(mouse==null)return;
             if(Game&&Game.Menu&&Game.Menu.InputBlocked){if(keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame)Game.Menu.ClosePanels();return;}
+            if(Game&&Game.Menu&&Game.Menu.ToolMode==3) {
+                Vector2 paintDelta=mouse.delta.ReadValue();
+                if(mouse.rightButton.isPressed){Yaw=Mathf.Clamp(Yaw+paintDelta.x*.06f,-5,5);Pitch=Mathf.Clamp(Pitch-paintDelta.y*.06f,78,85);}
+                ViewWidth=Mathf.Clamp(ViewWidth-mouse.scroll.ReadValue().y*.006f,18,21);UpdateCamera();return;
+            }
             Vector2 point=mouse.position.ReadValue();bool overUI=EventSystem.current&&EventSystem.current.IsPointerOverGameObject();
             if(mouse.leftButton.wasPressedThisFrame&&!overUI) {
                 if(Dragged&&clickCarry){MoveDrag(point);FinishDrag();clickCarry=false;}
@@ -102,7 +107,7 @@ namespace CozyBoard {
         public void BeginDragAt(Vector2 point) {
             if(!Physics.Raycast(ViewCamera.ScreenPointToRay(point),out var hit,100,1<<8))return;
             var supply=hit.collider.GetComponent<WorkshopSupply>();
-            var item=supply&&Game?Game.SupplyItem(supply.Stage):hit.collider.GetComponent<WorkshopItem>();
+            var item=supply&&Game?Game.SupplyItem(supply.Stage):hit.collider.GetComponent<WorkshopItem>();if(supply&&Game&&!item){Game.RejectStage(supply.Stage);return;}
             if(!item)return;
             if(Game&&Game.Menu&&Game.Menu.ToolMode==2&&item.Stage==0){item.transform.Rotate(0,15,0);Selected=item;return;}
             BeginDrag(item,point);
@@ -132,7 +137,7 @@ namespace CozyBoard {
             else RestorePreview();
         }
         void RestorePreview(){if(Dragged&&previewOriginal){Dragged.Visual.GetComponent<MeshFilter>().sharedMesh=previewOriginal;Dragged.Visual.sharedMaterials=previewMaterials;}}
-        public bool CanAttach(WorkshopItem item)=>item&&item.Stage>0&&!item.Fitted;
+        public bool CanAttach(WorkshopItem item)=>item&&item.Stage>0&&!item.Fitted&&(!Game||!Game.SessionActive||Game.CanInstall(item));
         public void Attach(WorkshopItem item) {
             var board=byId["Case"].transform;item.transform.SetParent(board,false);
             item.transform.localPosition=item.Slot;item.transform.localRotation=Quaternion.identity;
@@ -152,6 +157,7 @@ namespace CozyBoard {
         public WorkshopItem SnapCandidate(WorkshopItem item)=>item&&CanAttach(item)?FindSocket(item.Stage,item.transform.position):null;
         public bool PaintAt(int stage,Vector3 world) {
             var candidate=FindSocket(stage,world);if(!candidate)return false;
+            if(Game&&Game.SessionActive&&!Game.CanInstall(candidate)){Game.RejectStage(stage);return false;}
             Attach(candidate);if(Game)Game.InstalledPart(candidate,world+Vector3.up*.18f);return true;
         }
         public void FinishDrag() {

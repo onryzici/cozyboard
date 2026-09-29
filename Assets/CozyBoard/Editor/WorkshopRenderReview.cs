@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -20,6 +21,14 @@ namespace CozyBoard.Editor {
             controller.Game.Refresh();controller.SendMessage("LateUpdate");Canvas.ForceUpdateCanvases();camera.Render();Save(target,"Verification/unity-switches-4k.png");
             controller.Game.SessionActive=false;controller.Assemble();controller.Game.SessionActive=true;controller.Game.Refresh();controller.SendMessage("LateUpdate");Canvas.ForceUpdateCanvases();camera.Render();
             Save(target,"Verification/unity-completed-4k.png");
+            var caps=controller.Items.Where(item=>item.Kind=="keycap").OrderBy(item=>item.Id).ToArray();
+            for(int i=0;i<caps.Length;i++)if(i%3==0){
+                var color=WorkshopKeyPainter.Palette[(i/3)%WorkshopKeyPainter.Palette.Length];
+                controller.Game.Painter.DrawLine(caps[i],new Vector2(.18f,.2f),new Vector2(.82f,.8f),color,i%2==0);
+                if(i%6==0)controller.Game.Painter.DrawLine(caps[i],new Vector2(.82f,.2f),new Vector2(.18f,.8f),color);
+            }
+            controller.Game.Menu.SelectTool(3);controller.Game.Painter.Edit(caps[0]);controller.SendMessage("LateUpdate");Canvas.ForceUpdateCanvases();camera.Render();Save(target,"Verification/unity-paint-4k.png");
+            controller.Game.Menu.SelectTool(0);
             camera.targetTexture=null;target.Release();Object.DestroyImmediate(target);
             Debug.Log("COZY_4K_RENDER_READY 3840x2160");
         }
