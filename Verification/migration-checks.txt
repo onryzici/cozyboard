@@ -1,0 +1,46 @@
+PASS 128 independent parts
+PASS 61 switches
+PASS 61 keycaps
+PASS Unique IDs
+PASS Meshes, materials, colliders resolved
+PASS PCB layer hides caps and preserves PCB
+PASS Drag cancellation restores parent and transform
+PASS Free drop detaches cap
+PASS Free drop rests on desktop
+PASS Cap snaps to matching switch
+PASS Case movement carries assembly
+PASS Missing fitted PCB blocks cap attachment
+PASS Reset restores complete assembly
+PASS Camera ray selects visible cap
+PASS Exactly one EventSystem
+PASS All UI controls assigned
+PASS Shader compiles: SoftContactShadow
+PASS Shader compiles: CornerPlant2D
+PASS Shader compiles: PaintedDeskBackground
+PASS Shader compiles: Paint_black
+PASS Shader compiles: Paint_case_side
+PASS Shader compiles: Paint_copper
+PASS Shader compiles: Paint_cream
+PASS Shader compiles: Paint_foam
+PASS Shader compiles: Paint_housing
+PASS Shader compiles: Paint_key_clay
+PASS Shader compiles: Paint_key_cream
+PASS Shader compiles: Paint_key_sage
+PASS Shader compiles: Paint_key_teal
+PASS Shader compiles: Paint_latch
+PASS Shader compiles: Paint_legend
+PASS Shader compiles: Paint_legend_light
+PASS Shader compiles: Paint_metal
+PASS Shader compiles: Paint_pcb
+PASS Shader compiles: Paint_pcb_edge
+PASS Shader compiles: Paint_plate
+PASS Shader compiles: Paint_red
+PASS Shader compiles: Paint_silk
+PASS Shader compiles: Paint_socket
+PASS Shader compiles: Paint_steel_dark
+PASS Shader compiles: Paint_stem
+PASS Shader compiles: Paint_stem_top
+PASS Shader compiles: Paint_trace
+PASS Shader compiles: PlantSilhouetteShadow
+PASS Assembly state persists after scene reload
+PASS Layer filtering survives scene reload

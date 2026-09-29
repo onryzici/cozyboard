@@ -1,0 +1,13 @@
+PASS Mouse picks a switch from its physical box
+PASS Held mouse stroke places successive switches
+PASS Releasing a stroke returns the spare held piece
+PASS Mouse picks a keycap without completing all switches
+PASS Swept keycaps acquire the target letters
+PASS Painted undo button reverses one placement
+PASS Order icon opens the readable order card
+PASS Order close button restores interaction
+PASS Settings icon opens sound controls
+PASS Runtime free assembly completes
+PASS Installation animations settle exactly at rest
+PASS Runtime save data restores all placed parts
+PASS Recorded clicks are loaded in the player
