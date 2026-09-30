@@ -249,7 +249,7 @@ namespace CozyBoard {
             foreach (var item in Items) {
                 if (!shadows.TryGetValue(item.Id, out var renderer)) continue;
                 bool mountedCap = item.Fitted && item.Kind == "keycap";
-                renderer.enabled = item.Visual.enabled && (!item.Fitted || mountedCap);
+                renderer.enabled = item.gameObject.activeInHierarchy && item.Visual.enabled && (!item.Fitted || mountedCap);
                 if (!renderer.enabled) continue;
                 renderer.transform.SetPositionAndRotation(item.Visual.transform.position,item.Visual.transform.rotation);
                 renderer.transform.localScale=item.Visual.transform.lossyScale;

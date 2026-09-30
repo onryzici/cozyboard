@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 namespace CozyBoard {
  [DefaultExecutionOrder(-35)]
- public sealed class WorkshopShop:MonoBehaviour {
+ public sealed partial class WorkshopShop:MonoBehaviour {
   [Serializable] public class ShopData {
    public int credits=320;public bool laptopPlaced;public Vector3 laptopPosition;
    public int[] stock={1,0,0,1,0,0,1,0,0};
@@ -19,9 +19,9 @@ namespace CozyBoard {
   public ShopData Data=new();
   public bool IsOpen=>panel&&panel.activeSelf;
   public bool Ready{get;private set;}
-  public bool IsMoving{get;private set;}Vector3 laptopStart,laptopOffset;
+  public bool IsMoving{get;private set;}Vector3 laptopStart,laptopOffset;bool laptopBlocked;
   readonly string[] names={"Ada PCB","Gece PCB","Mercan PCB","Bulut · Lineer","Yaprak · Taktil","Çıtır · Clicky","Krem PBT","Adaçayı PBT","Lavanta PBT"};
-  readonly string[] details={"60% · Hot-swap\nKlasik yeşil devre","60% · Hot-swap\nGece mavisi devre","60% · Hot-swap\nMercan renkli devre","61 switch · 45 g\nYumuşak, tok ve sakin","61 switch · 55 g\nBelirgin basma noktası","61 switch · 50 g\nParlak, net bir tık","61 tuş · Mat yüzey\nSıcak krem tonları","61 tuş · Mat yüzey\nYumuşak yeşil tonları","61 tuş · Mat yüzey\nPastel mor tonları"};
+  readonly string[] details={"60% · Hot-swap\nKlasik yeşil devre","60% · Hot-swap\nGece mavisi devre","60% · Hot-swap\nMercan renkli devre","61 switch · 45 g\nYumuşak, tok ve sakin","61 switch · 55 g\nTok ses · Belirgin basış","61 switch · 50 g\nParlak, net bir tık","61 tuş · Mat yüzey\nSıcak krem tonları","61 tuş · Mat yüzey\nYumuşak yeşil tonları","61 tuş · Mat yüzey\nPastel mor tonları"};
   readonly int[] prices={40,55,55,60,75,85,45,55,55};
   readonly Color[] colors={new(.25f,.45f,.34f),new(.20f,.30f,.47f),new(.68f,.35f,.27f),new(.78f,.69f,.50f),new(.43f,.59f,.39f),new(.36f,.57f,.72f),new(.91f,.84f,.66f),new(.59f,.69f,.51f),new(.68f,.59f,.76f)};
   GameObject panel,laptop;Collider laptopHit;TMP_Text balance,notice,wallet;TMP_Text[] stockLabels=new TMP_Text[3];UnityEngine.UI.Button[] buy=new UnityEngine.UI.Button[3],use=new UnityEngine.UI.Button[3];int category;bool hovered;TMP_FontAsset font;
@@ -31,14 +31,14 @@ namespace CozyBoard {
   public void Consume(int stage){int c=Group(stage);if(Data.used[c])return;int id=Data.selected[c];if(Data.stock[id]>0)Data.stock[id]--;Data.used[c]=true;}
   public void NextOrder(){Data.used=new bool[3];}
   public void ResetShop(){Data=new ShopData();ApplyVariants();}
-  public void Restore(ShopData data){Data=data??new ShopData();if(Data.stock==null||Data.stock.Length!=9||Data.selected==null||Data.selected.Length!=3||Data.used==null||Data.used.Length!=3)Data=new ShopData();for(int c=0;c<3;c++)Data.selected[c]=Mathf.Clamp(Data.selected[c],c*3,c*3+2);ApplyVariants();if(laptop&&Data.laptopPlaced)laptop.transform.position=Data.laptopPosition;}
-  public void Reward(){Data.credits+=240;Game.Menu.Toast("Sipariş tamamlandı! +240 Tık");}
-  public void Initialize(WorkshopGameMode game,RectTransform ui,TMP_FontAsset font){if(Ready)return;Game=game;Ready=true;this.font=font;BuildLaptop(font);BuildUI(ui,font);BuildWallet(game.Menu.OrderPanel.transform.parent,font);ApplyVariants();}
+  public void Restore(ShopData data){Data=data??new ShopData();if(Data.stock==null||Data.stock.Length!=9||Data.selected==null||Data.selected.Length!=3||Data.used==null||Data.used.Length!=3)Data=new ShopData();for(int c=0;c<3;c++)Data.selected[c]=Mathf.Clamp(Data.selected[c],c*3,c*3+2);ApplyVariants();if(laptop)RestoreLaptopPosition();}
+  public void Reward(int amount){Data.credits+=amount;}
+  public void Initialize(WorkshopGameMode game,RectTransform ui,TMP_FontAsset font){if(Ready)return;Game=game;Ready=true;this.font=font;BuildLaptop(font);BuildUI(ui,font);BuildMailUI(ui);BuildWallet(game.Menu.OrderPanel.transform.parent,font);ApplyVariants();}
   Material Mat(string name,Color color){var m=new Material(Shader.Find("CozyBoard/Painted")){name=name};m.SetColor("_BaseColor",color);owned.Add(m);return m;}
   Transform Part(string name,Transform parent,Vector3 pos,Vector3 size,Material material){var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.transform.SetParent(parent,false);go.transform.localPosition=pos;go.transform.localScale=size;Destroy(go.GetComponent<Collider>());go.GetComponent<Renderer>().sharedMaterial=material;return go.transform;}
   Transform Shell(string name,Vector3 position,Vector3 size,Material material,float radius=.16f){var go=new GameObject(name);go.transform.SetParent(laptop.transform,false);go.transform.localPosition=position;var mesh=WorkshopPropMesh.RoundedBox(size,radius);owned.Add(mesh);go.AddComponent<MeshFilter>().sharedMesh=mesh;go.AddComponent<MeshRenderer>().sharedMaterial=material;var shadow=new GameObject(name+" shadow");shadow.transform.SetParent(go.transform,false);shadow.AddComponent<MeshFilter>().sharedMesh=mesh;shadow.AddComponent<MeshRenderer>().sharedMaterial=Game.Controller.ShadowMaterial;return go.transform;}
   void BuildLaptop(TMP_FontAsset font){
-   laptop=new GameObject("Cozy workshop laptop");laptop.transform.SetParent(Game.Controller.transform,false);laptop.transform.localPosition=new Vector3(6.35f,.025f,4.0f);laptop.transform.localRotation=Quaternion.Euler(0,-9,0);laptop.transform.localScale=new Vector3(1.32f,1.15f,1.32f);
+   laptop=new GameObject("Cozy workshop laptop");laptop.transform.SetParent(Game.Controller.transform,false);laptop.transform.localPosition=new Vector3(-7.5f,.025f,-4.0f);laptop.transform.localRotation=Quaternion.Euler(0,-9,0);laptop.transform.localScale=new Vector3(1.32f,1.15f,1.32f);
    var metal=Mat("Satin grey aluminium",new Color(.58f,.60f,.61f));var seam=Mat("Recessed graphite seam",new Color(.17f,.23f,.21f));var edge=Mat("Rolled aluminium highlight",new Color(.77f,.79f,.80f));var brass=Mat("Embossed cream brass logo",new Color(.83f,.72f,.46f));
    Shell("Rounded lower unibody",new Vector3(0,.11f,0),new Vector3(3.38f,.17f,2.28f),metal,.21f);
    Shell("Continuous lid seam",new Vector3(0,.202f,0),new Vector3(3.34f,.022f,2.25f),seam,.20f);
@@ -51,7 +51,7 @@ namespace CozyBoard {
    var logo=Shell("Embossed keycap maker mark",new Vector3(0,.322f,.06f),new Vector3(.47f,.024f,.43f),brass,.085f);logo.localRotation=Quaternion.Euler(0,-12,0);
    Shell("Logo inset key",new Vector3(0,.337f,.06f),new Vector3(.30f,.011f,.27f),metal,.055f);
    Shell("Logo dot",new Vector3(0,.346f,.06f),new Vector3(.06f,.012f,.06f),brass,.028f);
-   var collider=laptop.AddComponent<BoxCollider>();collider.center=new Vector3(0,.18f,0);collider.size=new Vector3(3.42f,.36f,2.32f);laptopHit=collider;if(Data.laptopPlaced)laptop.transform.position=Data.laptopPosition;
+   var collider=laptop.AddComponent<BoxCollider>();collider.center=new Vector3(0,.18f,0);collider.size=new Vector3(3.42f,.36f,2.32f);laptopHit=collider;RestoreLaptopPosition();
   }
   void BuildUI(RectTransform root,TMP_FontAsset font){
    var overlay=WorkshopUI.Panel("Laptop shop",root,Vector2.zero,Vector2.zero,Vector2.zero,new Color(.10f,.16f,.14f,.82f));overlay.rectTransform.anchorMax=Vector2.one;overlay.rectTransform.offsetMax=Vector2.zero;panel=overlay.gameObject;
@@ -73,7 +73,7 @@ namespace CozyBoard {
     DrawProduct(art.rectTransform,i,font);
    }
    notice=WorkshopUI.Text("Shop message",screen.transform,font,"",26,new Vector2(0,0),new Vector2(45,74),new Vector2(1290,64));
-   WorkshopUI.Text("Workshop economy",screen.transform,font,"Setler stokta kalır. Her teslimat: +240 Tık. PCB setine plaka dahildir.",22,new Vector2(0,0),new Vector2(45,24),new Vector2(1290,40));panel.SetActive(false);
+   WorkshopUI.Text("Workshop economy",screen.transform,font,"Setler stokta kalır. Teslimat: 240 Tık + 0–60 Tık teşekkür. PCB setine plaka dahildir.",22,new Vector2(0,0),new Vector2(45,24),new Vector2(1290,40));panel.SetActive(false);
   }
   void DrawProduct(RectTransform root,int id,TMP_FontAsset font){
    foreach(Transform child in root){child.gameObject.SetActive(false);Destroy(child.gameObject);}
@@ -82,19 +82,29 @@ namespace CozyBoard {
    else{for(int i=0;i<3;i++){var key=WorkshopUI.Panel("Keycap illustration",root,Vector2.one*.5f,new Vector2(-83+i*82,0),new Vector2(68,62),colors[id]);key.rectTransform.localRotation=Quaternion.Euler(0,0,i*5-5);var shadow=key.gameObject.AddComponent<UnityEngine.UI.Shadow>();shadow.effectDistance=new Vector2(3,-4);WorkshopUI.Text("Legend",key.transform,font,new[]{"A","S","D"}[i],30,Vector2.one*.5f,Vector2.zero,new Vector2(50,46)).alignment=TextAlignmentOptions.Center;}}
   }
   void BuildWallet(Transform root,TMP_FontAsset font){var p=WorkshopUI.Panel("Tık wallet",root,new Vector2(0,1),new Vector2(34,-30),new Vector2(205,64),WorkshopUI.Paper);WorkshopUI.Art("Wallet coin",p.transform,CoinArt,new Vector2(0,.5f),new Vector2(8,0),new Vector2(52,52));wallet=WorkshopUI.Text("Wallet amount",p.transform,font,"",29,new Vector2(1,.5f),new Vector2(-12,0),new Vector2(130,45));wallet.alignment=TextAlignmentOptions.Right;}
-  public void Open(){if(!Ready||Game.Experience.MainVisible||Game.Experience.Packing||(Game.Tools&&Game.Tools.Busy))return;Game.Experience.EndInspection();if(Game.Tools)Game.Tools.Deselect();Game.Controller.CancelDrag();Game.Painter.CloseEditor();Game.Menu.SelectTool(0);Game.Menu.ClosePanels();panel.SetActive(true);panel.transform.SetAsLastSibling();category=Game.CurrentStage<3?0:Game.CurrentStage==3?1:2;Refresh();}
+  public void Open(){if(!Ready||Game.Experience.MainVisible||Game.Experience.Packing||(Game.Tools&&Game.Tools.Busy))return;if(Game.Testing)Game.Testing.End();Game.Experience.EndInspection();if(Game.Tools)Game.Tools.Deselect();Game.Controller.CancelDrag();Game.Painter.CloseEditor();Game.Menu.SelectTool(0);Game.Menu.ClosePanels();panel.SetActive(true);panel.transform.SetAsLastSibling();category=Game.CurrentStage<3?0:Game.CurrentStage==3?1:2;Refresh();SelectMailbox(UnreadMail>0);}
   public void Close(){if(panel)panel.SetActive(false);}
   bool Locked(int group)=>Data.used[group]||Game.Controller.Items.Any(x=>x.Fitted&&x.Stage>0&&Group(x.Stage)==group);
   public bool Purchase(int id){if(id<0||id>=9||Data.credits<prices[id]){if(notice)notice.text="Bu set için yeterli Tık’ın yok.";return false;}Data.credits-=prices[id];Data.stock[id]++;if(!Locked(id/3))Data.selected[id/3]=id;ApplyVariants();Game.PresentStock();Game.Refresh();Game.SaveProgress();Refresh();if(notice)notice.text=names[id]+" stoklarına geldi. Montaja hazırsın.";Game.Audio.Play(Game.Audio.Place,.3f);return true;}
   public bool Refund(int id){if(id<0||id>=9||Data.stock[id]<1)return false;Data.stock[id]--;Data.credits+=prices[id];Game.PresentStock();Game.Refresh();Game.SaveProgress();Refresh();if(notice)notice.text=names[id]+" iade edildi. +"+prices[id]+" Tık";return true;}
   public bool Select(int id){if(id<0||id>=9||Locked(id/3)||Data.stock[id]==0)return false;Data.selected[id/3]=id;ApplyVariants();Game.PresentStock();Game.Refresh();Game.SaveProgress();Refresh();return true;}
-  void Refresh(){if(!panel)return;balance.text=Data.credits+" Tık";var root=panel.transform.Find("Laptop catalogue");for(int i=0;i<3;i++){int id=category*3+i;var card=root.Find("Product "+i);var product=card.Find("Product swatch").GetComponent<UnityEngine.UI.Image>();product.color=new Color(.91f,.87f,.75f);DrawProduct(product.rectTransform,id,font);card.Find("Product name").GetComponent<TMP_Text>().text=names[id];card.Find("Product details").GetComponent<TMP_Text>().text=details[id];card.Find("Return unopened kit").GetComponent<UnityEngine.UI.Button>().interactable=Data.stock[id]>0;stockLabels[i].text=Data.stock[id]+" set stokta"+(Data.selected[category]==id?"  ·  Seçili":"");buy[i].GetComponentInChildren<TMP_Text>().text=prices[id]+" Tık · Al";buy[i].interactable=Data.credits>=prices[id];use[i].GetComponentInChildren<TMP_Text>().text=Data.selected[category]==id?"Seçili":"Kullan";use[i].interactable=!Locked(category)&&Data.stock[id]>0&&Data.selected[category]!=id;}notice.text=Locked(category)?"Bu siparişte bu parçalar takıldı. Aldığın setleri sonraki klavyede kullanabilirsin.":"Bir set satın al veya stoktaki setini seç. Parçalar kutuyla masaya gelir.";}
+  void Refresh(){if(!panel)return;balance.text=Data.credits+" Tık";var root=panel.transform.Find("Laptop catalogue");for(int i=0;i<3;i++){int id=category*3+i;var card=root.Find("Product "+i);var product=card.Find("Product swatch").GetComponent<UnityEngine.UI.Image>();product.color=new Color(.91f,.87f,.75f);DrawProduct(product.rectTransform,id,font);card.Find("Product name").GetComponent<TMP_Text>().text=names[id];var description=card.Find("Product details").GetComponent<TMP_Text>();description.fontSize=category==1?20:25;description.text=details[id]+(category==1?"\n"+WorkshopOrders.Fit(Game.OrderNumber,id):"");card.Find("Return unopened kit").GetComponent<UnityEngine.UI.Button>().interactable=Data.stock[id]>0;stockLabels[i].text=Data.stock[id]+" set stokta"+(Data.selected[category]==id?"  ·  Seçili":"");buy[i].GetComponentInChildren<TMP_Text>().text=prices[id]+" Tık · Al";buy[i].interactable=Data.credits>=prices[id];use[i].GetComponentInChildren<TMP_Text>().text=Data.selected[category]==id?"Seçili":"Kullan";use[i].interactable=!Locked(category)&&Data.stock[id]>0&&Data.selected[category]!=id;}notice.text=Locked(category)?"Bu siparişte bu parçalar takıldı. Aldığın setleri sonraki klavyede kullanabilirsin.":category==1?WorkshopOrders.For(Game.OrderNumber).Name+" için: "+WorkshopOrders.For(Game.OrderNumber).Sound+", "+WorkshopOrders.For(Game.OrderNumber).Feel+".":"Bir set satın al veya stoktaki setini seç. Renk ve desen seçimi serbest.";}
   public void ApplyVariants(){if(!Game||Game.Controller.Items==null)return;var block=new MaterialPropertyBlock();foreach(var item in Game.Controller.Items){if(item.Stage is not (1 or 3 or 4))continue;int group=Group(item.Stage);int id=Data.selected[group];if(group==2&&Game.Painter&&Game.Painter.PaintIds.Contains(item.Id))continue;item.Visual.GetPropertyBlock(block,0);block.SetColor("_BaseColor",colors[id]);item.Visual.SetPropertyBlock(block,0);block.Clear();}Game.Audio.SwitchVoice=Data.selected[1]-3;}
-  void Update(){if(!Ready)return;if(wallet){wallet.text=Data.credits+" Tık";wallet.transform.parent.gameObject.SetActive(!Game.Painter.Editing&&!Game.Experience.Packing);}var k=Keyboard.current;if(k!=null&&k.escapeKey.wasPressedThisFrame&&IsOpen){Close();return;}if(k!=null&&k.lKey.wasPressedThisFrame&&!Game.Painter.Editing&&!Game.TypingMode){if(IsOpen)Close();else Open();}
+  void Update(){if(!Ready)return;UpdateMailNotification();if(wallet){wallet.text=Data.credits+" Tık";wallet.transform.parent.gameObject.SetActive(!Game.Painter.Editing&&!Game.Experience.Packing);}var k=Keyboard.current;if(k!=null&&k.escapeKey.wasPressedThisFrame&&IsOpen){Close();return;}if(k!=null&&k.lKey.wasPressedThisFrame&&!Game.Painter.Editing&&!Game.TypingMode){if(IsOpen)Close();else Open();}
   }
-  public bool BeginLaptopMove(Vector2 point){if(!Ready||IsOpen||Game.Tools.Busy||!laptopHit.Raycast(Game.Controller.ViewCamera.ScreenPointToRay(point),out _,100))return false;Game.Controller.CancelDrag();Game.Tools.Deselect();laptopStart=laptop.transform.position;laptopOffset=laptopStart-Game.Controller.MousePlane(point,laptopStart.y);IsMoving=true;return true;}
-  public void MoveLaptop(Vector2 point){if(!IsMoving)return;var p=Game.Controller.MousePlane(point,laptopStart.y)+laptopOffset;laptop.transform.position=new Vector3(Mathf.Clamp(p.x,-8,8),laptopStart.y,Mathf.Clamp(p.z,-3.8f,4.2f));}
-  public void EndLaptopMove(bool cancel){if(!IsMoving)return;if(cancel)laptop.transform.position=laptopStart;else{Data.laptopPlaced=true;Data.laptopPosition=laptop.transform.position;}IsMoving=false;}
+  static readonly Vector3 LaptopHome=new(-7.5f,.025f,-4.0f);
+  public bool ClearLaptopPosition(Vector3 position){
+   var footprint=new Rect(position.x-2.46f,position.z-1.84f,4.92f,3.68f);
+   if(footprint.xMin< -10.6f||footprint.xMax>10.6f||footprint.yMin< -6.15f||footprint.yMax>6.1f)return false;
+   // Reserve every stage's carton and open lid, including while cartons travel in.
+   var occupied=new[]{new Rect(-8.95f,-2.08f,3.2f,5.95f),new Rect(5.75f,-2.08f,3.2f,5.95f),new Rect(-4.65f,2.85f,9.3f,3.4f),new Rect(5.6f,-5.1f,3.65f,2.8f)};
+   foreach(var zone in occupied)if(footprint.Overlaps(zone))return false;
+   var board=Game.Controller.Lookup["Case"].Visual.bounds;return !footprint.Overlaps(new Rect(board.min.x-.12f,board.min.z-.12f,board.size.x+.24f,board.size.z+.24f));
+  }
+  void RestoreLaptopPosition(){var saved=Data.laptopPlaced?Data.laptopPosition:LaptopHome;laptop.transform.position=ClearLaptopPosition(saved)?new Vector3(saved.x,.025f,saved.z):LaptopHome;if(Data.laptopPlaced)Data.laptopPosition=laptop.transform.position;}
+  public bool BeginLaptopMove(Vector2 point){if(!Ready||IsOpen||Game.Tools.Busy||!laptopHit.Raycast(Game.Controller.ViewCamera.ScreenPointToRay(point),out _,100))return false;Game.Controller.CancelDrag();Game.Tools.Deselect();laptopStart=laptop.transform.position;laptopOffset=laptopStart-Game.Controller.MousePlane(point,laptopStart.y);laptopBlocked=false;IsMoving=true;return true;}
+  public void MoveLaptop(Vector2 point){if(!IsMoving)return;var p=Game.Controller.MousePlane(point,laptopStart.y)+laptopOffset;p=new Vector3(Mathf.Clamp(p.x,-8,8),laptopStart.y,Mathf.Clamp(p.z,-4.25f,4.2f));laptopBlocked=!ClearLaptopPosition(p);if(!laptopBlocked)laptop.transform.position=p;}
+  public void EndLaptopMove(bool cancel){if(!IsMoving)return;if(cancel)laptop.transform.position=laptopStart;else{Data.laptopPlaced=true;Data.laptopPosition=laptop.transform.position;if(laptopBlocked)Game.Menu.Toast("Burada kutu veya alet var. Laptop boş alanda kaldı.");}IsMoving=false;}
   public bool HandlePointer(){
    var m=Mouse.current;if(m==null||!Ready||IsOpen||Game.Painter.Editing)return false;
    if(IsMoving){if(Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame){EndLaptopMove(true);return true;}MoveLaptop(m.position.ReadValue());if(m.leftButton.wasReleasedThisFrame)EndLaptopMove(false);return true;}

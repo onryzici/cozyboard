@@ -1,0 +1,5 @@
+PASS Customer letters for Ece, Deniz and Mina fit without TMP overflow.
+PASS WorkMat shader compiles without shader errors.
+PASS Painted cursor uses WorkshopCursor asset, cropped to a 43 x 46 texture with a 42px artwork extent.
+PASS Only Workbench is enabled in build scenes; splash screen disabled.
+Visuals: customer-mail-preview.png, mail-notification-preview.png, clean-studio-shadow-preview.png, painted-cursor-preview.png

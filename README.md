@@ -115,7 +115,7 @@ Latest polish: the preset color tiles are removed; Patrick Hand includes all Tur
 
 Click the sage laptop to open Atölye Pazarı (or press L outside keyboard typing mode). Buy PCB + plate kits, three switch sound profiles, and PBT keycap palettes. Each small-parts kit contains the 61 parts needed for one keyboard; one kit is consumed per assembly category, not per piece. Unused kits can be returned at their purchase price. Already fitted categories keep their choice until the next keyboard.
 
-The workshop currency is **Tık**, shown as a honey-gold keycap coin. Start with 320 Tık and one basic kit per category; a shipped keyboard earns 240 Tık. Balance, inventory, selected variants and consumed kits are included in version 6 saves. Older saves migrate with a starter inventory.
+The workshop currency is **Tık**, shown as a honey-gold keycap coin. Start with 320 Tık and one basic kit per category; a shipped keyboard earns 240 Tık plus up to 60 Tık for meeting customer wishes. Balance, inventory, selected variants and consumed kits are included in saves (since version 6). Older saves migrate with a starter inventory.
 
 Supply cartons slide in and settle, then leave when empty. Only the active assembly stage's carton remains on the desk. Legacy authored box visuals have been removed from the single Workbench scene.
 
@@ -125,7 +125,7 @@ The laptop now rests closed on the desk, with a sculpted sage lid, embossed keyc
 
 Desk tools are interactive: select the screwdriver and click the four case corner screws to fasten/unfasten them. New orders require all four screws before packing. The keycap puller returns a fitted cap to its supply box; the switch puller works after its cap is removed. Reinstalling recovered parts does not consume another kit. Escape puts a tool down. Screw state is saved; completed legacy keyboards migrate as fastened.
 
-Key presses depress and subtly squash the cap, then settle with a damped spring return. Travel varies with the selected switch profile. Both mouse clicks and keyboard testing use the feedback.
+Key presses move the rigid cap into the switch and return it to its top stop without scaling or tilting. Travel varies with the selected switch profile. Both mouse clicks and keyboard testing use the feedback.
 
 Each desk tool now travels to its target and returns to its original pose. The screwdriver seats its tip on the selected screw and rotates around that contact point. Both pullers close their grip, rock and lift the selected part, then return to the desk. Tool actions block overlapping interactions; cancelling/resetting restores the moving tool.
 
@@ -136,3 +136,27 @@ Packing now uses desk gestures instead of a next-step button: drag the keyboard 
 Laptop placement: choose the move tool, drag the laptop, release to place; Escape restores its previous position. Clicking it in normal placement mode opens the shop. Placement is retained in shop save data. Key travel is now more pronounced, and mouse-held keys stay depressed until released. Menu art uses a flatter painted treatment with simplified shadows.
 
 Windows release: `WorkshopBackgroundBuild.RequestWindows()` queues a non-development Windows x64 Mono build under `Builds/Windows/CozyBoard.exe`. Distribute the entire folder, including `CozyBoard_Data`, `MonoBleedingEdge`, and Unity DLLs.
+
+### Assembly feel
+
+Switch placement now pauses against the plate before a short locking snap and a damped settle. Assembly clicks use a separate sound channel so switch typing profiles do not colour tool sounds. Screws turn in three wrist strokes with quiet friction and a brief local torque vibration at the end; loosening has a softer release. Effects volume controls all these sounds. Continuous placement remains available.
+
+The two short screw sounds in `Assets/Resources/Assembly` are original procedural audio. The shop smoke runner checks resistance, exact resting poses, occupied sockets, audio isolation, screw tightening/loosening and interrupted tool cleanup.
+
+### Customer requests
+
+Orders rotate through Ece (quiet, linear), Deniz (full-bodied sound, tactile feedback) and Mina (audible click, tactile feedback). The order card and switch catalogue show how the chosen set meets both wishes. PCB colour, cap palette and painting remain free creative choices and do not affect evaluation. Delivery pays 240 Tık plus 30 Tık per matched wish, up to 300 Tık. A customer mail explains the result in the laptop inbox while the next order stays accessible. Save version 9 archives read and unread messages; older saves keep their progress and wallet and migrate their last valid receipt.
+
+### Testing and presentation
+
+Completed boards now require a 61-key check before packing. Open the test card, press physical keys or the miniature keyboard, and find the unseated switch. Remove its cap and switch with the corresponding tools, reinstall both, then retest. Repeated presses count only once; removing a part invalidates its key's result. Version 8 saves preserve checked keys and repair state. Older saves require testing but do not acquire an invented fault on load.
+
+Progress sits on a paper card. Ece, Deniz and Mina have distinct painted portraits; the last customer's portrait also appears on their delivery note. Tools are distributed around the bench with a linen rest for pullers. Packing hides desk tools, centres the carton, folds two tissue wings, draws sealing tape and adds a named parcel label. Gesture input and explicit step buttons are both available. Cancelling restores the board, desk props and camera.
+
+Presentation refinement: progress is compact text at the bottom. The paint studio uses a close-up printed cutting-mat backdrop, and tools rest on a separate gridded mat to the right of the main work area. Laptop placement reserves all supply-carton footprints and open lids, the keyboard and the tool mat; invalid legacy placements move to the clear lower-left space.
+
+Key feedback now retriggers on rapid taps and follows physical key holds. The cap stays rigid, travels down 0.145–0.16 units, stays depressed while held, and returns to its top stop in 0.12 seconds.
+
+Customer reactions now arrive as a top-of-screen mail notification. Clicking it or opening the laptop's inbox shows the customer's portrait, letter and delivery summary. Reading marks a message read without changing the reward. Save version 9 archives all new delivery messages; older saves migrate their latest receipt. The order card remains available for the next order without acknowledging mail first.
+
+The compact progress text sits below the mat. The home button uses `Assets/Resources/UI/WorkshopHome.png` (built-in ImageGen, prompt recorded in `Verification/home-art-generation.txt`). The cursor now uses the existing painted brush art, cropped and resampled to 42px instead of a procedural arrow. The studio mat has low-amplitude fine grain and a soft projected key shadow that follows the viewing angle. The single Workbench scene remains; the Unity splash screen is disabled.

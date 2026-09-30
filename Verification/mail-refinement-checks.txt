@@ -1,0 +1,137 @@
+PASS Menu has dedicated atelier artwork
+PASS Laptop has larger desk footprint
+PASS Laptop body uses neutral grey
+PASS No UI intercepts desk tool Screwdriver 
+PASS Pointer ray selects desk tool Screwdriver
+PASS No UI intercepts desk tool KeyPuller 
+PASS Pointer ray selects desk tool KeyPuller
+PASS No UI intercepts desk tool Tweezers 
+PASS Pointer ray selects desk tool Tweezers
+PASS Laptop can be picked up in move mode
+PASS Moving laptop changes its position without opening shop
+PASS Escape restores laptop position
+PASS Placed laptop position is stored for saves
+PASS Physical laptop and catalogue initialized
+PASS Supply carton finishes arrival animation
+PASS Customer/switch match and reward 1/3
+PASS Customer/switch match and reward 1/4
+PASS Customer/switch match and reward 1/5
+PASS Customer/switch match and reward 2/3
+PASS Customer/switch match and reward 2/4
+PASS Customer/switch match and reward 2/5
+PASS Customer/switch match and reward 3/3
+PASS Customer/switch match and reward 3/4
+PASS Customer/switch match and reward 3/5
+PASS Customer rotation is stable across orders
+PASS Request fits order card for customer 1
+PASS Reaction fits delivery card for customer 1
+PASS Request fits order card for customer 2
+PASS Reaction fits delivery card for customer 2
+PASS Request fits order card for customer 3
+PASS Reaction fits delivery card for customer 3
+PASS Laptop starts in a clear footprint
+PASS Laptop rejects carton, open lid, tool mat or keyboard overlap (7.35, 0.03, 0.00)
+PASS Laptop rejects carton, open lid, tool mat or keyboard overlap (6.35, 0.03, 4.00)
+PASS Laptop rejects carton, open lid, tool mat or keyboard overlap (7.40, 0.03, -3.70)
+PASS Laptop rejects carton, open lid, tool mat or keyboard overlap (0.00, 0.00, 0.00)
+PASS Old overlapping laptop placement migrates to a clear space
+PASS Textured tool mat sits fully outside the main cutting mat
+PASS Progress is compact bottom text without a large background
+PASS Cutting mat shader is included in the player
+PASS Laptop catalogue blocks workbench input
+PASS Buying a tactile set deducts credits and adds stock
+PASS Selected switch affects sound profile
+PASS Purchased lavender caps become active
+PASS Unaffordable purchase cannot create stock
+PASS Unused set refund returns Tık without duplicating inventory
+PASS An empty inventory cannot be refunded twice
+PASS PCB and plate install using one kit
+PASS PCB and plate install using one kit
+PASS PCB kit consumed once for PCB and plate
+PASS Outgoing carton leaves before next stage settles
+PASS Assembly feedback is isolated from the typing sound filter
+PASS Screw friction and torque clips are included in the player
+PASS Effects slider also mutes assembly feedback
+PASS Switch installation starts
+PASS Switch meets visible resistance before seating
+PASS Repeated pressure cannot install a second switch in the same socket
+PASS Switch settles exactly into its socket
+PASS 61 switches consume exactly one selected set
+PASS Installed switch choice cannot change mid-keyboard
+PASS All supply cartons animate away after assembly
+PASS Laptop has closed sculpted lid
+PASS Key press travels downward without deforming the cap
+PASS Key spring returns exactly to resting pose
+PASS Rapid repeat tap restarts the downstroke instead of being ignored
+PASS Holding a physical key keeps the cap depressed
+PASS Releasing the physical key restores its exact rest pose
+PASS Switch cannot be removed through fitted keycap
+PASS Key puller starts removal
+PASS Key puller travels to the selected cap
+PASS Key puller returns to its desk position
+PASS Removing a pressed cap cancels its spring and returns it to stock
+PASS Switch puller removes uncovered switch
+PASS Switch puller travels to the selected switch
+PASS Switch puller returns to its desk position
+PASS Removed switch returns to stock
+PASS Removed switch can be reinstalled
+PASS Removed cap can be reinstalled
+PASS Corner screw starts tightening 0
+PASS Screwdriver tip stays seated on screw 0
+PASS Screwdriver visibly rotates on screw 0
+PASS Screwdriver returns to desk 0
+PASS Corner screw starts tightening 1
+PASS Screwdriver tip stays seated on screw 1
+PASS Screwdriver visibly rotates on screw 1
+PASS Screwdriver returns to desk 1
+PASS Corner screw starts tightening 2
+PASS Screwdriver tip stays seated on screw 2
+PASS Screwdriver visibly rotates on screw 2
+PASS Screwdriver returns to desk 2
+PASS Corner screw starts tightening 3
+PASS Screwdriver tip stays seated on screw 3
+PASS Screwdriver visibly rotates on screw 3
+PASS Screwdriver returns to desk 3
+PASS Four completed torque actions fasten all screws
+PASS A complete reverse turn loosens only the selected screw
+PASS Interrupted tool animation restores original pose
+PASS Interrupted screw rotation resets cleanly
+PASS All four case screws fasten
+PASS Paint panels share exact top and bottom edges
+PASS Finished assembly still needs key testing
+PASS Packing routes an untested board into the test stage
+PASS Test detects exactly one unseated switch
+PASS Unfinished test and fault survive save/reload
+PASS Faulty keycap can be lifted for repair
+PASS Unseated switch can be extracted
+PASS Reinstalled switch passes its retest
+PASS Repeated key presses cannot inflate test progress
+PASS Removing a checked key invalidates its test result
+PASS Distinct portrait for customer 1
+PASS Distinct portrait for customer 2
+PASS Distinct portrait for customer 3
+PASS Save restores fastened screws
+PASS Save restores repaired switch and all 61 tested keys
+PASS Save restores fitted parts, choices and consumed inventory
+PASS Physical packing starts at open carton
+PASS Packing hides tools and their contact shadows
+PASS Cancelling packing restores board, camera and tools
+PASS Packing animation completes step 1
+PASS Packing animation completes step 2
+PASS Both tissue wings finish folded over the keyboard
+PASS Packing animation completes step 3
+PASS Sealing tape reaches the full parcel depth
+PASS Shipment transition restores workspace and starts next order
+PASS Shipment reward funds future orders
+PASS Receipt evaluates shipped switches before starting next order
+PASS Delivery announces mail without forcing a modal open
+PASS Unread mail survives reload while next order remains accessible
+PASS Reading customer mail marks it read without paying twice
+PASS Read customer mail remains archived after reload
+PASS Version 8 receipt migrates to one unread laptop mail
+PASS Newest message opens in the laptop inbox
+PASS Older customer mail remains readable without duplicate rewards
+PASS Version 6 saves preserve order and wallet without a receipt
+PASS Next order requires fresh materials after kit consumption
+PASS Laptop restocks a new PCB variant
+PASS Purchased material returns in animated carton

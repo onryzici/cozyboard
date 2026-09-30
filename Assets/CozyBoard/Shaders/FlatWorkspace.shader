@@ -11,11 +11,11 @@ Shader "CozyBoard/FlatWorkspace" {
  half4 _Surface; half4 _Mat;
  CBUFFER_END
  struct A {float4 positionOS:POSITION;float2 uv:TEXCOORD0;};
- struct V {float4 positionCS:SV_POSITION;float2 uv:TEXCOORD0;};
- V vert(A i){V o;o.positionCS=TransformObjectToHClip(i.positionOS.xyz);o.uv=i.uv;return o;}
+ struct V {float4 positionCS:SV_POSITION;float2 uv:TEXCOORD0;float3 world:TEXCOORD1;};
+ V vert(A i){V o;o.positionCS=TransformObjectToHClip(i.positionOS.xyz);o.uv=i.uv;o.world=TransformObjectToWorld(i.positionOS.xyz);return o;}
  float rounded(float2 p,float2 b,float r){float2 q=abs(p)-b+r;return length(max(q,0))+min(max(q.x,q.y),0)-r;}
  half4 frag(V i):SV_Target {
-  float2 p=(i.uv-.5)*float2(21.8,12.2625);
+  float2 p=i.world.xz;
   // Pale honey oak, with quiet lengthwise grain and broad natural variation.
   float warp=paintNoise(float2(p.x*.32,p.y*.48))*.7;
   float grain=paintNoise(float2(p.x*.24,(p.y+warp)*21))-.5;
