@@ -39,9 +39,11 @@ namespace CozyBoard {
 
         public struct Texel { public int Index; public Vector3 Position,Normal; }
         readonly Dictionary<Vector3Int,List<Texel>> cells=new();
+        readonly List<(int target,int source)> gutters=new();
         float cellSize;
         Vector3Int Cell(Vector3 p)=>new Vector3Int(Mathf.FloorToInt(p.x/cellSize),Mathf.FloorToInt(p.y/cellSize),Mathf.FloorToInt(p.z/cellSize));
-        public void ReleaseSamples()=>cells.Clear();
+        public void ReleaseSamples(){cells.Clear();gutters.Clear();}
+        public void PadEdges(Color32[] pixels){foreach(var pair in gutters)pixels[pair.target]=pixels[pair.source];}
         public void CacheSamples(){
             if(cells.Count>0)return;cellSize=Mathf.Max(Bounds.size.z,Bounds.size.y)/24;
             var v=Mesh.vertices;var uv=Mesh.uv;var triangles=Mesh.GetTriangles(Body);var used=new HashSet<int>();
@@ -56,6 +58,12 @@ namespace CozyBoard {
                     var p=s*v[a]+t*v[b]+(1-s-t)*v[c];var cell=Cell(p);if(!cells.TryGetValue(cell,out var list))cells[cell]=list=new List<Texel>();list.Add(new Texel{Index=index,Position=p,Normal=normal});
                 }
             }
+            // Extend edge texels into the unused UV gutter so bilinear filtering cannot reveal base-colour seams.
+            var nearest=new Dictionary<int,(int source,int distance)>();
+            foreach(int index in used){int x=index%Width,y=index/Width;if(x>0&&x<Width-1&&y>0&&y<Height-1&&used.Contains(index-1)&&used.Contains(index+1)&&used.Contains(index-Width)&&used.Contains(index+Width))continue;
+                for(int dy=-2;dy<=2;dy++)for(int dx=-2;dx<=2;dx++){int nx=x+dx,ny=y+dy;if(nx<0||nx>=Width||ny<0||ny>=Height||nx/Tile!=x/Tile||ny/Tile!=y/Tile)continue;int target=ny*Width+nx;if(used.Contains(target))continue;int d=dx*dx+dy*dy;if(!nearest.TryGetValue(target,out var old)||d<old.distance)nearest[target]=(index,d);}
+            }
+            foreach(var pair in nearest)gutters.Add((pair.Key,pair.Value.source));
         }
         public void Visit(Vector3 center,float radius,System.Action<Texel> action){
             CacheSamples();var lo=Cell(center-Vector3.one*radius);var hi=Cell(center+Vector3.one*radius);float squared=radius*radius;

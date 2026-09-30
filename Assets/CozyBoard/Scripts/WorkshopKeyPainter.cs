@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace CozyBoard {
-    public sealed class WorkshopKeyPainter : MonoBehaviour {
+    public sealed partial class WorkshopKeyPainter : MonoBehaviour {
         enum BrushShape { Detail, Flat, Airbrush, Sponge, DryBrush, Splatter, Eraser, Line, Rectangle, Ellipse }
         sealed class CanvasState {
             public WorkshopItem Item;
@@ -20,8 +20,10 @@ namespace CozyBoard {
             public Color32[] Pixels,BasePixels;
             public int Body,Width,Height;
             public bool Modified,LegendVisible=true;
+            public readonly List<WorkshopTapeStrip> Tape=new();
+            public readonly Dictionary<int,float> Wet=new();public float LastWet=-100;
         }
-        sealed class Snapshot { public string Id; public Color32[] Pixels; public bool Modified,LegendVisible; }
+        sealed class Snapshot { public string Id; public Color32[] Pixels; public bool Modified,LegendVisible; public WorkshopTapeStrip[] Tape; }
 
         public WorkshopGameMode Game;
         public Shader StudioShader;
@@ -71,8 +73,9 @@ namespace CozyBoard {
         Texture2D colorFieldTexture,hueTexture;
 
         public bool Active=>Game&&Game.Menu&&Game.Menu.ToolMode==3;
-        public string[] PaintIds=>canvases.Values.Where(c=>c.Modified||!c.LegendVisible).Select(c=>c.Item.Id).OrderBy(id=>id).ToArray();
+        public string[] PaintIds=>canvases.Values.Where(c=>c.Modified||!c.LegendVisible||c.Tape.Count>0).Select(c=>c.Item.Id).OrderBy(id=>id).ToArray();
         public string[] PaintTextures=>PaintIds.Select(id=>Convert.ToBase64String(canvases[id].Texture.EncodeToPNG())).ToArray();
+        public string[] TapeMasks=>PaintIds.Select(id=>JsonUtility.ToJson(new WorkshopTapeSave{Strips=canvases[id].Tape.ToArray()})).ToArray();
         public bool[] LegendVisibility=>PaintIds.Select(id=>canvases[id].LegendVisible).ToArray();
 
         public void Bind(WorkshopGameMode game) {
@@ -106,7 +109,7 @@ namespace CozyBoard {
             if(!value){EndStroke();ShowCursor(false);}
         }
         public void Select(Color color){selected=color;Color.RGBToHSV(color,out var h,out var s,out selectedValue);if(s>.01f)selectedHue=h;if(brush==BrushShape.Eraser)SetBrush(BrushShape.Detail);if(CurrentColor)CurrentColor.color=color;RefreshColorPicker();RefreshSelections();}
-        void SetBrush(BrushShape value){brush=value;RefreshSelections();RefreshReadout();}
+        void SetBrush(BrushShape value){tapeMode=false;brush=value;RefreshTapeUI();RefreshSelections();RefreshReadout();}
         void SetRadius(float value){radius=Mathf.Clamp(value,.004f,.16f);if(BrushSize)BrushSize.SetValueWithoutNotify(radius);RefreshReadout();}
         void RefreshReadout(){if(BrushReadout)BrushReadout.text=$"{BrushName(brush)}  ·  {Mathf.RoundToInt(radius*1000)}";}
         static string BrushName(BrushShape value)=>value switch { BrushShape.Detail=>"DETAY",BrushShape.Flat=>"YASSI",BrushShape.Airbrush=>"AIRBRUSH",BrushShape.Sponge=>"SÜNGER",BrushShape.DryBrush=>"KURU FIRÇA",BrushShape.Splatter=>"SIÇRATMA",BrushShape.Eraser=>"SİLGİ",BrushShape.Line=>"ÇİZGİ",BrushShape.Rectangle=>"DİKDÖRTGEN",_=>"ELİPS" };
@@ -118,6 +121,7 @@ namespace CozyBoard {
         static void SetOutline(Button button,bool selected){if(!button)return;var outline=button.GetComponent<Outline>();if(outline)outline.effectDistance=selected?new Vector2(4,-4):new Vector2(1,-1);}
 
         void Update(){
+            foreach(var c in canvases.Values)if(c.Wet.Count>0&&Time.unscaledTime-c.LastWet>WorkshopPaintMedium.DrySeconds)c.Wet.Clear();
             if(!Active||!Game||!Game.SessionActive||Game.Menu.InputBlocked){ShowCursor(false);return;}
             var mouse=Mouse.current;var keyboard=Keyboard.current;if(mouse==null)return;
             if(keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame){if(editing){CloseEditor();return;}Game.Menu.SelectTool(0);return;}
@@ -135,12 +139,14 @@ namespace CozyBoard {
 
         void UpdateEditor(Mouse mouse,Keyboard keyboard){
             if(studio==null)return;
+            if(peeling){studio.Render();return;}
             var rect=EditorSurface.rectTransform;var uiCamera=EditorSurface.canvas.renderMode==RenderMode.ScreenSpaceOverlay?null:EditorSurface.canvas.worldCamera;
             var screen=mouse.position.ReadValue();bool inside=ScreenUV(rect,screen,uiCamera,out var viewport);
             ShowCursor(false);studio.HideCursor();Cursor.visible=true;
             if(HandleColorPicker(mouse)){EndStroke();studio.Render();return;}
-            if(inside&&(mouse.rightButton.isPressed||mouse.middleButton.isPressed)){EndStroke();surfaceStrokeReady=false;studio.Orbit(mouse.delta.ReadValue());studio.Render();return;}
             if(keyboard!=null&&keyboard.fKey.wasPressedThisFrame)studio.ResetView();
+            if(HandleTape(mouse,inside,viewport)){studio.Render();return;}
+            if(inside&&(mouse.rightButton.isPressed||mouse.middleButton.isPressed)){EndStroke();surfaceStrokeReady=false;studio.Orbit(mouse.delta.ReadValue());studio.Render();return;}
             bool hit=inside&&studio.Hit(viewport,out _);
             if(hit){
                 studio.Hit(viewport,out var contact);var canvas=Canvas(editing);float size=radius*canvas.Surface.Bounds.size.z*2;
@@ -153,20 +159,21 @@ namespace CozyBoard {
                     Touch(canvas);int steps=surfaceStrokeReady?Mathf.Clamp(Mathf.CeilToInt(Vector2.Distance(lastScreenStroke,screen)/3),1,128):1;
                     for(int i=1;i<=steps;i++){
                         Vector2 point=surfaceStrokeReady?Vector2.Lerp(lastScreenStroke,screen,(float)i/steps):screen;
-                        if(ScreenUV(rect,point,uiCamera,out var uv)&&studio.Hit(uv,out var sample))PaintSurface(canvas,studio.Local(sample.point),sample.normal,size);
+                        if(ScreenUV(rect,point,uiCamera,out var uv)&&studio.Hit(uv,out var sample))PaintSurface(canvas,studio.Local(sample.point),sample.normal,size,Mathf.Min(Time.unscaledDeltaTime,.05f)/steps);
                     }
-                    studio.Dab(contact.point,size);lastScreenStroke=screen;surfaceStrokeReady=true;canvas.Modified=true;canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);
+                    studio.Dab(contact.point,size);lastScreenStroke=screen;surfaceStrokeReady=true;canvas.Modified=true;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);
                 }
             }else surfaceStrokeReady=false;
             if(mouse.leftButton.wasReleasedThisFrame)EndStroke();
             studio.Render();
         }
 
-        void PaintSurface(CanvasState canvas,Vector3 center,Vector3 normal,float size){
+        void PaintSurface(CanvasState canvas,Vector3 center,Vector3 normal,float size,float contactSeconds=.10f){
             var tangent=Vector3.Cross(normal,Mathf.Abs(normal.y)>.95f?Vector3.forward:Vector3.up).normalized;
             var vertical=Vector3.Cross(normal,tangent);float reach=brush==BrushShape.Splatter?size*1.35f:size;
             canvas.Surface.Visit(center,reach,texel=>{
                 if(Vector3.Dot(texel.Normal,normal)<-.05f||(studio!=null&&Vector3.Dot(texel.Normal,studio.ViewDirection)<=.02f))return;
+                if(Masked(canvas,texel.Position))return;
                 Vector3 offset=texel.Position-center;float distance=offset.magnitude/size;
                 if(brush==BrushShape.Flat||brush==BrushShape.DryBrush)distance=Mathf.Max(Mathf.Abs(Vector3.Dot(offset,tangent)),Mathf.Abs(Vector3.Dot(offset,vertical))/.4f)/size;
                 int x=texel.Index%canvas.Width,y=texel.Index/canvas.Width;float grain=Hash(x,y,19);
@@ -179,14 +186,16 @@ namespace CozyBoard {
                 if(strength<=0)return;
                 Color target=brush==BrushShape.Eraser?canvas.BasePixels[texel.Index]:selected;
                 if(brush!=BrushShape.Eraser){float pigment=.97f+.03f*Mathf.PerlinNoise(x*.17f,y*.17f);target=new Color(target.r*pigment,target.g*pigment,target.b*pigment,1);}
-                canvas.Pixels[texel.Index]=Color.Lerp(canvas.Pixels[texel.Index],target,strength*opacity);
+                float now=Time.unscaledTime;float wet=canvas.Wet.TryGetValue(texel.Index,out var at)?WorkshopPaintMedium.Wetness(at,now):0;
+                canvas.Pixels[texel.Index]=WorkshopPaintMedium.Deposit(canvas.Pixels[texel.Index],target,strength*opacity,contactSeconds,brush==BrushShape.Eraser?0:wet);
+                if(brush==BrushShape.Eraser)canvas.Wet.Remove(texel.Index);else{canvas.Wet[texel.Index]=now;canvas.LastWet=now;}
             });
         }
 
         public void PaintAtSurface(WorkshopItem item,Vector3 localPoint,Vector3 localNormal,Color color,float brushRadius){
             if(!item||!item.Fitted||item.Kind!="keycap")return;
             var canvas=Canvas(item);var previous=selected;selected=color;BeginStroke();Touch(canvas);
-            PaintSurface(canvas,localPoint,localNormal,brushRadius);canvas.Modified=true;canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);EndStroke();selected=previous;
+            PaintSurface(canvas,localPoint,localNormal,brushRadius);canvas.Modified=true;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);EndStroke();selected=previous;
         }
         public Vector2 SurfaceUV(WorkshopItem item,Vector3 localPoint,Vector3 normal)=>Canvas(item).Surface.UV(localPoint,KeycapSurface.Face(normal));
 
@@ -195,7 +204,7 @@ namespace CozyBoard {
             ConfigureStudioUI();canvas.Surface.CacheSamples();
             studio=new KeycapStudio(canvas.Surface,item.Visual.sharedMaterials,StudioShader?StudioShader:Shader.Find("CozyBoard/KeycapStudio"));
             EditorSurface.texture=studio.Target;EditorTitle.text="BOYA ATÖLYESİ  /  "+DisplayName(item);
-            RefreshLegend(canvas);EditorHint.text="Sol: boya   ·   Sağ / orta: döndür   ·   Tekerlek: fırça   ·   Shift + tekerlek: yakınlaş   ·   Alt: renk al   ·   F: görünümü sıfırla";
+            BuildTapeUI();SyncTape();RefreshTapeUI();RefreshLegend(canvas);EditorHint.text="Sol: boya   ·   Sağ / orta: döndür   ·   Tekerlek: fırça   ·   Shift + tekerlek: yakınlaş   ·   Alt: renk al   ·   F: görünümü sıfırla";
             EditorPanel.SetActive(true);if(PalettePanel)PalettePanel.SetActive(true);studio.Render();
         }
 
@@ -235,7 +244,7 @@ namespace CozyBoard {
         void SetupStudioButton(Button button,string label,UnityEngine.Events.UnityAction action){if(!button)return;button.gameObject.SetActive(true);button.GetComponentInChildren<TMP_Text>(true).text=label;button.onClick.RemoveAllListeners();button.onClick.AddListener(action);}
         void FillCurrent(){if(!editing)return;BeginStroke();Touch(Canvas(editing));Fill(editing,selected);EndStroke();}
 
-        public void CloseEditor(){EndStroke();studio?.Dispose();studio=null;editing=null;if(EditorPanel)EditorPanel.SetActive(false);if(PalettePanel)PalettePanel.SetActive(false);ShowCursor(false);Cursor.visible=true;if(Active&&EditorHint)EditorHint.text="Klavyeden boyamak istediğin tuşa tıkla";}
+        public void CloseEditor(){EndStroke();tapeDragging=false;studio?.Dispose();studio=null;editing=null;if(EditorPanel)EditorPanel.SetActive(false);if(PalettePanel)PalettePanel.SetActive(false);ShowCursor(false);Cursor.visible=true;if(Active&&EditorHint)EditorHint.text="Klavyeden boyamak istediğin tuşa tıkla";}
         static string DisplayName(WorkshopItem item){var value=string.IsNullOrWhiteSpace(item.Label)?item.Id:item.Label;if(value.StartsWith("Tuş ",StringComparison.OrdinalIgnoreCase))value=value.Substring(4);return value.Replace("Space","BOŞLUK");}
 
         void ShowCursor(bool value){if(BrushCursor)BrushCursor.gameObject.SetActive(value&&Active);}
@@ -268,7 +277,7 @@ namespace CozyBoard {
             if(brush==BrushShape.Line)RasterLine(canvas,a,b,size);
             else if(brush==BrushShape.Rectangle){Vector2 c=new Vector2(a.x,b.y);Vector2 d=new Vector2(b.x,a.y);RasterLine(canvas,a,c,size);RasterLine(canvas,c,b,size);RasterLine(canvas,b,d,size);RasterLine(canvas,d,a,size);}
             else {Vector2 center=(a+b)*.5f;Vector2 radii=new Vector2(Mathf.Abs(b.x-a.x),Mathf.Abs(b.y-a.y))*.5f;int steps=Mathf.Clamp(Mathf.CeilToInt(Mathf.PI*(radii.x+radii.y)/Mathf.Max(2,size*.24f)),24,220);Vector2 last=center+new Vector2(radii.x,0);for(int i=1;i<=steps;i++){float angle=i*Mathf.PI*2/steps;var next=center+new Vector2(Mathf.Cos(angle)*radii.x,Mathf.Sin(angle)*radii.y);RasterLine(canvas,last,next,size);last=next;}}
-            canvas.Modified=true;canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);
+            canvas.Modified=true;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);
         }
         void RasterLine(CanvasState canvas,Vector2 from,Vector2 to,float size){int count=Mathf.Clamp(Mathf.CeilToInt(Vector2.Distance(from,to)/Mathf.Max(1,size*.24f)),1,256);for(int i=0;i<=count;i++)StampPixels(canvas,Vector2.Lerp(from,to,(float)i/count),size);}
 
@@ -277,7 +286,7 @@ namespace CozyBoard {
             float brushPixels=radius*canvas.Height;
             int count=previousId==item.Id?Mathf.Clamp(Mathf.CeilToInt(Vector2.Distance(previousPixel,pixel)/Mathf.Max(1,brushPixels*.28f)),1,96):1;
             for(int i=1;i<=count;i++)StampPixels(canvas,previousId==item.Id?Vector2.Lerp(previousPixel,pixel,(float)i/count):pixel,brushPixels);
-            previousId=item.Id;previousPixel=pixel;canvas.Modified=true;canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);
+            previousId=item.Id;previousPixel=pixel;canvas.Modified=true;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);
         }
 
         void StampPixels(CanvasState canvas,Vector2 center,float size){
@@ -300,15 +309,15 @@ namespace CozyBoard {
         }
         static float Hash(int x,int y,int seed){unchecked{uint n=(uint)(x*374761393+y*668265263+seed*1442695041);n=(n^(n>>13))*1274126177u;return (n^(n>>16))/4294967295f;}}
 
-        void Touch(CanvasState canvas){if(touched.Add(canvas.Item.Id))stroke.Add(new Snapshot{Id=canvas.Item.Id,Pixels=(Color32[])canvas.Pixels.Clone(),Modified=canvas.Modified,LegendVisible=canvas.LegendVisible});}
+        void Touch(CanvasState canvas){if(touched.Add(canvas.Item.Id))stroke.Add(new Snapshot{Id=canvas.Item.Id,Pixels=(Color32[])canvas.Pixels.Clone(),Modified=canvas.Modified,LegendVisible=canvas.LegendVisible,Tape=canvas.Tape.ToArray()});}
         public void Undo(){EndStroke();if(undo.Count==0){Game.Menu.Toast("Geri alınacak boya yok.");return;}redo.Push(SwapSnapshots(undo.Pop()));Game.Menu.Toast("Son boya işlemi geri alındı.");}
         public void Redo(){EndStroke();if(redo.Count==0){Game.Menu.Toast("Yinelenecek boya yok.");return;}undo.Push(SwapSnapshots(redo.Pop()));Game.Menu.Toast("Boya işlemi yeniden uygulandı.");}
-        List<Snapshot> SwapSnapshots(List<Snapshot> source){var reverse=new List<Snapshot>();foreach(var snapshot in source){if(!Game.Controller.Lookup.TryGetValue(snapshot.Id,out var item))continue;var canvas=Canvas(item);reverse.Add(new Snapshot{Id=snapshot.Id,Pixels=(Color32[])canvas.Pixels.Clone(),Modified=canvas.Modified,LegendVisible=canvas.LegendVisible});canvas.Pixels=(Color32[])snapshot.Pixels.Clone();canvas.Modified=snapshot.Modified;canvas.LegendVisible=snapshot.LegendVisible;ApplyMaterials(canvas);if(editing==item)RefreshLegend(canvas);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);}return reverse;}
-        public void ClearCurrent(){if(!editing)return;BeginStroke();var canvas=Canvas(editing);Touch(canvas);canvas.Pixels=(Color32[])canvas.BasePixels.Clone();canvas.Modified=false;canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);EndStroke();Game.Menu.Toast("Seçili tuş temizlendi.");}
+        List<Snapshot> SwapSnapshots(List<Snapshot> source){var reverse=new List<Snapshot>();foreach(var snapshot in source){if(!Game.Controller.Lookup.TryGetValue(snapshot.Id,out var item))continue;var canvas=Canvas(item);reverse.Add(new Snapshot{Id=snapshot.Id,Pixels=(Color32[])canvas.Pixels.Clone(),Modified=canvas.Modified,LegendVisible=canvas.LegendVisible,Tape=canvas.Tape.ToArray()});canvas.Pixels=(Color32[])snapshot.Pixels.Clone();canvas.Modified=snapshot.Modified;canvas.LegendVisible=snapshot.LegendVisible;canvas.Wet.Clear();if(editing==item)studio?.ClearWetness();canvas.Tape.Clear();if(snapshot.Tape!=null)canvas.Tape.AddRange(snapshot.Tape);ApplyMaterials(canvas);if(editing==item){RefreshLegend(canvas);SyncTape();RefreshTapeUI();}canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);}return reverse;}
+        public void ClearCurrent(){if(!editing)return;BeginStroke();var canvas=Canvas(editing);Touch(canvas);canvas.Pixels=(Color32[])canvas.BasePixels.Clone();canvas.Wet.Clear();studio?.ClearWetness();canvas.Modified=false;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);EndStroke();Game.Menu.Toast("Seçili tuş temizlendi.");}
         public void ToggleLegend(){if(!editing)return;BeginStroke();var canvas=Canvas(editing);Touch(canvas);canvas.LegendVisible=!canvas.LegendVisible;ApplyMaterials(canvas);RefreshLegend(canvas);EndStroke();Game.Menu.Toast(canvas.LegendVisible?"Tuş harfi gösteriliyor.":"Tuş harfi gizlendi.");}
         void RefreshLegend(CanvasState canvas){if(EditorLegend)EditorLegend.gameObject.SetActive(false);studio?.UpdateMaterials(canvas.Item.Visual.sharedMaterials);if(LegendButtonLabel)LegendButtonLabel.text=canvas.LegendVisible?"HARF  AÇIK":"HARF  KAPALI";}
 
-        public void Fill(WorkshopItem item,Color color){var canvas=Canvas(item);for(int i=0;i<canvas.Pixels.Length;i++)canvas.Pixels[i]=color;canvas.Modified=true;canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);}
+        public void Fill(WorkshopItem item,Color color){var canvas=Canvas(item);if(canvas.Tape.Count>0){canvas.Surface.Visit(canvas.Surface.Bounds.center,canvas.Surface.Bounds.size.magnitude,t=>{if(!Masked(canvas,t.Position))canvas.Pixels[t.Index]=color;});}else for(int i=0;i<canvas.Pixels.Length;i++)canvas.Pixels[i]=color;canvas.Wet.Clear();canvas.Modified=true;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);}
         public void DrawLine(WorkshopItem item,Vector2 from,Vector2 to,Color color,bool square=false){
             if(!item||!item.Fitted||item.Kind!="keycap")return;
             var oldColor=selected;var oldBrush=brush;selected=color;brush=square?BrushShape.Flat:BrushShape.Detail;
@@ -340,10 +349,10 @@ namespace CozyBoard {
         public void ResetPaint(){CloseEditor();foreach(var canvas in canvases.Values)Dispose(canvas);canvases.Clear();undo.Clear();redo.Clear();}
         void Dispose(CanvasState canvas){if(canvas.Item&&canvas.Item.Visual){canvas.Item.Visual.sharedMaterials=canvas.OriginalMaterials;canvas.Item.Visual.GetComponent<MeshFilter>().sharedMesh=canvas.OriginalMesh;}if(Application.isPlaying)Destroy(canvas.Surface.Mesh);else DestroyImmediate(canvas.Surface.Mesh);if(Application.isPlaying){Destroy(canvas.Material);Destroy(canvas.Texture);}else{DestroyImmediate(canvas.Material);DestroyImmediate(canvas.Texture);}}
 
-        public void Restore(string[] ids,string[] textures,string[] legacyColors=null,bool[] legendVisibility=null){
+        public void Restore(string[] ids,string[] textures,string[] legacyColors=null,bool[] legendVisibility=null,string[] tapeMasks=null){
             ResetPaint();if(ids==null)return;
             for(int i=0;i<ids.Length;i++)if(Game.Controller.Lookup.TryGetValue(ids[i],out var item)){
-                if(textures!=null&&i<textures.Length&&!string.IsNullOrEmpty(textures[i])){try{var canvas=Canvas(item);var source=new Texture2D(2,2);source.LoadImage(Convert.FromBase64String(textures[i]));var restored=new Color32[canvas.Width*canvas.Height];for(int y=0;y<canvas.Height;y++)for(int x=0;x<canvas.Width;x++)restored[y*canvas.Width+x]=(source.width==KeycapSurface.Width&&source.height==KeycapSurface.Height?source.GetPixel(x,y):(x<KeycapSurface.Tile&&y<KeycapSurface.Tile?source.GetPixelBilinear(Mathf.Clamp01((x-4f)/(KeycapSurface.Tile-8)),Mathf.Clamp01((y-4f)/(KeycapSurface.Tile-8))):(Color)canvas.BasePixels[y*canvas.Width+x]));canvas.Pixels=restored;canvas.Modified=true;canvas.LegendVisible=legendVisibility==null||i>=legendVisibility.Length||legendVisibility[i];ApplyMaterials(canvas);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);if(Application.isPlaying)Destroy(source);else DestroyImmediate(source);}catch(Exception e){Debug.LogWarning("Paint restore failed for "+ids[i]+": "+e.Message);}}
+                if(textures!=null&&i<textures.Length&&!string.IsNullOrEmpty(textures[i])){try{var canvas=Canvas(item);var source=new Texture2D(2,2);source.LoadImage(Convert.FromBase64String(textures[i]));var restored=new Color32[canvas.Width*canvas.Height];for(int y=0;y<canvas.Height;y++)for(int x=0;x<canvas.Width;x++)restored[y*canvas.Width+x]=(source.width==KeycapSurface.Width&&source.height==KeycapSurface.Height?source.GetPixel(x,y):(x<KeycapSurface.Tile&&y<KeycapSurface.Tile?source.GetPixelBilinear(Mathf.Clamp01((x-4f)/(KeycapSurface.Tile-8)),Mathf.Clamp01((y-4f)/(KeycapSurface.Tile-8))):(Color)canvas.BasePixels[y*canvas.Width+x]));canvas.Pixels=restored;canvas.Modified=true;if(tapeMasks!=null&&i<tapeMasks.Length&&!string.IsNullOrEmpty(tapeMasks[i])){var tape=JsonUtility.FromJson<WorkshopTapeSave>(tapeMasks[i]);if(tape?.Strips!=null)canvas.Tape.AddRange(tape.Strips.Take(8));}canvas.LegendVisible=legendVisibility==null||i>=legendVisibility.Length||legendVisibility[i];ApplyMaterials(canvas);canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);if(Application.isPlaying)Destroy(source);else DestroyImmediate(source);}catch(Exception e){Debug.LogWarning("Paint restore failed for "+ids[i]+": "+e.Message);}}
                 else if(legacyColors!=null&&i<legacyColors.Length&&ColorUtility.TryParseHtmlString(legacyColors[i],out var color))Fill(item,color);
             }
         }

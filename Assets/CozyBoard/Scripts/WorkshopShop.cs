@@ -9,7 +9,7 @@ namespace CozyBoard {
  [DefaultExecutionOrder(-35)]
  public sealed partial class WorkshopShop:MonoBehaviour {
   [Serializable] public class ShopData {
-   public int credits=320;public bool laptopPlaced;public Vector3 laptopPosition;
+   public int laptopLayoutVersion;public int credits=320;public bool laptopPlaced;public Vector3 laptopPosition;
    public int[] stock={1,0,0,1,0,0,1,0,0};
    public int[] selected={0,3,6};
    public bool[] used=new bool[3];
@@ -38,7 +38,7 @@ namespace CozyBoard {
   Transform Part(string name,Transform parent,Vector3 pos,Vector3 size,Material material){var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.transform.SetParent(parent,false);go.transform.localPosition=pos;go.transform.localScale=size;Destroy(go.GetComponent<Collider>());go.GetComponent<Renderer>().sharedMaterial=material;return go.transform;}
   Transform Shell(string name,Vector3 position,Vector3 size,Material material,float radius=.16f){var go=new GameObject(name);go.transform.SetParent(laptop.transform,false);go.transform.localPosition=position;var mesh=WorkshopPropMesh.RoundedBox(size,radius);owned.Add(mesh);go.AddComponent<MeshFilter>().sharedMesh=mesh;go.AddComponent<MeshRenderer>().sharedMaterial=material;var shadow=new GameObject(name+" shadow");shadow.transform.SetParent(go.transform,false);shadow.AddComponent<MeshFilter>().sharedMesh=mesh;shadow.AddComponent<MeshRenderer>().sharedMaterial=Game.Controller.ShadowMaterial;return go.transform;}
   void BuildLaptop(TMP_FontAsset font){
-   laptop=new GameObject("Cozy workshop laptop");laptop.transform.SetParent(Game.Controller.transform,false);laptop.transform.localPosition=new Vector3(-7.5f,.025f,-4.0f);laptop.transform.localRotation=Quaternion.Euler(0,-9,0);laptop.transform.localScale=new Vector3(1.32f,1.15f,1.32f);
+   laptop=new GameObject("Cozy workshop laptop");laptop.transform.SetParent(Game.Controller.transform,false);laptop.transform.localPosition=LaptopHome;laptop.transform.localRotation=Quaternion.Euler(0,-9,0);laptop.transform.localScale=new Vector3(1.32f,1.15f,1.32f);
    var metal=Mat("Satin grey aluminium",new Color(.58f,.60f,.61f));var seam=Mat("Recessed graphite seam",new Color(.17f,.23f,.21f));var edge=Mat("Rolled aluminium highlight",new Color(.77f,.79f,.80f));var brass=Mat("Embossed cream brass logo",new Color(.83f,.72f,.46f));
    Shell("Rounded lower unibody",new Vector3(0,.11f,0),new Vector3(3.38f,.17f,2.28f),metal,.21f);
    Shell("Continuous lid seam",new Vector3(0,.202f,0),new Vector3(3.34f,.022f,2.25f),seam,.20f);
@@ -92,19 +92,19 @@ namespace CozyBoard {
   public void ApplyVariants(){if(!Game||Game.Controller.Items==null)return;var block=new MaterialPropertyBlock();foreach(var item in Game.Controller.Items){if(item.Stage is not (1 or 3 or 4))continue;int group=Group(item.Stage);int id=Data.selected[group];if(group==2&&Game.Painter&&Game.Painter.PaintIds.Contains(item.Id))continue;item.Visual.GetPropertyBlock(block,0);block.SetColor("_BaseColor",colors[id]);item.Visual.SetPropertyBlock(block,0);block.Clear();}Game.Audio.SwitchVoice=Data.selected[1]-3;}
   void Update(){if(!Ready)return;UpdateMailNotification();if(wallet){wallet.text=Data.credits+" Tık";wallet.transform.parent.gameObject.SetActive(!Game.Painter.Editing&&!Game.Experience.Packing);}var k=Keyboard.current;if(k!=null&&k.escapeKey.wasPressedThisFrame&&IsOpen){Close();return;}if(k!=null&&k.lKey.wasPressedThisFrame&&!Game.Painter.Editing&&!Game.TypingMode){if(IsOpen)Close();else Open();}
   }
-  static readonly Vector3 LaptopHome=new(-7.5f,.025f,-4.0f);
+  static readonly Vector3 LaptopHome=new(-8.8f,.025f,-3.2f);
   public bool ClearLaptopPosition(Vector3 position){
    var footprint=new Rect(position.x-2.46f,position.z-1.84f,4.92f,3.68f);
-   if(footprint.xMin< -10.6f||footprint.xMax>10.6f||footprint.yMin< -6.15f||footprint.yMax>6.1f)return false;
+   if(footprint.xMin< -12f||footprint.xMax>10.6f||footprint.yMin< -6.15f||footprint.yMax>6.1f)return false;
    // Reserve every stage's carton and open lid, including while cartons travel in.
-   var occupied=new[]{new Rect(-8.95f,-2.08f,3.2f,5.95f),new Rect(5.75f,-2.08f,3.2f,5.95f),new Rect(-4.65f,2.85f,9.3f,3.4f),new Rect(5.6f,-5.1f,3.65f,2.8f)};
+   var occupied=new[]{new Rect(-8.95f,-1.28f,3.2f,5.95f),new Rect(5.75f,-2.08f,3.2f,5.95f),new Rect(-4.65f,2.85f,9.3f,3.4f),new Rect(5.6f,-5.1f,3.65f,2.8f)};
    foreach(var zone in occupied)if(footprint.Overlaps(zone))return false;
    var board=Game.Controller.Lookup["Case"].Visual.bounds;return !footprint.Overlaps(new Rect(board.min.x-.12f,board.min.z-.12f,board.size.x+.24f,board.size.z+.24f));
   }
-  void RestoreLaptopPosition(){var saved=Data.laptopPlaced?Data.laptopPosition:LaptopHome;laptop.transform.position=ClearLaptopPosition(saved)?new Vector3(saved.x,.025f,saved.z):LaptopHome;if(Data.laptopPlaced)Data.laptopPosition=laptop.transform.position;}
+  void RestoreLaptopPosition(){var saved=Data.laptopPlaced&&Data.laptopLayoutVersion>=1?Data.laptopPosition:LaptopHome;Data.laptopLayoutVersion=1;laptop.transform.position=ClearLaptopPosition(saved)?new Vector3(saved.x,.025f,saved.z):LaptopHome;if(Data.laptopPlaced)Data.laptopPosition=laptop.transform.position;}
   public bool BeginLaptopMove(Vector2 point){if(!Ready||IsOpen||Game.Tools.Busy||!laptopHit.Raycast(Game.Controller.ViewCamera.ScreenPointToRay(point),out _,100))return false;Game.Controller.CancelDrag();Game.Tools.Deselect();laptopStart=laptop.transform.position;laptopOffset=laptopStart-Game.Controller.MousePlane(point,laptopStart.y);laptopBlocked=false;IsMoving=true;return true;}
-  public void MoveLaptop(Vector2 point){if(!IsMoving)return;var p=Game.Controller.MousePlane(point,laptopStart.y)+laptopOffset;p=new Vector3(Mathf.Clamp(p.x,-8,8),laptopStart.y,Mathf.Clamp(p.z,-4.25f,4.2f));laptopBlocked=!ClearLaptopPosition(p);if(!laptopBlocked)laptop.transform.position=p;}
-  public void EndLaptopMove(bool cancel){if(!IsMoving)return;if(cancel)laptop.transform.position=laptopStart;else{Data.laptopPlaced=true;Data.laptopPosition=laptop.transform.position;if(laptopBlocked)Game.Menu.Toast("Burada kutu veya alet var. Laptop boş alanda kaldı.");}IsMoving=false;}
+  public void MoveLaptop(Vector2 point){if(!IsMoving)return;var p=Game.Controller.MousePlane(point,laptopStart.y)+laptopOffset;p=new Vector3(Mathf.Clamp(p.x,-9.4f,8),laptopStart.y,Mathf.Clamp(p.z,-4.25f,4.2f));laptopBlocked=!ClearLaptopPosition(p);if(!laptopBlocked)laptop.transform.position=p;}
+  public void EndLaptopMove(bool cancel){if(!IsMoving)return;if(cancel)laptop.transform.position=laptopStart;else{Data.laptopLayoutVersion=1;Data.laptopPlaced=true;Data.laptopPosition=laptop.transform.position;if(laptopBlocked)Game.Menu.Toast("Burada kutu veya alet var. Laptop boş alanda kaldı.");}IsMoving=false;}
   public bool HandlePointer(){
    var m=Mouse.current;if(m==null||!Ready||IsOpen||Game.Painter.Editing)return false;
    if(IsMoving){if(Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame){EndLaptopMove(true);return true;}MoveLaptop(m.position.ReadValue());if(m.leftButton.wasReleasedThisFrame)EndLaptopMove(false);return true;}

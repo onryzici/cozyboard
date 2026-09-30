@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 namespace CozyBoard {
  public sealed partial class WorkshopShop {
-  GameObject mailView,mailNotification;
+  GameObject mailView,mailNotification,laptopMailBadge;
+  RectTransform mailRoot;TMP_Text laptopMailCount;
   TMP_Text mailSender,mailSubject,mailBody,mailReward,mailCounter,mailNoticeText;
   UnityEngine.UI.RawImage mailPortrait;
   UnityEngine.UI.Button previousMail,nextMail;
@@ -11,6 +12,7 @@ namespace CozyBoard {
   public bool MailOpen=>IsOpen&&mailView&&mailView.activeSelf;
   public int UnreadMail=>Game.DeliveryMail.Count(x=>x.pending);
   void BuildMailUI(RectTransform root){
+   mailRoot=root;
    var screen=panel.transform.Find("Laptop catalogue");
    screen.Find("Store title").GetComponent<TMP_Text>().text="ATÖLYE LAPTOPU";
    screen.Find("Store subtitle").gameObject.SetActive(false);
@@ -29,7 +31,12 @@ namespace CozyBoard {
    WorkshopUI.Button("Return to workshop",mail,font,"Atölyeye dön",new Vector2(1,0),new Vector2(0,22),new Vector2(240,48),Close);
    var notification=WorkshopUI.Button("New customer mail",root,font,"",new Vector2(.5f,1),new Vector2(0,-24),new Vector2(490,60),OpenMail);mailNotification=notification.gameObject;
    notification.GetComponent<UnityEngine.UI.Image>().color=WorkshopUI.Paper;mailNoticeText=notification.GetComponentInChildren<TMP_Text>();mailNoticeText.color=WorkshopUI.Ink;mailNoticeText.fontSize=23;
-   mailView.SetActive(false);mailNotification.SetActive(false);
+   var source=Game.Menu.OrderButton.GetComponent<UnityEngine.UI.RawImage>();
+   var envelope=WorkshopUI.Art("Notification envelope",notification.transform,source.texture,new Vector2(0,.5f),new Vector2(12,0),new Vector2(44,44));envelope.uvRect=source.uvRect;mailNoticeText.rectTransform.anchoredPosition=new Vector2(25,0);mailNoticeText.rectTransform.sizeDelta=new Vector2(415,48);
+   var badge=WorkshopUI.Button("Laptop unread mail",root,font,"",Vector2.one*.5f,Vector2.zero,new Vector2(60,60),OpenMail);laptopMailBadge=badge.gameObject;badge.GetComponent<UnityEngine.UI.Image>().enabled=false;badge.GetComponent<UnityEngine.UI.Shadow>().enabled=false;
+   var badgeArt=WorkshopUI.Art("Unread envelope",badge.transform,source.texture,Vector2.one*.5f,Vector2.zero,new Vector2(60,60));badgeArt.uvRect=source.uvRect;badgeArt.raycastTarget=true;badge.targetGraphic=badgeArt;
+   var count=WorkshopUI.Panel("Unread counter",badge.transform,Vector2.one,new Vector2(5,5),new Vector2(25,25),new Color(.65f,.28f,.20f));count.raycastTarget=false;laptopMailCount=WorkshopUI.Text("Count",count.transform,font,"",18,Vector2.one*.5f,Vector2.zero,new Vector2(25,25));laptopMailCount.alignment=TextAlignmentOptions.Center;laptopMailCount.color=WorkshopUI.Paper;
+   mailView.SetActive(false);mailNotification.SetActive(false);laptopMailBadge.SetActive(false);
   }
   public void OpenMail(){if(!IsOpen)Open();if(IsOpen)SelectMailbox(true);}
   void SelectMailbox(bool value){
@@ -49,7 +56,7 @@ namespace CozyBoard {
   }
   void UpdateMailNotification(){
    if(!mailNotification)return;bool visible=UnreadMail>0&&!Game.Experience.MainVisible&&!Game.Experience.Packing&&!Game.Experience.Inspecting&&!Game.Painter.Editing&&!IsOpen;
-   mailNotification.SetActive(visible);if(visible){var latest=Game.DeliveryMail.Last(x=>x.pending);mailNoticeText.text=$"Yeni mail · {WorkshopOrders.For(latest.order).Name}   ·   Oku →";mailNotification.transform.SetAsLastSibling();}
+   mailNotification.SetActive(visible);if(laptopMailBadge){laptopMailBadge.SetActive(visible);if(visible){var screen=Game.Controller.ViewCamera.WorldToScreenPoint(laptop.transform.TransformPoint(new Vector3(1.05f,.45f,.6f)));var canvas=mailRoot.GetComponentInParent<Canvas>();var uiCamera=canvas.renderMode==RenderMode.ScreenSpaceOverlay?null:canvas.worldCamera;if(RectTransformUtility.ScreenPointToWorldPointInRectangle(mailRoot,screen,uiCamera,out var point))laptopMailBadge.transform.position=point;laptopMailCount.text=UnreadMail.ToString();laptopMailBadge.transform.SetAsLastSibling();}}if(visible){var latest=Game.DeliveryMail.Last(x=>x.pending);mailNoticeText.text=$"Yeni mail · {WorkshopOrders.For(latest.order).Name}   ·   Oku →";mailNotification.transform.SetAsLastSibling();}
   }
  }
 }

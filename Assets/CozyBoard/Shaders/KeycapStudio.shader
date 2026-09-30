@@ -9,6 +9,7 @@ Shader "CozyBoard/KeycapStudio" {
  CBUFFER_START(UnityPerMaterial)
  float4 _BaseColor; float _Smoothness;
  float4 _WetPoints[12]; float _WetTimes[12];
+ int _TapeCount;float4 _TapeStarts[8],_TapeAxes[8],_TapeNormals[8];
  CBUFFER_END
  struct A {float4 p:POSITION; float3 n:NORMAL; float2 uv:TEXCOORD0;};
  struct V {float4 p:SV_POSITION; float3 n:TEXCOORD0; float3 w:TEXCOORD1; float2 uv:TEXCOORD2;float3 local:TEXCOORD3;};
@@ -18,11 +19,15 @@ Shader "CozyBoard/KeycapStudio" {
  float key=saturate(dot(n,l)),fill=saturate(dot(n,normalize(float3(.8,.2,.4))));
  float3 color=SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,i.uv).rgb*_BaseColor.rgb;
  float wet=0;
- [unroll] for(int k=0;k<12;k++){float age=_Time.y-_WetTimes[k];float r=_WetPoints[k].w;if(r>.00001&&age<2.4){float dist=length(i.local-_WetPoints[k].xyz)/(r*(1+min(age,.2)*.22));wet=max(wet,(1-smoothstep(.68,1,dist))*saturate(1-age/2.4));}}
+ [unroll] for(int k=0;k<12;k++){float age=_Time.y-_WetTimes[k];float r=_WetPoints[k].w;if(r>.00001&&age<7){float dist=length(i.local-_WetPoints[k].xyz)/(r*(1+min(age,.2)*.22));wet=max(wet,(1-smoothstep(.68,1,dist))*saturate(1-age/7));}}
  float grain=sin(i.local.x*1100+i.local.z*520)*sin(i.local.z*980+i.local.y*450);
  color*=1+grain*.009-wet*.045;
  float wetShine=pow(saturate(dot(n,normalize(l+v))),52)*wet*.36;
- float spec=pow(saturate(dot(n,normalize(l+v))),lerp(18,110,_Smoothness))*.23;
+ float spec=pow(saturate(dot(n,normalize(l+v))),lerp(18,110,_Smoothness))*.13;
+ [loop] for(int j=0;j<_TapeCount;j++){
+ float3 offset=i.local-_TapeStarts[j].xyz;float3 axis=_TapeAxes[j].xyz;float3 across=normalize(cross(_TapeNormals[j].xyz,axis)+float3(.000001,0,0));float along=dot(offset,axis),side=abs(dot(offset,across));float width=_TapeStarts[j].w*.5;
+ if(_TapeAxes[j].w>.001&&along>=-width&&along<=_TapeAxes[j].w+width&&side<=width){float fibers=sin(i.local.x*940+i.local.y*330)*sin(i.local.z*830)*.012;float rim=smoothstep(width-.006,width,side);return half4((float3(.91,.82,.58)+fibers-rim*.07)*(.70+.26*key),1);}
+ }
  return half4(color*(.46+.48*key+.13*fill)+spec+wetShine,1);
  }
  ENDHLSL

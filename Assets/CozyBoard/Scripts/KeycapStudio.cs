@@ -67,6 +67,12 @@ namespace CozyBoard {
                 ring.SetPosition(i,p);
             }
         }
+        public void SetTape(WorkshopTapeStrip[] strips){
+            var starts=new Vector4[8];var axes=new Vector4[8];var normals=new Vector4[8];int count=Mathf.Min(8,strips.Length);
+            for(int i=0;i<count;i++){var t=strips[i];starts[i]=new Vector4(t.Start.x,t.Start.y,t.Start.z,t.Width);var direction=Vector3.ProjectOnPlane(t.End-t.Start,t.Normal);axes[i]=new Vector4(direction.normalized.x,direction.normalized.y,direction.normalized.z,direction.magnitude);normals[i]=new Vector4(t.Normal.x,t.Normal.y,t.Normal.z,0);}
+            foreach(var m in materials){m.SetInt("_TapeCount",count);m.SetVectorArray("_TapeStarts",starts);m.SetVectorArray("_TapeAxes",axes);m.SetVectorArray("_TapeNormals",normals);}
+        }
+        public void ClearWetness(){System.Array.Clear(wetPoints,0,wetPoints.Length);}
         public void HideCursor()=>ring.enabled=false;
         public void Dab(Vector3 point,float radius){if(Time.time-lastDab<.025f)return;lastDab=Time.time;var local=Local(point);wetPoints[wetIndex]=new Vector4(local.x,local.y,local.z,radius*1.1f);wetTimes[wetIndex]=Time.time;wetIndex=(wetIndex+1)%wetPoints.Length;}
         public void Render(){foreach(var m in materials){m.SetVectorArray("_WetPoints",wetPoints);m.SetFloatArray("_WetTimes",wetTimes);}camera.Render();}

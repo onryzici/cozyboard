@@ -90,6 +90,7 @@ namespace CozyBoard {
    var second=WorkshopOrders.Evaluate(2,3);g.DeliveryMail.Add(second);shop.OpenMail();Check(!second.pending,"Newest message opens in the laptop inbox");shop.ReadMail(0);Check(shop.MailOpen&&g.DeliveryMail[0].order==1&&shop.Data.credits==paid,"Older customer mail remains readable without duplicate rewards");shop.Close();
    var legacy=JsonUtility.FromJson<WorkshopGameMode.SaveData>(g.SerializeProgress());legacy.version=6;legacy.receipt=null;g.RestoreProgress(JsonUtility.ToJson(legacy));Check(g.LastDelivery==null&&g.OrderNumber==order+1&&shop.Data.credits==paid,"Version 6 saves preserve order and wallet without a receipt");
 g.Menu.ClosePanels();Check(!shop.HasSupply(1)&&g.Stock.Length==0,"Next order requires fresh materials after kit consumption");Check(shop.Purchase(1)&&shop.HasSupply(1),"Laptop restocks a new PCB variant");yield return new WaitForSeconds(.8f);Check(FindObjectsByType<WorkshopSupply>(FindObjectsSortMode.None).Single().GetComponent<WorkshopSupplyMotion>().Arrived,"Purchased material returns in animated carton");
+   WorkshopPaintVerify.Run(g,Check);
   }
  }
 }

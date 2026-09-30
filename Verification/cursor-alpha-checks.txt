@@ -1,0 +1,3 @@
+PASS arrow: transparent=748, clear border=True, dark pixels=0
+PASS openHand: transparent=520, clear border=True, dark pixels=0
+PASS closedHand: transparent=648, clear border=True, dark pixels=0

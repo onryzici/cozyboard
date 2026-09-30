@@ -1,0 +1,5 @@
+PASS Revised laptop home is accepted by footprint collision checks.
+PASS Clicking the laptop envelope opens the inbox.
+PASS Envelope hides when there is no unread mail.
+PASS Header home art padding and visible dimensions checked in laptop-mail-badge-preview.png.
+PASS Cursor context: available part = Hand, carried part = Grab, menu = Arrow.
