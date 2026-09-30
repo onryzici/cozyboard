@@ -16,16 +16,14 @@ Shader "CozyBoard/FlatWorkspace" {
  float rounded(float2 p,float2 b,float r){float2 q=abs(p)-b+r;return length(max(q,0))+min(max(q.x,q.y),0)-r;}
  half4 frag(V i):SV_Target {
   float2 p=(i.uv-.5)*float2(21.8,12.2625);
-  // A calm, matte walnut worktop. Long low-contrast fibres read as material
-  // without competing with the keyboard and its painted parts.
-  float grainWarp=(paintNoise(p*.23)-.5)*1.7;
-  float grain=sin((p.y+grainWarp)*21)+sin((p.y*.63+grainWarp*.42)*47)*.42;
-  float fibre=(paintNoise(float2(p.x*3.2,p.y*38))- .5);
-  half3 surface=_Surface.rgb*(1+grain*.018+fibre*.025)+pigment(p*.55)*.12;
-  float seamDistance=abs(frac((p.y+6.2)/3.05)-.5);
-  float seam=1-smoothstep(.485,.5,seamDistance);
-  surface*=1-seam*.055;
-  float softVignette=smoothstep(6.0,10.8,abs(p.x));surface*=1-softVignette*.035;
+  // Pale honey oak, with quiet lengthwise grain and broad natural variation.
+  float warp=paintNoise(float2(p.x*.32,p.y*.48))*.7;
+  float grain=paintNoise(float2(p.x*.24,(p.y+warp)*21))-.5;
+  float broad=paintNoise(float2(p.x*.16,p.y*2.4))-.5;
+  float fibers=sin((p.y+warp*.15)*145+paintNoise(p*.8)*4);
+  half3 surface=half3(.57,.38,.22)+broad*.065+grain*.040+fibers*.004;
+  float sunwash=1-smoothstep(0,12,length(p-float2(-5,4)));
+  surface+=half3(.025,.020,.012)*sunwash;
   float2 center=float2(0,-.08),halfSize=float2(5.05,3.45);
   float wobble=(paintNoise(p*3)-.5)*.047+(paintNoise(p*17)-.5)*.009;
   float shadow=1-smoothstep(-.02,.12,rounded(p-center-float2(.08,-.10),halfSize,.20));

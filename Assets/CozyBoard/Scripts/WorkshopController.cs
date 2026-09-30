@@ -57,7 +57,10 @@ namespace CozyBoard {
         void Update() {
             var mouse=Mouse.current;var keyboard=Keyboard.current;if(mouse==null)return;
             if(Game&&Game.Menu&&Game.Menu.InputBlocked){if(keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame)Game.Menu.ClosePanels();return;}
+            if(Game&&Game.Shop&&Game.Shop.HandlePointer())return;
+            if(Game&&Game.Tools&&(Game.Tools.Active||Game.Tools.Busy)){Game.Tools.HandleInput();return;}
             if(Game&&Game.Menu&&Game.Menu.ToolMode==3) {
+                if(Game.Painter&&Game.Painter.Editing)return;
                 Vector2 paintDelta=mouse.delta.ReadValue();
                 if(mouse.rightButton.isPressed){Yaw=Mathf.Clamp(Yaw+paintDelta.x*.06f,-5,5);Pitch=Mathf.Clamp(Pitch-paintDelta.y*.06f,78,85);}
                 ViewWidth=Mathf.Clamp(ViewWidth-mouse.scroll.ReadValue().y*.006f,18,21);UpdateCamera();return;
@@ -86,7 +89,7 @@ namespace CozyBoard {
             }
             if(!Dragged&&!overUI) {
                 Vector2 delta=mouse.delta.ReadValue();
-                if(mouse.rightButton.isPressed){Yaw=Mathf.Clamp(Yaw+delta.x*.06f,-5,5);Pitch=Mathf.Clamp(Pitch-delta.y*.06f,78,85);}
+                if(mouse.rightButton.isPressed){Yaw=Mathf.Clamp(Yaw+delta.x*.06f,-5,5);Pitch=Mathf.Clamp(Pitch-delta.y*.06f,68,83);}
                 else if(mouse.middleButton.isPressed){ViewTarget.x=Mathf.Clamp(ViewTarget.x-delta.x*.008f,-.15f,.15f);ViewTarget.z=Mathf.Clamp(ViewTarget.z-delta.y*.008f,-.10f,.10f);}
                 ViewWidth=Mathf.Clamp(ViewWidth-mouse.scroll.ReadValue().y*.006f,18,21);
             }
@@ -109,6 +112,7 @@ namespace CozyBoard {
             var supply=hit.collider.GetComponent<WorkshopSupply>();
             var item=supply&&Game?Game.SupplyItem(supply.Stage):hit.collider.GetComponent<WorkshopItem>();if(supply&&Game&&!item){Game.RejectStage(supply.Stage);return;}
             if(!item)return;
+            if(Game&&Game.Tools&&Game.Tools.TrySelect(item))return;
             if(Game&&Game.Menu&&Game.Menu.ToolMode==2&&item.Stage==0){item.transform.Rotate(0,15,0);Selected=item;return;}
             BeginDrag(item,point);
         }

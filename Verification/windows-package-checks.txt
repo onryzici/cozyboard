@@ -1,0 +1,6 @@
+Windows x64 release build: PASS
+Build errors: 0
+Archive CRC and required files: PASS
+Developer save and debug symbols excluded: PASS
+Windows runtime play test: NOT RUN (macOS host)
+SHA256: 248f8bb16f1ac95d344b38647e5babe67a069f2220f14a12b117c49f2b4fb512

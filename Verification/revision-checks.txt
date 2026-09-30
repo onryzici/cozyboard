@@ -1,0 +1,7 @@
+PASS Turkish letters present in primary font
+PASS Only current supply carton visible
+PASS PCB and plate boxes leave; mixed switch pile arrives
+PASS Empty switch carton disappears and keycap carton arrives
+PASS All empty supply cartons disappear
+PASS Preset color tiles removed from paint UI
+PASS New order restores first supply carton

@@ -1,0 +1,12 @@
+PASS Side wall accepts a direct 3D brush stroke
+PASS Opposite wall is not painted through the key
+PASS Undo restores side paint
+PASS Redo restores side paint
+PASS Save and restore retain side artwork
+PASS Legacy artwork migrates onto the top surface
+PASS Legacy artwork leaves new side surfaces clean
+PASS Studio displays a rendered 3D model
+PASS Flat drawing mask is removed
+PASS Raised legend can be hidden
+PASS Legend visibility supports undo
+PASS Studio shader compiles

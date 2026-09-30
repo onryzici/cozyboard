@@ -30,9 +30,13 @@ This repository contains only the Unity version. Open this folder in Unity Hub, 
 | Arrow icon | Place parts |
 | Four-arrow icon | Move the keyboard case or tools |
 | Circular arrow icon | Rotate a case/tool by clicking it |
-| Paint-brush icon | Select an installed key, enlarge it in the paint studio, then draw freely |
+| Paint-brush icon | Select an installed key and paint directly on its 3D surface |
 | Mouse wheel in paint mode | Change brush size |
+| Right / middle drag in paint studio | Orbit the 3D keycap, including its sides |
+| Shift + mouse wheel in paint studio | Zoom |
 | Alt + left mouse in paint mode | Sample a color from a keycap |
+| F in paint studio | Reset the view |
+| Ctrl / Cmd + Z or Y | Undo / redo paint |
 | Curved arrow icon | Undo the latest placement |
 | Floppy disk icon | Save the current order and assembly |
 | Envelope icon | Open customer order / deliver completed board |
@@ -40,7 +44,9 @@ This repository contains only the Unity version. Open this folder in Unity Hub, 
 
 The save file is `workshop-save.json` in Unity's `Application.persistentDataPath`. A saved order is restored on launch. Assembly progress is saved explicitly using the disk icon; delivery also saves. Undo history lasts for the current session. Parts use direct manipulation, not rigidbody simulation.
 
-The focused keycap studio uses a 512-pixel drawing surface per key (up to 2048 pixels wide for long keys), with continuous stroke interpolation for detailed lettering and small symbols. Painting replaces the original molded legend so a design can cover the full key face.
+The paint studio renders the actual sculpted keycap with studio lighting. Orbit the model to paint the top, bevels and side walls directly. Six separate 512-pixel texture islands keep opposite faces independent; brush strokes are evaluated on the 3D surface and interpolated along the pointer path. A surface-aligned brush ring shows the contact area. The color wheel, value slider, brush tips, fill and undo/redo controls remain available beside the model. Raised legends can be shown or hidden. Saved artwork includes side paint; older flat artwork migrates to the top face.
+
+Verify the 3D paint and save migration with `unity run . -- -executeMethod CozyBoard.Editor.WorkshopStudioVerify.Run`. The Editor menu **Cozy Board → Preview 3D paint studio** temporarily assembles the keyboard and opens a key for inspection in Play mode; it does not write the player save.
 
 ## Art and audio
 
@@ -90,3 +96,43 @@ Reports are in `Verification/`. `Library`, `Temp`, `Logs`, `UserSettings`, stand
 - `Shaders/`: painterly surface, shared window light, dashed guide and silhouette shadows.
 
 These paths are relative to `Assets/CozyBoard/`. Native meshes, materials, prefabs and scene data are included; no Godot or Blender installation is needed. Historical `WorkshopMigration.Build` rebuilds the earlier imported scene and should not be used for the current game. `WorkshopGameBuild.Configure` reapplies the current authored setup and resets the editor scene to a fresh order.
+
+## Cozy workshop experience
+
+The single Workbench scene now starts with a main menu: Continue, New game (confirms replacing a save), replayable illustrated tutorial, settings and quit. The seven tutorial steps cover orders, assembly, painting, inspection and shipping.
+
+- The orbit toolbar icon lifts the whole keyboard. Drag to rotate freely, scroll to zoom, then use **Masaya bırak** or Escape.
+- Painting uses the rendered 3D keycap, including its side walls. Right/middle drag rotates it; brush icons have hover hints. Fresh strokes briefly look wet before drying.
+- Completed orders enter four packing steps: place keyboard, fold protective paper, close and tape, ship. Cancelling restores the keyboard.
+- The tabletop is pale honey oak with subtle grain; the cutting mat is retained. A low-intensity bloom adds soft light.
+- Generated illustration prompts and saved asset locations: [Generated art](Documentation/GeneratedArt.md).
+
+Verification: `Verification/3d-paint-checks.txt` and `Verification/experience-checks.txt`.
+
+Latest polish: the preset color tiles are removed; Patrick Hand includes all Turkish letters; the tutorial guide stands behind its dialogue card. Only the current supply carton is visible, with up to 18 loosely piled small parts. Exhausted cartons disappear and a new order restores the first carton. Checks: `Verification/revision-checks.txt`.
+
+## Laptop and Tık
+
+Click the sage laptop to open Atölye Pazarı (or press L outside keyboard typing mode). Buy PCB + plate kits, three switch sound profiles, and PBT keycap palettes. Each small-parts kit contains the 61 parts needed for one keyboard; one kit is consumed per assembly category, not per piece. Unused kits can be returned at their purchase price. Already fitted categories keep their choice until the next keyboard.
+
+The workshop currency is **Tık**, shown as a honey-gold keycap coin. Start with 320 Tık and one basic kit per category; a shipped keyboard earns 240 Tık. Balance, inventory, selected variants and consumed kits are included in version 6 saves. Older saves migrate with a starter inventory.
+
+Supply cartons slide in and settle, then leave when empty. Only the active assembly stage's carton remains on the desk. Legacy authored box visuals have been removed from the single Workbench scene.
+
+Headless shop checks: run the built player with `-batchmode -nographics --cozy-shop-smoke`; it uses a separate temporary save and writes `shop-smoke-report.txt` in the application's temporary cache.
+
+The laptop now rests closed on the desk, with a sculpted sage lid, embossed keycap maker mark, rounded metal edges, hinge and ports; clicking it opens the catalogue.
+
+Desk tools are interactive: select the screwdriver and click the four case corner screws to fasten/unfasten them. New orders require all four screws before packing. The keycap puller returns a fitted cap to its supply box; the switch puller works after its cap is removed. Reinstalling recovered parts does not consume another kit. Escape puts a tool down. Screw state is saved; completed legacy keyboards migrate as fastened.
+
+Key presses depress and subtly squash the cap, then settle with a damped spring return. Travel varies with the selected switch profile. Both mouse clicks and keyboard testing use the feedback.
+
+Each desk tool now travels to its target and returns to its original pose. The screwdriver seats its tip on the selected screw and rotates around that contact point. Both pullers close their grip, rock and lift the selected part, then return to the desk. Tool actions block overlapping interactions; cancelling/resetting restores the moving tool.
+
+Menu refresh: dedicated full-bleed atelier art, cream wordmark, animated menu entrance/hover, and quieter secondary actions. Laptop footprint is 32% wider/deeper with neutral satin grey metal. The bottom toolbar uses matching 86px icons, cropped palette art, and a gold underline for the active mode. A house mark replaces the three-dot home button. Order/settings panels fade in.
+
+Packing now uses desk gestures instead of a next-step button: drag the keyboard into the carton, drag horizontally across the paper, click the open lid, then drag the parcel upward to ship. Shipping uses a soft curtain transition before the next order card appears. Escape cancels packing and restores the keyboard/camera. Screwdriver detail placement follows its actual longitudinal axis, removing the stray floating stripes.
+
+Laptop placement: choose the move tool, drag the laptop, release to place; Escape restores its previous position. Clicking it in normal placement mode opens the shop. Placement is retained in shop save data. Key travel is now more pronounced, and mouse-held keys stay depressed until released. Menu art uses a flatter painted treatment with simplified shadows.
+
+Windows release: `WorkshopBackgroundBuild.RequestWindows()` queues a non-development Windows x64 Mono build under `Builds/Windows/CozyBoard.exe`. Distribute the entire folder, including `CozyBoard_Data`, `MonoBleedingEdge`, and Unity DLLs.

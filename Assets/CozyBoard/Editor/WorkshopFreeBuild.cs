@@ -14,13 +14,13 @@ namespace CozyBoard.Editor {
         static Mesh SaveMesh(string name,Mesh mesh){string path=Root+"/Meshes/"+name+".asset";var old=AssetDatabase.LoadAssetAtPath<Mesh>(path);if(old){EditorUtility.CopySerialized(mesh,old);UnityEngine.Object.DestroyImmediate(mesh);return old;}AssetDatabase.CreateAsset(mesh,path);return mesh;}
         public static void FinalizeVersion(){WorkshopGameBuild.Configure();WorkshopRenderReview.ReviewAndBuild();}
         public static void Apply(WorkshopController c) {
-            font=CozyFont();font.TryAddCharacters("çğıöşüÇĞİÖŞÜ–·%:0123456789",out _);
+            font=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(Root+"/Data/WorkshopHandwritten.asset")??CozyFont();font.TryAddCharacters("çğıöşüÇĞİÖŞÜ–·%:0123456789",out _);
             foreach(var path in new[]{"PaintedIcons.png","OrderClipboard.png","PaintBrushIcon.png"}){var imp=(TextureImporter)AssetImporter.GetAtPath(Root+"/Art/UI/"+path);imp.textureType=TextureImporterType.Default;imp.npotScale=TextureImporterNPOTScale.None;imp.alphaIsTransparency=true;imp.mipmapEnabled=false;imp.maxTextureSize=4096;imp.textureCompression=TextureImporterCompression.Uncompressed;imp.SaveAndReimport();}
             var cursorImporter=(TextureImporter)AssetImporter.GetAtPath(Root+"/Art/UI/WorkshopCursor.png");cursorImporter.textureType=TextureImporterType.Cursor;cursorImporter.alphaIsTransparency=true;cursorImporter.mipmapEnabled=false;cursorImporter.isReadable=true;cursorImporter.maxTextureSize=64;cursorImporter.textureCompression=TextureImporterCompression.Uncompressed;cursorImporter.SaveAndReimport();
             icons=AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"/Art/UI/PaintedIcons.png");
             paintIcon=AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"/Art/UI/PaintBrushIcon.png");
             var shadow=AssetDatabase.LoadAssetAtPath<Material>(Root+"/Materials/PaintedSilhouette.mat");if(!shadow){shadow=new Material(Shader.Find("CozyBoard/PaintedSilhouette"));AssetDatabase.CreateAsset(shadow,Root+"/Materials/PaintedSilhouette.mat");}c.ShadowMaterial=shadow;
-            BuildCase(c);BuildSupplies(c,shadow);BuildUI(c.Game);var cursor=Ensure<WorkshopCursor>(c.Game.gameObject);cursor.Pointer=AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"/Art/UI/WorkshopCursor.png");
+            BuildCase(c);BuildSupplies(c,shadow);BuildUI(c.Game);WorkshopExperienceBuild.Configure();var cursor=Ensure<WorkshopCursor>(c.Game.gameObject);cursor.Pointer=AssetDatabase.LoadAssetAtPath<Texture2D>(Root+"/Art/UI/WorkshopCursor.png");
             foreach(var text in UnityEngine.Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include,FindObjectsSortMode.None)){text.font=font;text.fontStyle|=FontStyles.Bold;}
             foreach(var item in c.Items.Where(p=>p.Stage==0&&p.Id!="Case")) {
                 int index=item.Id=="Screwdriver"?0:item.Id=="KeyPuller"?1:2;
@@ -144,7 +144,7 @@ namespace CozyBoard.Editor {
             var label=Label("Label",r,value,18,new Vector2(.5f,.5f),Vector2.zero,size-Vector2.one*8);label.alignment=TextAlignmentOptions.Center;label.color=new Color(.97f,.92f,.82f);label.fontStyle=FontStyles.Bold;return button;
         }
         static void BuildPaintPalette(WorkshopGameMode game,WorkshopMenu menu,RectTransform hud) {
-            var painter=Ensure<WorkshopKeyPainter>(game.gameObject);game.Painter=painter;painter.Game=game;
+            var painter=Ensure<WorkshopKeyPainter>(game.gameObject);game.Painter=painter;painter.Game=game;painter.StudioShader=AssetDatabase.LoadAssetAtPath<Shader>(Root+"/Shaders/KeycapStudio.shader");
             menu.PaintButton=StandaloneIcon("Paint",hud,paintIcon,Vector2.zero,new Vector2(429,25));
             var panel=Rect("PaintPalette",hud,new Vector2(0,.5f),new Vector2(270,0),new Vector2(356,930));foreach(Transform child in panel.Cast<Transform>().ToArray())UnityEngine.Object.DestroyImmediate(child.gameObject);
             var background=Ensure<UnityEngine.UI.Image>(panel.gameObject);background.sprite=SoftUISprite();background.type=UnityEngine.UI.Image.Type.Sliced;background.color=new Color(.105f,.145f,.14f,.995f);

@@ -1,0 +1,73 @@
+PASS Menu has dedicated atelier artwork
+PASS Laptop has larger desk footprint
+PASS Laptop body uses neutral grey
+PASS No UI intercepts desk tool Screwdriver 
+PASS Pointer ray selects desk tool Screwdriver
+PASS No UI intercepts desk tool KeyPuller 
+PASS Pointer ray selects desk tool KeyPuller
+PASS No UI intercepts desk tool Tweezers 
+PASS Pointer ray selects desk tool Tweezers
+PASS Laptop can be picked up in move mode
+PASS Moving laptop changes its position without opening shop
+PASS Escape restores laptop position
+PASS Placed laptop position is stored for saves
+PASS Physical laptop and catalogue initialized
+PASS Supply carton finishes arrival animation
+PASS Laptop catalogue blocks workbench input
+PASS Buying a tactile set deducts credits and adds stock
+PASS Selected switch affects sound profile
+PASS Purchased lavender caps become active
+PASS Unaffordable purchase cannot create stock
+PASS Unused set refund returns Tık without duplicating inventory
+PASS An empty inventory cannot be refunded twice
+PASS PCB and plate install using one kit
+PASS PCB and plate install using one kit
+PASS PCB kit consumed once for PCB and plate
+PASS Outgoing carton leaves before next stage settles
+PASS 61 switches consume exactly one selected set
+PASS Installed switch choice cannot change mid-keyboard
+PASS All supply cartons animate away after assembly
+PASS Laptop has closed sculpted lid
+PASS Key press visibly travels downward and compresses
+PASS Key spring returns exactly to resting pose
+PASS Switch cannot be removed through fitted keycap
+PASS Key puller starts removal
+PASS Key puller travels to the selected cap
+PASS Key puller returns to its desk position
+PASS Removing a pressed cap cancels its spring and returns it to stock
+PASS Switch puller removes uncovered switch
+PASS Switch puller travels to the selected switch
+PASS Switch puller returns to its desk position
+PASS Removed switch returns to stock
+PASS Removed switch can be reinstalled
+PASS Removed cap can be reinstalled
+PASS Corner screw starts tightening 0
+PASS Screwdriver tip stays seated on screw 0
+PASS Screwdriver visibly rotates on screw 0
+PASS Screwdriver returns to desk 0
+PASS Corner screw starts tightening 1
+PASS Screwdriver tip stays seated on screw 1
+PASS Screwdriver visibly rotates on screw 1
+PASS Screwdriver returns to desk 1
+PASS Corner screw starts tightening 2
+PASS Screwdriver tip stays seated on screw 2
+PASS Screwdriver visibly rotates on screw 2
+PASS Screwdriver returns to desk 2
+PASS Corner screw starts tightening 3
+PASS Screwdriver tip stays seated on screw 3
+PASS Screwdriver visibly rotates on screw 3
+PASS Screwdriver returns to desk 3
+PASS Interrupted tool animation restores original pose
+PASS All four case screws fasten
+PASS Paint panels share exact top and bottom edges
+PASS Save restores fastened screws
+PASS Save restores fitted parts, choices and consumed inventory
+PASS Physical packing starts at open carton
+PASS Packing animation completes step 1
+PASS Packing animation completes step 2
+PASS Packing animation completes step 3
+PASS Shipment transition restores workspace and starts next order
+PASS Shipment reward funds future orders
+PASS Next order requires fresh materials after kit consumption
+PASS Laptop restocks a new PCB variant
+PASS Purchased material returns in animated carton

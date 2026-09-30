@@ -1,0 +1,11 @@
+PASS Main menu blocks workbench input
+PASS Existing save requires new-game confirmation
+PASS Continue returns to workshop
+PASS Illustrated tutorial can be replayed
+PASS Tutorial paint step is available
+PASS All 124 parts assemble with new cartons
+PASS Keyboard can be lifted
+PASS Inspection restores keyboard pose
+PASS Delivery starts packing before advancing order
+PASS Cancel packing preserves assembled keyboard
+PASS Four packing animations advance to shipment and next order
