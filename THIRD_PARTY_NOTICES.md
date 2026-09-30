@@ -16,6 +16,12 @@ Full license: `Assets/CozyBoard/ThirdParty/MechVibes/LICENSE.txt`.
 
 ## Music
 
+The current workshop track is **“A Warm Fireplace” by MouthlessGames**, from
+“Snowy Cozyness (Calm Piano/Guitar)”, licensed under **CC BY 3.0**.
+Source: https://opengameart.org/content/snowy-cozyness-calm-pianoguitar
+License: https://creativecommons.org/licenses/by/3.0/
+Original recording is used without modification, with quiet playback and fade-in.
+
 “Chill lofi inspired” by **omfgdude**, CC0. Imported from the user's existing LittleSwitch project; retained original recording, low-volume playback and three-second fade-in.
 
 Source: https://opengameart.org/node/74097

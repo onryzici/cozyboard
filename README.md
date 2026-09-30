@@ -2,6 +2,10 @@
 
 A cozy, painterly keyboard assembly game built in **Unity 6000.5.6f1 / URP**.
 
+Gameplay and narrative direction (Turkish; opening, selectable orders, repair jobs, six-key macro pads and narrative saves implemented): [Game system and story](Documentation/GameDesignAndStory.md).
+
+After the first story keyboard (or the current delivery from an older save), the laptop offers three job types: a short repair with three neighbour tests and one replacement switch; a six-key macro pad with configurable in-game shortcuts; and a full keyboard. Small jobs consume only the needed loose parts. Save version 12 preserves product layout, repair diagnosis, macro functions, unused parts and existing artwork. New builds do not add artificial faults to newly manufactured boards; faults already stored in old saves still need repair.
+
 This repository contains only the Unity version. Open this folder in Unity Hub, then open `Assets/CozyBoard/Scenes/Workbench.unity` and press Play.
 
 ![Workshop](Verification/unity-completed-4k.png)
@@ -31,9 +35,9 @@ This repository contains only the Unity version. Open this folder in Unity Hub, 
 | Four-arrow icon | Move the keyboard case or tools |
 | Circular arrow icon | Rotate a case/tool by clicking it |
 | Paint-brush icon | Select an installed key and paint directly on its 3D surface |
-| Mouse wheel in paint mode | Change brush size |
+| Mouse wheel in paint studio | Zoom |
 | Right / middle drag in paint studio | Orbit the 3D keycap, including its sides |
-| Shift + mouse wheel in paint studio | Zoom |
+| Shift + mouse wheel in paint studio | Change brush / tape size |
 | Alt + left mouse in paint mode | Sample a color from a keycap |
 | F in paint studio | Reset the view |
 | Ctrl / Cmd + Z or Y | Undo / redo paint |
@@ -161,6 +165,6 @@ Customer reactions now arrive as a top-of-screen mail notification. Clicking it 
 
 The compact progress text sits below the mat. The home button uses `Assets/Resources/UI/WorkshopHome.png` (built-in ImageGen, prompt recorded in `Verification/home-art-generation.txt`). The cursor is a small warm-white arrow with a soft outline; available assembly parts use an open hand, and carried parts use a holding hand. The studio mat has low-amplitude fine grain and a soft projected key shadow that follows the viewing angle. The single Workbench scene remains; the Unity splash screen is disabled.
 
-Painting feel prototype (after GitHub checkpoint `checkpoint-2026-09-30-before-painting`): brush contact builds translucent pigment over time, with slight wet-on-wet mixing. Wet highlights fade over seven seconds. Choose **Bant çek**, drag a strip across the 3D cap, then choose **Fırçaya dön** to paint over it. The wheel/size control adjusts tape width. **Bandı sök** peels the strips away to reveal protected colour. Up to eight strips can wrap across the top and sides. Brush strokes and fill respect the mask; undo/redo includes tape placement and peeling. Version 10 saves preserve masking strips alongside existing artwork; earlier artwork loads without tape. UV edge padding prevents thin base-colour seams between faces.
+Painting uses the direct brush colour and opacity behavior from GitHub checkpoint `checkpoint-2026-09-30-before-painting`, without contact-time pigment buildup or wet colour mixing. Wet highlights fade over 2.4 seconds. Choose **Bant çek**, drag a strip across the 3D cap, then choose **Fırçaya dön** to paint over it. The wheel/size control adjusts tape width. **Bandı sök** peels the strips away to reveal protected colour. Up to eight strips can wrap across the top and sides. Brush strokes and fill respect the mask; undo/redo includes tape placement and peeling. Version 10 saves preserve masking strips alongside existing artwork; earlier artwork loads without tape. UV edge padding prevents thin base-colour seams between faces.
 
 Desk refinements: home-button transparent padding is cropped to match the other header icons. Unread customer mail shows a clickable envelope and count over the laptop, as well as the top notification. The laptop sits further up/left with its left edge partly off-screen; the left switch carton and stock move together to keep the area clear. Existing laptop positions migrate once to the revised layout.

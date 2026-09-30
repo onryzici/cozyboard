@@ -1,0 +1,23 @@
+Story foundation verification — 2026-09-30 (historical stage-one snapshot)
+
+For the later repair/macro-pad update and current save migration, see variety-system-result.txt.
+
+Editor narrative/order/save checks: 102 PASS
+Editor presentation/paint regressions: 163 PASS
+Native Windows narrative/packing/save/paint checks: 74 PASS
+Native Windows atelier/zoom/paint checks: 22 PASS; 3 timing observations
+git diff --check: passed
+
+Legacy save versions 1 through 10 keep their active keyboard and original customer rotation.
+New story runs require New game; old workshop saves are not forced to restart.
+Narrative verification uses a dedicated save under Logs or the temporary application cache.
+Previous distributable ZIP was not overwritten. Native test output: Builds/StoryVerification.
+
+Legacy shop smoke stopped after 38 PASS on an obsolete UI assertion:
+it expected no background for the old compact text, while the current design uses rounded paper.
+That assertion was updated to check the compact rounded mat-to-toolbar layout.
+The updated legacy shop smoke has NOT been rerun: user requested no game/Unity launches while playing LoL.
+Rendering warnings from that older -nographics runner are not treated as visual validation.
+No Unity or CozyBoard processes remain running.
+
+Next development phase: separate repair jobs; current automatic loose-switch behavior is unchanged.

@@ -12,13 +12,20 @@ namespace CozyBoard {
   void BuildTapeUI(){
    if(tapeButton)return;
    var font=EditorTitle.font;
-   tapeButton=WorkshopUI.Button("Masking tape",PalettePanel.transform,font,"Bant çek",new Vector2(.5f,1),new Vector2(-74,-525),new Vector2(136,38),()=>SetTapeMode(!tapeMode));
-   peelButton=WorkshopUI.Button("Peel masking tape",PalettePanel.transform,font,"Bandı sök",new Vector2(.5f,1),new Vector2(74,-525),new Vector2(136,38),PeelTape);
-   tapeHint=WorkshopUI.Text("Tape instructions",PalettePanel.transform,font,"",16,new Vector2(.5f,0),new Vector2(0,18),new Vector2(284,48));tapeHint.alignment=TextAlignmentOptions.Center;tapeHint.color=WorkshopUI.Paper;
+   tapeButton=WorkshopUI.Button("Masking tape",PalettePanel.transform,font,"Bant çek",new Vector2(.5f,1),new Vector2(-74,-549),new Vector2(136,46),()=>SetTapeMode(!tapeMode));
+   peelButton=WorkshopUI.Button("Peel masking tape",PalettePanel.transform,font,"Bandı sök",new Vector2(.5f,1),new Vector2(74,-549),new Vector2(136,46),PeelTape);
+   tapeHint=WorkshopUI.Text("Tape instructions",PalettePanel.transform,font,"",16,new Vector2(.5f,1),new Vector2(0,-587),new Vector2(284,30));tapeHint.alignment=TextAlignmentOptions.Center;tapeHint.color=WorkshopUI.Paper;
+   StyleTapeButton(tapeButton,24);StyleTapeButton(peelButton,25);
    var previous=PalettePanel.transform.Find("PaintHint");if(previous)previous.gameObject.SetActive(false);
   }
+  void StyleTapeButton(UnityEngine.UI.Button button,int icon){
+   var image=button.GetComponent<UnityEngine.UI.Image>();button.targetGraphic=WorkshopAtelierStyle.Paper(image,WorkshopUI.Sage,10);
+   button.GetComponent<UnityEngine.UI.Shadow>().enabled=false;
+   var text=button.GetComponentInChildren<TMP_Text>();text.fontSize=17;text.rectTransform.sizeDelta=new Vector2(94,34);text.rectTransform.anchoredPosition=new Vector2(15,0);
+   WorkshopAtelierStyle.Art("Tape action icon",button.transform,icon,new Vector2(0,.5f),new Vector2(6,0),new Vector2(30,30));
+  }
   public void SetTapeMode(bool value){EndStroke();tapeDragging=false;tapeMode=value;SyncTape();RefreshTapeUI();}
-  void RefreshTapeUI(){if(!tapeButton)return;tapeButton.GetComponentInChildren<TMP_Text>().text=tapeMode?"Fırçaya dön":"Bant çek";tapeButton.GetComponent<UnityEngine.UI.Image>().color=tapeMode?new Color(.72f,.48f,.30f):WorkshopUI.Sage;peelButton.interactable=editing&&Canvas(editing).Tape.Count>0;tapeHint.text=tapeMode?"Tuşun üstünde sürükle.\nTekerlek: bant genişliği.":"Islak renkler hafifçe karışır.\nBantla boya, sök ve çizgiyi gör.";}
+  void RefreshTapeUI(){if(!tapeButton)return;tapeButton.GetComponentInChildren<TMP_Text>().text=tapeMode?"Fırçaya dön":"Bant çek";tapeButton.targetGraphic.color=tapeMode?new Color(.72f,.48f,.30f):WorkshopUI.Sage;peelButton.interactable=editing&&Canvas(editing).Tape.Count>0;tapeHint.text=tapeMode?"Sürükle: bant · Shift + tekerlek: genişlik":"Boya, bandı sök, çizgiyi ortaya çıkar.";}
   bool HandleTape(Mouse mouse,bool inside,Vector2 viewport){
    if(!tapeMode)return false;
    if(mouse.rightButton.isPressed||mouse.middleButton.isPressed){tapeDragging=false;SyncTape();return false;}

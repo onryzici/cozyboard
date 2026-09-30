@@ -10,7 +10,8 @@ namespace CozyBoard {
   public WorkshopGameMode Game;public int Tightened;public string Selected{get;private set;}public bool Active=>!string.IsNullOrEmpty(Selected);public bool Busy{get;private set;}
   Transform movingTool;Vector3 toolHome;Quaternion toolHomeRotation;Vector3 visualHomeScale;
   readonly List<Object> owned=new();readonly List<Transform> screws=new();GameObject bar;TMP_Text hint;
-  public void Initialize(WorkshopGameMode game,Transform ui,TMP_FontAsset font){Game=game;LayoutTools();BuildScrews();BuildDetails();var p=WorkshopUI.Panel("Selected workshop tool",ui,new Vector2(.5f,0),new Vector2(0,35),new Vector2(1000,105),WorkshopUI.Paper);bar=p.gameObject;hint=WorkshopUI.Text("Tool instructions",p.transform,font,"",26,new Vector2(0,.5f),new Vector2(24,0),new Vector2(720,80));WorkshopUI.Button("Put tool down",p.transform,font,"Bırak · Esc",new Vector2(1,.5f),new Vector2(-18,0),new Vector2(220,58),Deselect);bar.SetActive(false);}
+  public void Initialize(WorkshopGameMode game,Transform ui,TMP_FontAsset font){Game=game;LayoutTools();BuildScrews();UpdateProduct();BuildDetails();var p=WorkshopUI.Panel("Selected workshop tool",ui,new Vector2(.5f,0),new Vector2(0,35),new Vector2(1000,105),WorkshopUI.Paper);bar=p.gameObject;hint=WorkshopUI.Text("Tool instructions",p.transform,font,"",26,new Vector2(0,.5f),new Vector2(24,0),new Vector2(720,80));WorkshopUI.Button("Put tool down",p.transform,font,"Bırak · Esc",new Vector2(1,.5f),new Vector2(-18,0),new Vector2(220,58),Deselect);bar.SetActive(false);}
+  public void UpdateProduct(){if(!Game)return;for(int i=0;i<screws.Count;i++)screws[i].localPosition=new Vector3(i%2==0?-(Game.IsMacro?.85f:3.13f):(Game.IsMacro?.85f:3.13f),.308f,i<2?-(Game.IsMacro?.63f:1.17f):(Game.IsMacro?.63f:1.17f));}
   void LayoutTools(){
    string[] ids={"Screwdriver","KeyPuller","Tweezers"};Vector3[] positions={new(7.0f,.065f,-2.9f),new(6.8f,.065f,-4.05f),new(8.55f,.065f,-3.85f)};float[] angles={90,55,-15};
    for(int i=0;i<ids.Length;i++){var item=Game.Controller.Lookup[ids[i]];item.InitialPosition=positions[i];item.InitialYaw=angles[i];item.transform.localPosition=positions[i];item.transform.localRotation=Quaternion.Euler(0,angles[i],0);}
@@ -60,7 +61,7 @@ namespace CozyBoard {
    yield return MoveTool(tool,tip+axis*.4f,tool.transform.rotation,.14f,0);yield return ReturnTool(tool);Busy=false;
    Game.Menu.Toast(Tightened==15?"Dört vida sabitlendi. Kasa hazır!":tighten?"Vida sabitlendi.":"Vida gevşetildi.");
   }
-  public bool TryRemove(WorkshopItem item){if(Busy||!item||!item.Fitted)return false;int stage=Selected=="KeyPuller"?4:Selected=="Tweezers"?3:0;if(item.Stage!=stage){Game.Menu.Toast(stage==4?"Bu alet tuş kapaklarını çıkarır.":"Bu alet switch'leri çıkarır.");return false;}if(stage==3&&Game.Controller.Items.Any(x=>x.Stage==4&&x.Fitted&&Vector2.Distance(new Vector2(x.Slot.x,x.Slot.z),new Vector2(item.Slot.x,item.Slot.z))<.15f)){Game.Menu.Toast("Önce üzerindeki tuşu tuş sökücüyle çıkar.");return false;}StartCoroutine(Remove(item));return true;}
+  public bool TryRemove(WorkshopItem item){if(Busy||!item||!item.Fitted||!Game.CanRemoveForRepair(item))return false;int stage=Selected=="KeyPuller"?4:Selected=="Tweezers"?3:0;if(item.Stage!=stage){Game.Menu.Toast(stage==4?"Bu alet tuş kapaklarını çıkarır.":"Bu alet switch'leri çıkarır.");return false;}if(stage==3&&Game.Controller.Items.Any(x=>x.Stage==4&&x.Fitted&&Vector2.Distance(new Vector2(x.Slot.x,x.Slot.z),new Vector2(item.Slot.x,item.Slot.z))<.15f)){Game.Menu.Toast("Önce üzerindeki tuşu tuş sökücüyle çıkar.");return false;}StartCoroutine(Remove(item));return true;}
   IEnumerator Remove(WorkshopItem item){
    Game.StopAnimations();Busy=true;Game.TypingMode=false;var tool=Game.Controller.Lookup[Selected];BeginTool(tool);var visual=item.Visual.transform;var start=visual.localPosition;
    var axis=Game.Controller.Lookup["Case"].transform.up;var tip=item.transform.TransformPoint(item.BoundsCenter+Vector3.up*(item.BoundsSize.y*.25f));var rotation=Quaternion.FromToRotation(Vector3.back,-axis);
@@ -69,7 +70,7 @@ namespace CozyBoard {
    Game.Audio.Play(Game.Audio.Pickup,.4f);
    for(float t=0;t<.42f;t+=Time.unscaledDeltaTime){float lift=.62f*Mathf.SmoothStep(0,1,t/.42f);visual.localPosition=start+Vector3.up*lift;float wiggle=Mathf.Sin(t*32)*2.5f*(1-t/.42f);visual.localRotation=Quaternion.Euler(0,0,wiggle);PoseTool(tool,tip+axis*(lift*item.transform.lossyScale.y),Quaternion.AngleAxis(wiggle,Game.Controller.Lookup["Case"].transform.forward)*rotation);yield return null;}
    visual.localPosition=Vector3.zero;visual.localRotation=Quaternion.identity;if(Game.Testing)Game.Testing.Removed(item);item.Fitted=false;item.transform.SetParent(Game.Controller.PartsRoot,true);Game.PresentStock();Game.Refresh();tool.Visual.transform.localScale=visualHomeScale;
-   yield return ReturnTool(tool);Busy=false;Game.Menu.Toast("Parça kutuya döndü. Yeniden takabilirsin.");
+   yield return ReturnTool(tool);Busy=false;Game.Menu.Toast(Game.IsRepair&&Game.Repair!=null&&item.Id==Game.Repair.switchId?"Arızalı switch ayrıldı. Kutudan yedek switch tak.":"Parça kutuya döndü. Yeniden takabilirsin.");
   }
   public void ResetState(){StopAllCoroutines();RestoreTool();if(Game&&Game.Audio)Game.Audio.StopAssembly();foreach(var screw in screws)if(screw)screw.localRotation=Quaternion.identity;Busy=false;Tightened=0;Deselect();}
   void OnDisable(){StopAllCoroutines();RestoreTool();if(Game&&Game.Audio)Game.Audio.StopAssembly();foreach(var screw in screws)if(screw)screw.localRotation=Quaternion.identity;Busy=false;}

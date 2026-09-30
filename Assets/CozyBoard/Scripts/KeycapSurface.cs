@@ -41,29 +41,43 @@ namespace CozyBoard {
         readonly Dictionary<Vector3Int,List<Texel>> cells=new();
         readonly List<(int target,int source)> gutters=new();
         float cellSize;
+        public bool SamplesReady {get;private set;}
         Vector3Int Cell(Vector3 p)=>new Vector3Int(Mathf.FloorToInt(p.x/cellSize),Mathf.FloorToInt(p.y/cellSize),Mathf.FloorToInt(p.z/cellSize));
-        public void ReleaseSamples(){cells.Clear();gutters.Clear();}
+        public void ReleaseSamples(){cells.Clear();gutters.Clear();SamplesReady=false;}
         public void PadEdges(Color32[] pixels){foreach(var pair in gutters)pixels[pair.target]=pixels[pair.source];}
-        public void CacheSamples(){
-            if(cells.Count>0)return;cellSize=Mathf.Max(Bounds.size.z,Bounds.size.y)/24;
-            var v=Mesh.vertices;var uv=Mesh.uv;var triangles=Mesh.GetTriangles(Body);var used=new HashSet<int>();
+        public void CacheSamples(){if(SamplesReady)return;var preparation=CacheSamplesIncremental();while(preparation.MoveNext()){}}
+        public System.Collections.IEnumerator CacheSamplesIncremental(){
+            if(SamplesReady)yield break;ReleaseSamples();
+            var budget=System.Diagnostics.Stopwatch.StartNew();
+            cellSize=Mathf.Max(Bounds.size.z,Bounds.size.y)/24;
+            var v=Mesh.vertices;var uv=Mesh.uv;var triangles=Mesh.GetTriangles(Body);var used=new bool[Width*Height];
             for(int i=0;i<triangles.Length;i+=3){
                 int a=triangles[i],b=triangles[i+1],c=triangles[i+2];Vector2 u=Vector2.Scale(uv[a],new Vector2(Width,Height)),w=Vector2.Scale(uv[b],new Vector2(Width,Height)),q=Vector2.Scale(uv[c],new Vector2(Width,Height));
                 float den=(w.y-q.y)*(u.x-q.x)+(q.x-w.x)*(u.y-q.y);if(Mathf.Abs(den)<.0001f)continue;
                 Vector3 normal=Vector3.Cross(v[b]-v[a],v[c]-v[a]).normalized;
-                for(int y=Mathf.Max(0,Mathf.FloorToInt(Mathf.Min(u.y,w.y,q.y)));y<=Mathf.Min(Height-1,Mathf.CeilToInt(Mathf.Max(u.y,w.y,q.y)));y++)
+                for(int y=Mathf.Max(0,Mathf.FloorToInt(Mathf.Min(u.y,w.y,q.y)));y<=Mathf.Min(Height-1,Mathf.CeilToInt(Mathf.Max(u.y,w.y,q.y)));y++){
                 for(int x=Mathf.Max(0,Mathf.FloorToInt(Mathf.Min(u.x,w.x,q.x)));x<=Mathf.Min(Width-1,Mathf.CeilToInt(Mathf.Max(u.x,w.x,q.x)));x++){
                     float s=((w.y-q.y)*(x+.5f-q.x)+(q.x-w.x)*(y+.5f-q.y))/den,t=((q.y-u.y)*(x+.5f-q.x)+(u.x-q.x)*(y+.5f-q.y))/den;
-                    if(s<-.002f||t<-.002f||s+t>1.002f)continue;int index=y*Width+x;if(!used.Add(index))continue;
+                    if(s<-.002f||t<-.002f||s+t>1.002f)continue;int index=y*Width+x;if(used[index])continue;used[index]=true;
                     var p=s*v[a]+t*v[b]+(1-s-t)*v[c];var cell=Cell(p);if(!cells.TryGetValue(cell,out var list))cells[cell]=list=new List<Texel>();list.Add(new Texel{Index=index,Position=p,Normal=normal});
+                }
+                if(budget.Elapsed.TotalMilliseconds>=6){yield return null;budget.Restart();}
                 }
             }
             // Extend edge texels into the unused UV gutter so bilinear filtering cannot reveal base-colour seams.
-            var nearest=new Dictionary<int,(int source,int distance)>();
-            foreach(int index in used){int x=index%Width,y=index/Width;if(x>0&&x<Width-1&&y>0&&y<Height-1&&used.Contains(index-1)&&used.Contains(index+1)&&used.Contains(index-Width)&&used.Contains(index+Width))continue;
-                for(int dy=-2;dy<=2;dy++)for(int dx=-2;dx<=2;dx++){int nx=x+dx,ny=y+dy;if(nx<0||nx>=Width||ny<0||ny>=Height||nx/Tile!=x/Tile||ny/Tile!=y/Tile)continue;int target=ny*Width+nx;if(used.Contains(target))continue;int d=dx*dx+dy*dy;if(!nearest.TryGetValue(target,out var old)||d<old.distance)nearest[target]=(index,d);}
+            var nearest=new int[Width*Height];var distances=new byte[Width*Height];
+            for(int index=0;index<used.Length;index++){
+                if(index%2048==0&&budget.Elapsed.TotalMilliseconds>=6){yield return null;budget.Restart();}
+                if(!used[index])continue;int x=index%Width,y=index/Width;
+                if(x>0&&x<Width-1&&y>0&&y<Height-1&&used[index-1]&&used[index+1]&&used[index-Width]&&used[index+Width])continue;
+                for(int dy=-2;dy<=2;dy++)for(int dx=-2;dx<=2;dx++){
+                    int nx=x+dx,ny=y+dy;if(nx<0||nx>=Width||ny<0||ny>=Height||nx/Tile!=x/Tile||ny/Tile!=y/Tile)continue;
+                    int target=ny*Width+nx;if(used[target])continue;int d=dx*dx+dy*dy;
+                    if(nearest[target]==0||d<distances[target]){nearest[target]=index+1;distances[target]=(byte)d;}
+                }
             }
-            foreach(var pair in nearest)gutters.Add((pair.Key,pair.Value.source));
+            for(int i=0;i<nearest.Length;i++){if(nearest[i]>0)gutters.Add((i,nearest[i]-1));if(i%8192==0&&budget.Elapsed.TotalMilliseconds>=6){yield return null;budget.Restart();}}
+            SamplesReady=true;
         }
         public void Visit(Vector3 center,float radius,System.Action<Texel> action){
             CacheSamples();var lo=Cell(center-Vector3.one*radius);var hi=Cell(center+Vector3.one*radius);float squared=radius*radius;

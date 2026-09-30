@@ -31,7 +31,7 @@ namespace CozyBoard {
         public void ScrewStop(bool tightened)=>AssemblySound(tightened?screwStop:Pickup,tightened?.52f:.20f);
         public void StopAssembly(){if(assemblySource)assemblySource.Stop();}
         void OnDisable()=>StopAssembly();
-        void Start(){SetMusic(PlayerPrefs.GetFloat("CozyBoard.MusicVolume",MusicVolume));SetEffects(PlayerPrefs.GetFloat("CozyBoard.EffectsVolume",EffectsVolume));MusicSource.clip=Music;MusicSource.loop=true;MusicSource.Play();StartCoroutine(FadeMusic());}
+        void Start(){SetMusic(PlayerPrefs.GetFloat("CozyBoard.MusicVolume",MusicVolume));SetEffects(PlayerPrefs.GetFloat("CozyBoard.EffectsVolume",EffectsVolume));var atelierMusic=Resources.Load<AudioClip>("Music/WarmFireplace");if(atelierMusic)Music=atelierMusic;MusicSource.clip=Music;MusicSource.loop=true;MusicSource.Play();StartCoroutine(FadeMusic());}
         IEnumerator FadeMusic(){for(float t=0;t<1;t+=Time.deltaTime/3){MusicSource.volume=Mathf.SmoothStep(0,MusicVolume*.42f,t);yield return null;}MusicSource.volume=MusicVolume*.42f;}
         public void SetMusic(float v){MusicVolume=Mathf.Clamp01(v);if(MusicSource)MusicSource.volume=MusicVolume*.42f;PlayerPrefs.SetFloat("CozyBoard.MusicVolume",MusicVolume);}
         public void SetEffects(float v){EffectsVolume=Mathf.Clamp01(v);if(EffectsSource)EffectsSource.volume=EffectsVolume;if(assemblySource)assemblySource.volume=EffectsVolume;PlayerPrefs.SetFloat("CozyBoard.EffectsVolume",EffectsVolume);}

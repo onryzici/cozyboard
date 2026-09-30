@@ -21,6 +21,7 @@ namespace CozyBoard {
         readonly float[] wetTimes=new float[12];
         int wetIndex;
         float lastDab;
+        bool dirty=true;double lastRender;Vector3 cursorPoint;float cursorSize;Color cursorColor;bool cursorCached;
         readonly Vector3 origin=new Vector3(0,2000,0);
         public KeycapStudio(KeycapSurface surface,Material[] source,Shader shader) {
             this.surface=surface;
@@ -39,12 +40,12 @@ namespace CozyBoard {
         }
         public void UpdateMaterials(Material[] source){
             for(int i=0;i<materials.Length;i++){materials[i].SetColor("_BaseColor",source[i].HasProperty("_BaseColor")?source[i].GetColor("_BaseColor"):Color.white);materials[i].SetTexture("_BaseMap",source[i].GetTexture("_BaseMap"));}
-            renderer.sharedMaterials=materials;
+            renderer.sharedMaterials=materials;dirty=true;
         }
         public void Orbit(Vector2 delta){yaw-=delta.x*.32f;pitch=Mathf.Clamp(pitch+delta.y*.32f,-75,85);UpdateCamera();}
-        public void Zoom(float delta){zoom=Mathf.Clamp(zoom*Mathf.Exp(-delta*.0015f),.55f,2.2f);UpdateCamera();}
+        public void Zoom(float delta){zoom=Mathf.Clamp(zoom*Mathf.Exp(-WorkshopAtelierStyle.WheelSteps(delta)*.16f),.55f,2.2f);UpdateCamera();}
         public void ResetView(){yaw=32;pitch=48;zoom=1;UpdateCamera();}
-        void UpdateCamera(){float size=Mathf.Max(surface.Bounds.size.z*.8f,surface.Bounds.size.x*.43f);camera.orthographicSize=size*zoom;camera.transform.position=origin+Quaternion.Euler(pitch,yaw,0)*new Vector3(0,0,-4);camera.transform.LookAt(origin);if(backdrop){float width=camera.orthographicSize*camera.aspect*2.2f,height=camera.orthographicSize*2.2f;backdrop.transform.SetPositionAndRotation(origin+camera.transform.forward*(surface.Bounds.size.magnitude+.1f),camera.transform.rotation);backdrop.transform.localScale=new Vector3(width,height,1);matMaterial.SetVector("_Size",new Vector4(width,height,0,0));UpdateShadow();}}
+        void UpdateCamera(){dirty=true;float size=Mathf.Max(surface.Bounds.size.z*.8f,surface.Bounds.size.x*.43f);camera.orthographicSize=size*zoom;camera.transform.position=origin+Quaternion.Euler(pitch,yaw,0)*new Vector3(0,0,-4);camera.transform.LookAt(origin);if(backdrop){float width=camera.orthographicSize*camera.aspect*2.2f,height=camera.orthographicSize*2.2f;backdrop.transform.SetPositionAndRotation(origin+camera.transform.forward*(surface.Bounds.size.magnitude+.1f),camera.transform.rotation);backdrop.transform.localScale=new Vector3(width,height,1);matMaterial.SetVector("_Size",new Vector4(width,height,0,0));UpdateShadow();}}
         void UpdateShadow(){
             // Project the cap's bounds in the studio camera basis so the shadow follows orbit and zoom.
             var points=new List<Vector2>();var ext=surface.Bounds.extents;
@@ -59,7 +60,8 @@ namespace CozyBoard {
         public Vector3 Local(Vector3 point)=>model.transform.InverseTransformPoint(point);
         public Vector3 ViewDirection=>-camera.transform.forward;
         public void Cursor(RaycastHit hit,float radius,Color color){
-            ring.enabled=true;ring.widthMultiplier=surface.Bounds.size.z*.004f;ringMaterial.SetColor("_BaseColor",Color.Lerp(color,Color.white,.35f));
+            bool changed=!ring.enabled||!cursorCached||(cursorPoint-hit.point).sqrMagnitude>.000001f||!Mathf.Approximately(cursorSize,radius)||cursorColor!=color;
+            ring.enabled=true;if(!changed)return;cursorCached=true;cursorPoint=hit.point;cursorSize=radius;cursorColor=color;dirty=true;ring.widthMultiplier=surface.Bounds.size.z*.004f;ringMaterial.SetColor("_BaseColor",Color.Lerp(color,Color.white,.35f));
             var normal=hit.normal;var right=Vector3.Cross(normal,Mathf.Abs(normal.y)>.95f?Vector3.forward:Vector3.up).normalized;var up=Vector3.Cross(normal,right);
             for(int i=0;i<64;i++){float angle=i*Mathf.PI*2/64;var p=hit.point+(right*Mathf.Cos(angle)+up*Mathf.Sin(angle))*radius;
                 // Project each segment onto the actual bevel instead of drawing a screen-space circle.
@@ -68,15 +70,19 @@ namespace CozyBoard {
             }
         }
         public void SetTape(WorkshopTapeStrip[] strips){
+            dirty=true;
             var starts=new Vector4[8];var axes=new Vector4[8];var normals=new Vector4[8];int count=Mathf.Min(8,strips.Length);
             for(int i=0;i<count;i++){var t=strips[i];starts[i]=new Vector4(t.Start.x,t.Start.y,t.Start.z,t.Width);var direction=Vector3.ProjectOnPlane(t.End-t.Start,t.Normal);axes[i]=new Vector4(direction.normalized.x,direction.normalized.y,direction.normalized.z,direction.magnitude);normals[i]=new Vector4(t.Normal.x,t.Normal.y,t.Normal.z,0);}
             foreach(var m in materials){m.SetInt("_TapeCount",count);m.SetVectorArray("_TapeStarts",starts);m.SetVectorArray("_TapeAxes",axes);m.SetVectorArray("_TapeNormals",normals);}
         }
-        public void ClearWetness(){System.Array.Clear(wetPoints,0,wetPoints.Length);}
-        public void HideCursor()=>ring.enabled=false;
-        public void Dab(Vector3 point,float radius){if(Time.time-lastDab<.025f)return;lastDab=Time.time;var local=Local(point);wetPoints[wetIndex]=new Vector4(local.x,local.y,local.z,radius*1.1f);wetTimes[wetIndex]=Time.time;wetIndex=(wetIndex+1)%wetPoints.Length;}
-        public void Render(){foreach(var m in materials){m.SetVectorArray("_WetPoints",wetPoints);m.SetFloatArray("_WetTimes",wetTimes);}camera.Render();}
+        public void Invalidate()=>dirty=true;
+        public void ClearWetness(){System.Array.Clear(wetPoints,0,wetPoints.Length);dirty=true;}
+        public void HideCursor(){if(ring.enabled){ring.enabled=false;dirty=true;}}
+        public void Dab(Vector3 point,float radius){if(Time.time-lastDab<.025f)return;lastDab=Time.time;var local=Local(point);wetPoints[wetIndex]=new Vector4(local.x,local.y,local.z,radius*1.1f);wetTimes[wetIndex]=Time.time;wetIndex=(wetIndex+1)%wetPoints.Length;dirty=true;}
+        public void Render(){bool wet=false;for(int i=0;i<wetPoints.Length;i++)if(wetPoints[i].w>0&&Time.time-wetTimes[i]<2.5f){wet=true;break;}
+            double now=Time.realtimeSinceStartupAsDouble;if(!dirty&&(!wet||now-lastRender<1f/30))return;
+            foreach(var m in materials){m.SetVectorArray("_WetPoints",wetPoints);m.SetFloatArray("_WetTimes",wetTimes);}camera.Render();dirty=false;lastRender=now;}
         static void Release(Object value){if(Application.isPlaying)Object.Destroy(value);else Object.DestroyImmediate(value);}
-        public void Dispose(){Release(root);Release(matMaterial);Release(collision);Release(ringMaterial);foreach(var m in materials)Release(m);Target.Release();Release(Target);surface.ReleaseSamples();}
+        public void Dispose(){Release(root);Release(matMaterial);Release(collision);Release(ringMaterial);foreach(var m in materials)Release(m);Target.Release();Release(Target);}
     }
 }

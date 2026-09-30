@@ -63,7 +63,7 @@ namespace CozyBoard {
                 if(Game.Painter&&Game.Painter.Editing)return;
                 Vector2 paintDelta=mouse.delta.ReadValue();
                 if(mouse.rightButton.isPressed){Yaw=Mathf.Clamp(Yaw+paintDelta.x*.06f,-5,5);Pitch=Mathf.Clamp(Pitch-paintDelta.y*.06f,78,85);}
-                ViewWidth=Mathf.Clamp(ViewWidth-mouse.scroll.ReadValue().y*.006f,18,21);UpdateCamera();return;
+                ViewWidth=Mathf.Clamp(ViewWidth*Mathf.Exp(-WorkshopAtelierStyle.WheelSteps(mouse.scroll.ReadValue().y)*.10f),15,24);UpdateCamera();return;
             }
             Vector2 point=mouse.position.ReadValue();bool overUI=EventSystem.current&&EventSystem.current.IsPointerOverGameObject();
             if(mouse.leftButton.wasPressedThisFrame&&!overUI) {
@@ -91,7 +91,7 @@ namespace CozyBoard {
                 Vector2 delta=mouse.delta.ReadValue();
                 if(mouse.rightButton.isPressed){Yaw=Mathf.Clamp(Yaw+delta.x*.06f,-5,5);Pitch=Mathf.Clamp(Pitch-delta.y*.06f,68,83);}
                 else if(mouse.middleButton.isPressed){ViewTarget.x=Mathf.Clamp(ViewTarget.x-delta.x*.008f,-.15f,.15f);ViewTarget.z=Mathf.Clamp(ViewTarget.z-delta.y*.008f,-.10f,.10f);}
-                ViewWidth=Mathf.Clamp(ViewWidth-mouse.scroll.ReadValue().y*.006f,18,21);
+                ViewWidth=Mathf.Clamp(ViewWidth*Mathf.Exp(-WorkshopAtelierStyle.WheelSteps(mouse.scroll.ReadValue().y)*.10f),15,24);
             }
             if(keyboard!=null){if(keyboard.escapeKey.wasPressedThisFrame)CancelDrag();if(Selected&&!Selected.Fitted){if(keyboard.qKey.wasPressedThisFrame)Selected.transform.Rotate(0,15,0,Space.World);if(keyboard.eKey.wasPressedThisFrame)Selected.transform.Rotate(0,-15,0,Space.World);}}
             UpdateCamera();
@@ -127,7 +127,7 @@ namespace CozyBoard {
             item.Fitted = false;
             t.SetParent(PartsRoot, true);
             dragHeight = item.Stage>0?byId["Case"].transform.TransformPoint(item.Slot).y+.24f:Mathf.Max(t.position.y+.16f,.38f);
-            if(Game&&Game.SessionActive&&item.Stage>0){t.rotation=byId["Case"].transform.rotation;t.localScale=Vector3.one*1.22f;}
+            if(Game&&Game.SessionActive&&item.Stage>0){t.rotation=byId["Case"].transform.rotation;t.localScale=Vector3.one*Game.ProductScale;}
             dragOffset = item.Stage>0?Vector3.zero:t.position - MousePlane(point, dragHeight); dragOffset.y = 0;
             if (HintLabel) HintLabel.text = item.Label + " · Klavyenin üzerine bırak veya tıkla · Esc: geri koy";
             if(Game&&Game.SessionActive)Game.Picked(item);
@@ -149,9 +149,9 @@ namespace CozyBoard {
         }
         public WorkshopItem FindSocket(int stage,Vector3 world) {
             var local=byId["Case"].transform.InverseTransformPoint(world);
-            if(stage<3){var item=byId[stage==1?"PCB":"Plate"];return Mathf.Abs(local.x)<3.3f&&Mathf.Abs(local.z)<1.3f&&!item.Fitted?item:null;}
+            if(stage<3){var item=byId[stage==1?"PCB":"Plate"];return Mathf.Abs(local.x)<(Game&&Game.IsMacro?.89f:3.3f)&&Mathf.Abs(local.z)<(Game&&Game.IsMacro?.66f:1.3f)&&!item.Fitted?item:null;}
             WorkshopItem nearest=null;float best=float.MaxValue;
-            foreach(var cap in Items.Where(p=>p.Kind=="keycap")) {
+            foreach(var cap in Items.Where(p=>p.Kind=="keycap"&&(!Game||Game.BelongsToProduct(p)))) {
                 float dx=Mathf.Abs(local.x-cap.Slot.x)/(cap.BoundsSize.x*.5f+.055f),dz=Mathf.Abs(local.z-cap.Slot.z)/.245f;
                 if(dx>1||dz>1)continue;float score=dx*dx+dz*dz;
                 if(score<best){best=score;nearest=stage==4?cap:byId[cap.Id.Replace("Keycap_","Switch_")];}
@@ -203,7 +203,7 @@ namespace CozyBoard {
             ShowLayer(Layer);
         }
         public void ResetLayout() {
-            if(Game&&Game.SessionActive) {Game.NewOrder();return;}
+            if(Game&&Game.SessionActive) {Game.RestartActiveWork();return;}
             CancelDrag();
             foreach (var item in Items.OrderBy(p => p.Stage)) ResetItem(item);
             Yaw = 0; Pitch = 81; ViewWidth = 21; ViewTarget = Vector3.zero;
@@ -244,6 +244,10 @@ namespace CozyBoard {
             var renderer = go.AddComponent<MeshRenderer>(); renderer.sharedMaterial = ShadowMaterial;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false; shadows.Add(item.Id, renderer);
+        }
+        public void RefreshShadowMesh(WorkshopItem item){
+            if(!shadows.TryGetValue(item.Id,out var renderer)||!renderer)return;
+            var filter=renderer.GetComponent<MeshFilter>();var old=filter.sharedMesh;var mesh=Instantiate(item.Visual.GetComponent<MeshFilter>().sharedMesh);var triangles=mesh.triangles;mesh.subMeshCount=1;mesh.SetTriangles(triangles,0);filter.sharedMesh=mesh;if(old){if(Application.isPlaying)Destroy(old);else DestroyImmediate(old);}
         }
         void LateUpdate() {
             foreach (var item in Items) {

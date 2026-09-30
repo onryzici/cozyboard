@@ -1,0 +1,17 @@
+# Atelier interface refresh
+
+The new shared icon sheet is `Assets/Resources/UI/AtelierIcons.png` (1374 × 1145, alpha preserved). It was generated with the built-in image generator, then copied into this project. Measured cell bounds in `WorkshopAtelierStyle.IconUV` prevent neighbouring tiles from bleeding into icons. All toolbar, painting, tape, test, wallet and mail graphics use this family.
+
+## Generation prompt
+
+Use case: stylized-concept. Asset type: production game UI icon atlas for a cozy hand-painted keyboard workshop. Create a single sheet of EXACTLY 30 distinct icons in a precise regular grid of SIX columns by FIVE rows; all cells equally sized. Transparent background outside icons; no text, labels, watermark, separators. Each cell contains one centered softly rounded square painted tile, occupying 78% of its cell with consistent equal padding. Unified subtle gouache paper texture, fine charcoal painted outlines (not thick black), creamy readable symbols, muted sage, teal, dusty blue, ochre and terracotta tiles; restrained worn edges, no gloss. Clean silhouettes readable at 48 pixels. Left-to-right, top-to-bottom exact order: Row 1: floppy save disk, envelope with letter, gear settings, checkmark, pointer arrow, four-direction move arrows. Row 2: circular rotation arrow, undo curved left arrow, artist paintbrush, small atelier house, redo curved right arrow, eraser with tiny cleaning sparkle. Row 3: pointed detail paintbrush, broad flat paintbrush, airbrush spray tool, porous sponge, dry bristle brush, paint splatter. Row 4: eraser, tipped paint bucket filling, reset view circular arrow surrounding a small keycap, brush diameter with large and small circles, soft feather for brush softness, droplet for paint opacity. Row 5: masking tape roll with short tape tail, hand lifting a strip of masking tape, close X, miniature keyboard, brass coin embossed with tiny keycap (no lettering), music note. All icons must share the same tile size, border weight, symbol scale and palette. Exactly one symbol per cell, no missing cells, no duplicate symbols except specifically requested variants. Image aspect ratio 6:5, high resolution 2400x2000 if possible.
+
+## Layout and interaction
+
+Workshop progress follows the midpoint between the mat’s lower edge and the bottom toolbar. The keyboard test opens a rounded paper card with a correctly spaced miniature keyboard, sage successes and terracotta failures. The wallet is a dark sage cashbox label with the shared coin motif. Desk dressing adds a cream tea cup on a cork coaster, a linen notebook and a honey-coloured pencil using the existing painted shader.
+
+Painting retains direct colour application and masking tape. Tape actions and instructions have their own row, followed by shorter sliders with additional vertical space. The wheel zooms the painting view; Shift + wheel changes brush/tape size. Zoom normalizes both 120-unit and one-unit wheel events.
+
+Surface samples prepare in small coroutine slices while the 3D view is already visible. The last prepared key stays cached until switching to another key; buffers are bounded to one prepared key. UV preparation uses arrays for coverage and gutters. The studio redraws when its contents change and at 30 Hz while wet highlights fade, then remains idle until the next change.
+
+Music: “A Warm Fireplace” by MouthlessGames (CC BY 3.0), https://opengameart.org/content/snowy-cozyness-calm-pianoguitar. Credits and license are in `THIRD_PARTY_NOTICES.md`.

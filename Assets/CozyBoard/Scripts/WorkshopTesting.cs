@@ -3,46 +3,73 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 namespace CozyBoard {
  public sealed class WorkshopTesting:MonoBehaviour {
   public WorkshopGameMode Game;public bool Active{get;private set;}
   public string LooseSwitch;public bool FaultAssigned;
-  readonly HashSet<string> tested=new(),failed=new();readonly Dictionary<string,UnityEngine.UI.Image> pads=new();
-  GameObject panel;TMP_Text title,message;string lastMessage;
+  readonly HashSet<string> tested=new(),failed=new();readonly Dictionary<string,Image> pads=new();
+  readonly List<GameObject> generated=new();readonly List<Button> bindings=new();
+  GameObject panel,functionPicker;RectTransform inset;TMP_Text title,message;TMP_FontAsset font;string lastMessage;int editingBinding;
   public string[] Tested=>tested.ToArray();public int Count=>tested.Count;
-  public bool Passed=>Game.Completed&&Count==61&&string.IsNullOrEmpty(LooseSwitch);
+  public bool Passed=>Game.Completed&&Count==Game.TestCount&&string.IsNullOrEmpty(LooseSwitch)&&Game.RepairReady&&Game.MacroReady;
   public void Initialize(Transform root,TMP_FontAsset font){
-   var card=WorkshopUI.Panel("Keyboard test card",root,new Vector2(.5f,0),new Vector2(0,28),new Vector2(1160,205),WorkshopUI.Paper);panel=card.gameObject;
-   title=WorkshopUI.Text("Test progress",card.transform,font,"",29,new Vector2(0,1),new Vector2(24,-18),new Vector2(410,45));
-   message=WorkshopUI.Text("Test instructions",card.transform,font,"",22,new Vector2(0,1),new Vector2(24,-69),new Vector2(420,95));
-   WorkshopUI.Button("Close test",card.transform,font,"×",Vector2.one,new Vector2(-9,-8),new Vector2(38,38),End);
-   foreach(var key in Game.Controller.Items.Where(x=>x.Stage==4)){
-    var captured=key;float width=Mathf.Max(25,key.BoundsSize.x*94-3);var pos=new Vector2(486+(key.Slot.x+3)*96-width*.5f,-42-(1-key.Slot.z)*62);
-    var button=WorkshopUI.Button("Test "+key.Id,card.transform,font,key.Label.Replace("Tuş ",""),new Vector2(0,1),pos,new Vector2(width,26),()=>Game.Press(captured));
-    var label=button.GetComponentInChildren<TMP_Text>();label.fontSize=12;label.enableAutoSizing=true;label.fontSizeMin=8;label.fontSizeMax=12;pads[key.Id]=button.GetComponent<UnityEngine.UI.Image>();
+   this.font=font;
+   var card=WorkshopUI.Panel("Keyboard test card",root,new Vector2(.5f,0),new Vector2(0,40),new Vector2(1100,254),WorkshopUI.Paper);panel=card.gameObject;WorkshopAtelierStyle.Paper(card,WorkshopUI.Paper,18);
+   title=WorkshopUI.Text("Test progress",card.transform,font,"",25,new Vector2(0,1),new Vector2(30,-29),new Vector2(310,38));
+   message=WorkshopUI.Text("Test instructions",card.transform,font,"",20,new Vector2(0,1),new Vector2(30,-87),new Vector2(310,110));message.textWrappingMode=TextWrappingModes.Normal;message.enableAutoSizing=true;message.fontSizeMin=17;message.fontSizeMax=20;
+   WorkshopUI.Text("Test section label",card.transform,font,"SON DOKUNUŞ",13,new Vector2(0,1),new Vector2(30,-10),new Vector2(310,20)).color=WorkshopUI.Sage;
+   var close=WorkshopUI.Button("Close test",card.transform,font,"×",Vector2.one,new Vector2(-12,-12),new Vector2(34,34),End);WorkshopAtelierStyle.Icon(close,26,"Tuş kontrolünü kapat",Game.Experience);
+   var keyboard=WorkshopUI.Panel("Test keyboard inset",card.transform,new Vector2(0,1),new Vector2(372,-28),new Vector2(674,199),new Color(.29f,.39f,.35f));WorkshopAtelierStyle.Paper(keyboard,new Color(.29f,.39f,.35f),12).raycastTarget=false;inset=keyboard.rectTransform;
+   RebuildPads();panel.SetActive(false);
+  }
+  public void RebuildPads(){
+   if(!panel)return;
+   foreach(var go in generated){go.SetActive(false);if(Application.isPlaying)Destroy(go);else DestroyImmediate(go);}generated.Clear();pads.Clear();bindings.Clear();functionPicker=null;
+   ((RectTransform)panel.transform).sizeDelta=new Vector2(1100,Game.IsMacro?370:254);message.rectTransform.sizeDelta=new Vector2(310,Game.IsMacro?210:110);
+   var keys=Game.TestKeys;if(keys.Length==0)return;
+   float minX=keys.Min(x=>x.Slot.x-x.BoundsSize.x*.5f),maxX=keys.Max(x=>x.Slot.x+x.BoundsSize.x*.5f);
+   float maxZ=keys.Max(x=>x.Slot.z),minZ=keys.Min(x=>x.Slot.z),scale=632/(maxX-minX),height=Game.IsMacro||Game.IsRepair?48:28;
+   foreach(var key in keys){
+    var captured=key;float width=Mathf.Max(25,key.BoundsSize.x*scale-4);var pos=new Vector2(21+(key.Slot.x-key.BoundsSize.x*.5f-minX)*scale,-13-(maxZ-key.Slot.z)*(Game.IsMacro?120:Game.IsRepair?110:148)/Mathf.Max(.1f,maxZ-minZ));
+    var button=WorkshopUI.Button("Test "+key.Id,inset,font,key.Label.Replace("Tuş ",""),new Vector2(0,1),pos,new Vector2(width,height),()=>Game.Press(captured));
+    var label=button.GetComponentInChildren<TMP_Text>();label.fontSize=Game.IsMacro?24:13;label.enableAutoSizing=true;label.fontSizeMin=9;label.fontSizeMax=Game.IsMacro?24:13;var image=button.GetComponent<Image>();button.targetGraphic=WorkshopAtelierStyle.Paper(image,new Color(.86f,.81f,.68f),5);button.GetComponent<Shadow>().effectDistance=new Vector2(0,-2);pads[key.Id]=image;generated.Add(button.gameObject);
    }
-   panel.SetActive(false);
+   if(Game.IsMacro)BuildBindings();Refresh();
   }
-  public void Begin(){if(!Game.Completed||(Game.Tools&&Game.Tools.Busy))return;Game.Menu.ClosePanels();Game.Menu.SelectTool(0);Game.TypingMode=true;Active=true;lastMessage="Her tuşa bas. Klavyeyi veya sağdaki test tuşlarını kullanabilirsin.";Refresh();}
-  public void End(){Active=false;if(panel)panel.SetActive(false);}
+  void BuildBindings(){
+   var root=WorkshopUI.Rect("Macro bindings",panel.transform,new Vector2(0,1),new Vector2(372,-238),new Vector2(674,104));generated.Add(root.gameObject);
+   for(int i=0;i<6;i++){int slot=i;var button=WorkshopUI.Button("Macro function "+i,root,font,"",new Vector2(0,1),new Vector2(i%3*225,-(i/3)*51),new Vector2(214,43),()=>OpenFunctionPicker(slot));button.GetComponentInChildren<TMP_Text>().fontSize=18;bindings.Add(button);}
+   var picker=WorkshopUI.Panel("Macro function picker",panel.transform,new Vector2(1,1),new Vector2(-46,-35),new Vector2(690,184),WorkshopUI.Paper);WorkshopAtelierStyle.Paper(picker,WorkshopUI.Paper,14);functionPicker=picker.gameObject;generated.Add(functionPicker);
+   WorkshopUI.Text("Choose function",picker.transform,font,"BU TUŞA HANGİ KISAYOLU VERELİM?",20,new Vector2(0,1),new Vector2(18,-14),new Vector2(625,28)).color=WorkshopUI.Sage;
+   for(int i=0;i<6;i++){string value=WorkshopGameMode.FunctionNames[i];WorkshopUI.Button("Choose "+value,picker.transform,font,value,new Vector2(0,1),new Vector2(18+i%3*222,-55-i/3*56),new Vector2(210,46),()=>{SetFunction(editingBinding,value);functionPicker.SetActive(false);});}
+   var close=WorkshopUI.Button("Close function picker",picker.transform,font,"×",Vector2.one,new Vector2(-8,-8),new Vector2(32,32),()=>functionPicker.SetActive(false));WorkshopAtelierStyle.Icon(close,26,"Kısayol seçimini kapat",Game.Experience);functionPicker.SetActive(false);
+  }
+  void OpenFunctionPicker(int index){editingBinding=index;functionPicker.SetActive(true);functionPicker.transform.SetAsLastSibling();}
+  public bool SetFunction(int index,string value){
+   if(!Game.IsMacro||index<0||index>=6||!WorkshopGameMode.FunctionNames.Contains(value))return false;
+   if(Game.MacroFunctions==null||Game.MacroFunctions.Length!=6)Game.MacroFunctions=new string[6];Game.MacroFunctions[index]=value;
+   string key=$"Keycap_{index+1:00}";tested.Remove(key);failed.Remove(key);lastMessage=$"{index+1}. tuş: {value}. Şimdi tuşa basıp deneyelim.";Refresh();Game.Refresh();return true;
+  }
+  public void Begin(){if(!Game.Completed||(Game.Tools&&Game.Tools.Busy))return;Game.Menu.ClosePanels();Game.Menu.SelectTool(0);Game.TypingMode=true;Active=true;lastMessage=Game.IsMacro?"Altı tuşa sırayla geri al, yinele, kaydet, bul, önceki ve sonraki sayfa ata. Sonra tuşlara basarak dene.":Game.IsRepair?"Üç komşu tuştan hangisi yanıt vermiyor? Turuncu tuşu bul; testten çıkıp kapağı ve switch'i sök.":"Klavyendeki tuşlara bas veya sağdaki tuşlara dokun. Yeşil: hazır. Turuncu: switch’i kontrol et.";Refresh();}
+  public void End(){Active=false;if(panel)panel.SetActive(false);if(functionPicker)functionPicker.SetActive(false);}
   public void ResetOrder(){End();tested.Clear();failed.Clear();LooseSwitch=null;FaultAssigned=false;lastMessage=null;}
-  public void Installed(WorkshopItem item){
-   if(item.Stage==3&&!FaultAssigned){var switches=Game.Controller.Items.Where(x=>x.Stage==3).OrderBy(x=>x.Id).ToArray();if(item==switches[(Game.OrderNumber*17)%switches.Length]){LooseSwitch=item.Id;FaultAssigned=true;}}
-   if(item.Stage==4)tested.Remove(item.Id);
-  }
+  public void Installed(WorkshopItem item){if(item.Stage==3)FaultAssigned=true;if(item.Stage==4)tested.Remove(item.Id);}
   public void Removed(WorkshopItem item){
-   foreach(var cap in Game.Controller.Items.Where(x=>x.Stage==4&&(x==item||Vector2.Distance(new Vector2(x.Slot.x,x.Slot.z),new Vector2(item.Slot.x,item.Slot.z))<.15f))){tested.Remove(cap.Id);failed.Remove(cap.Id);}
+   foreach(var cap in Game.ProductItems.Where(x=>x.Stage==4&&(x==item||Vector2.Distance(new Vector2(x.Slot.x,x.Slot.z),new Vector2(item.Slot.x,item.Slot.z))<.15f))){tested.Remove(cap.Id);failed.Remove(cap.Id);}
    if(item.Id==LooseSwitch)LooseSwitch=null;Refresh();
   }
   public bool Check(WorkshopItem cap){
-   if(!Active||cap.Stage!=4||!cap.Fitted)return true;
-   var sw=Game.Controller.Items.FirstOrDefault(x=>x.Stage==3&&Vector2.Distance(new Vector2(x.Slot.x,x.Slot.z),new Vector2(cap.Slot.x,cap.Slot.z))<.15f);
-   bool ok=sw&&sw.Fitted&&sw.Id!=LooseSwitch;
-   if(ok){failed.Remove(cap.Id);tested.Add(cap.Id);lastMessage=Passed?"Hepsi çalışıyor! Sipariş kartından paketlemeye geçebilirsin.":cap.Label+" çalışıyor. Kalan tuşları da deneyelim.";}
-   else{failed.Add(cap.Id);lastMessage=cap.Label+" yanıt vermedi. Testi kapat; tuşu ve switch'i sökücüyle çıkarıp yeniden tak.";if(pads.TryGetValue(cap.Id,out var pad))pad.color=new Color(.78f,.43f,.24f);}
-   if(Count==60&&!string.IsNullOrEmpty(LooseSwitch))lastMessage="Turuncu tuş yanıt vermedi. Testi kapat; kapağını ve switch’ini söküp yeniden tak.";Refresh();Game.Refresh();return ok;
+   if(!Active||cap.Stage!=4||!cap.Fitted||!pads.ContainsKey(cap.Id))return true;
+   var sw=Game.ProductItems.FirstOrDefault(x=>x.Stage==3&&Vector2.Distance(new Vector2(x.Slot.x,x.Slot.z),new Vector2(cap.Slot.x,cap.Slot.z))<.15f);
+   bool hardware=sw&&sw.Fitted&&sw.Id!=LooseSwitch,ok=hardware;Game.DiagnoseRepair(cap,hardware);
+   int macroIndex=Game.IsMacro?int.Parse(cap.Id.Substring(cap.Id.LastIndexOf('_')+1))-1:-1;
+   if(Game.IsMacro)ok=hardware&&Game.MacroFunctions!=null&&Game.MacroFunctions.Length==6&&Game.MacroFunctions[macroIndex]==WorkshopGameMode.DesiredFunctions[macroIndex];
+   if(ok){failed.Remove(cap.Id);tested.Add(cap.Id);lastMessage=Passed?"Hepsi çalışıyor! Sipariş kartından paketlemeye geçebilirsin.":Game.IsMacro?$"{macroIndex+1}. tuş → {Game.MacroFunctions[macroIndex]} · Denendi.":cap.Label+" çalışıyor. Kalan tuşları da deneyelim.";}
+   else{failed.Add(cap.Id);lastMessage=Game.IsMacro?$"{macroIndex+1}. tuşun işlevini '{WorkshopGameMode.DesiredFunctions[macroIndex]}' olarak ayarlayıp yeniden dene.":cap.Label+" yanıt vermedi. Testi kapat; tuşu ve switch'i sökücüyle çıkarıp yeniden tak.";}
+   if(Count==Game.TestCount-1&&!string.IsNullOrEmpty(LooseSwitch))lastMessage="Turuncu tuş yanıt vermedi. Testi kapat; kapağını ve switch’ini söküp yeniden tak.";Refresh();Game.Refresh();return ok;
   }
-  public void Restore(string[] ids,string loose,bool assigned){tested.Clear();failed.Clear();if(ids!=null)foreach(var id in ids)if(Game.Controller.Lookup.TryGetValue(id,out var item)&&item.Stage==4&&item.Fitted)tested.Add(id);LooseSwitch=loose!=null&&Game.Controller.Lookup.TryGetValue(loose,out var sw)&&sw.Stage==3&&sw.Fitted?loose:null;FaultAssigned=assigned;Refresh();}
-  void Refresh(){if(!panel)return;panel.SetActive(Active);title.text=Passed?"TEST TAMAM · 61 / 61":$"TUŞ KONTROLÜ · {Count} / 61";message.text=lastMessage;foreach(var pair in pads)pair.Value.color=tested.Contains(pair.Key)?WorkshopUI.Sage:failed.Contains(pair.Key)?new Color(.78f,.43f,.24f):new Color(.57f,.56f,.48f);}
+  public void Restore(string[] ids,string loose,bool assigned){tested.Clear();failed.Clear();if(ids!=null)foreach(var id in ids)if(Game.Controller.Lookup.TryGetValue(id,out var item)&&item.Stage==4&&item.Fitted&&Game.TestKeys.Any(x=>x.Id==id))tested.Add(id);LooseSwitch=loose!=null&&Game.Controller.Lookup.TryGetValue(loose,out var sw)&&sw.Stage==3&&sw.Fitted?loose:null;FaultAssigned=assigned;Refresh();}
+  void Refresh(){if(!panel)return;panel.SetActive(Active);title.text=Passed?$"TEST TAMAM · {Game.TestCount} / {Game.TestCount}":$"TUŞ KONTROLÜ · {Count} / {Game.TestCount}";message.text=lastMessage;foreach(var pair in pads){var color=tested.Contains(pair.Key)?new Color(.42f,.61f,.46f):failed.Contains(pair.Key)?new Color(.81f,.43f,.27f):new Color(.86f,.81f,.68f);pair.Value.color=color;pair.Value.GetComponentInChildren<WorkshopPaperGraphic>().color=color;var text=pair.Value.GetComponentInChildren<TMP_Text>();text.color=tested.Contains(pair.Key)||failed.Contains(pair.Key)?WorkshopUI.Paper:WorkshopUI.Ink;}for(int i=0;i<bindings.Count;i++)bindings[i].GetComponentInChildren<TMP_Text>().text=$"{i+1}: "+(Game.MacroFunctions!=null&&i<Game.MacroFunctions.Length&&!string.IsNullOrEmpty(Game.MacroFunctions[i])?Game.MacroFunctions[i]:"Kısayol seç");}
  }
 }

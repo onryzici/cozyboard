@@ -11,7 +11,7 @@ namespace CozyBoard {
  public sealed class WorkshopToolbarSelection:MonoBehaviour {
   public WorkshopGameMode Game;public int Mode;GameObject mark;
   public void Setup(WorkshopGameMode game,int mode){Game=game;Mode=mode;var line=WorkshopUI.Panel("Selected tool underline",transform,new Vector2(.5f,0),new Vector2(0,-9),new Vector2(70,5),new Color(1,.87f,.51f));line.raycastTarget=false;mark=line.gameObject;}
-  void Update(){bool selected=Game.Menu.ToolMode==Mode&&(!Game.Tools||!Game.Tools.Active);if(Mode==2)selected=Game.Experience.Inspecting;mark.SetActive(selected);var graphic=GetComponent<RawImage>();if(graphic)graphic.color=selected?Color.white:new Color(.87f,.87f,.87f);}
+  void Update(){bool selected=Game.Menu.ToolMode==Mode&&(!Game.Tools||!Game.Tools.Active);if(Mode==2)selected=Game.Experience.Inspecting;mark.SetActive(selected);var graphic=GetComponent<Button>().targetGraphic;if(graphic)graphic.color=selected?Color.white:new Color(.87f,.87f,.87f);}
  }
  public sealed class WorkshopHomeMark:Graphic {
   void Quad(VertexHelper h,Vector2 a,Vector2 b,float width){var n=new Vector2(-(b-a).y,(b-a).x).normalized*width*.5f;int k=h.currentVertCount;h.AddVert(a+n,color,Vector2.zero);h.AddVert(b+n,color,Vector2.zero);h.AddVert(b-n,color,Vector2.zero);h.AddVert(a-n,color,Vector2.zero);h.AddTriangle(k,k+1,k+2);h.AddTriangle(k,k+2,k+3);}

@@ -1,7 +1,7 @@
 Shader "CozyBoard/PaintedCutout" {
  Properties { _BaseMap("Artwork",2D)="white"{} _Opacity("Opacity",Range(0,1))=1 _Silhouette("Shadow",Range(0,1))=0 }
  SubShader {
-  Tags { "RenderType"="Transparent" "RenderPipeline"="UniversalPipeline" "Queue"="Transparent+10" }
+  Tags { "RenderType"="Transparent" "RenderPipeline"="UniversalPipeline" "Queue"="Transparent-1" }
   Pass {
    Blend SrcAlpha OneMinusSrcAlpha ZWrite Off Cull Off
    HLSLPROGRAM

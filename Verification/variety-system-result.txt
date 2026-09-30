@@ -1,0 +1,23 @@
+Repair and macro-pad update verification - 2026-09-30
+
+Editor repair/macro/save/UI checks: 102 PASS
+Editor narrative/order/save checks: 102 PASS
+Editor presentation/paint regressions: 163 PASS
+Final native Windows repair/macro/packing/save/UI checks: 146 PASS
+Final native Windows narrative/packing/save/paint checks: 74 PASS
+Windows build: succeeded, Builds/VarietyVerification/CozyBoard.exe
+git diff --check: passed
+
+New jobs include a three-key repair diagnosis with one spare switch and a six-key
+macro pad with simulated in-game shortcut assignment. Full keyboards remain.
+Save version 12 retains existing work; finishing a legacy order unlocks varied offers.
+Verification runners use isolated saves, not the player's workshop save.
+
+The legacy shop smoke reached 126 PASS before an unread-letter assertion failed.
+This revealed that opening offers silently marked the newest letter as read.
+That bug was fixed and the final variety runner explicitly checks unread mail.
+The entire legacy shop smoke has not been rerun after the fix; later assertions
+still assume automatic next-customer rotation instead of the new offer selection.
+
+The Windows build is local and excluded from Git. ZIP packaging was not completed.
+Unity/game processes are not needed for committing or publishing these changes.

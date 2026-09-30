@@ -8,6 +8,19 @@ using UnityEditor.SceneManagement;
 namespace CozyBoard.Editor {
     public static class WorkshopStudioVerify {
         const string Scene="Assets/CozyBoard/Scenes/Workbench.unity";
+        [MenuItem("Cozy Board/Verify direct paint and masking tape")]
+        public static void VerifyDirectPaintAndTape(){
+            EditorSceneManager.OpenScene(Scene);
+            var controller=UnityEngine.Object.FindFirstObjectByType<WorkshopController>();controller.Initialize();controller.Game.NewOrder();
+            var report=new List<string>();
+            void Check(bool test,string message){if(!test)throw new Exception(message);report.Add("PASS "+message);}
+            try{
+                WorkshopPaintVerify.Run(controller.Game,Check);
+                Check(!ShaderUtil.ShaderHasError(Shader.Find("CozyBoard/KeycapStudio")),"Studio shader compiles with masking tape");
+                Directory.CreateDirectory("Logs");File.WriteAllLines("Logs/direct-paint-and-tape-checks.txt",report);
+                Debug.Log("COZY_DIRECT_PAINT_AND_TAPE_VERIFIED "+report.Count);
+            }finally{controller.Game.Painter.ResetPaint();EditorSceneManager.OpenScene(Scene);}
+        }
         [MenuItem("Cozy Board/Verify 3D paint studio")]
         public static void Run(){
             EditorSceneManager.OpenScene(Scene);
