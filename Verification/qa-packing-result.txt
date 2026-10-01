@@ -1,0 +1,12 @@
+PASS Accept deniz-macro
+PASS deniz-macro: measured height matches assembled product
+PASS deniz-macro: both folded sheets clear every keycap, including wrinkles
+PASS deniz-macro: closed lid clears the folded paper
+PASS deniz-macro: folded sheets overlap across the centre
+PASS deniz-macro: packing height is independent of inspection rotation
+PASS Accept mina-keyboard
+PASS mina-keyboard: measured height matches assembled product
+PASS mina-keyboard: both folded sheets clear every keycap, including wrinkles
+PASS mina-keyboard: closed lid clears the folded paper
+PASS mina-keyboard: folded sheets overlap across the centre
+PASS mina-keyboard: packing height is independent of inspection rotation

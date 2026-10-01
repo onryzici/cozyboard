@@ -10,13 +10,27 @@ namespace CozyBoard {
         readonly List<Object> owned=new();
         Material kraft,edge,paper,shadow;
         Material Material(string label,Color color){var m=new Material(Shader.Find("CozyBoard/Painted")){name=label};m.SetColor("_BaseColor",color);owned.Add(m);return m;}
-        public static WorkshopCarton Create(Transform parent,string name,float width,float depth,float height,bool packing=false){
-            var go=new GameObject(name);go.transform.SetParent(parent,false);var carton=go.AddComponent<WorkshopCarton>();carton.Build(width,depth,height,packing);return carton;
+        public static WorkshopCarton Create(Transform parent,string name,float width,float depth,float height,bool packing=false,float contentsTop=0){
+            var go=new GameObject(name);go.transform.SetParent(parent,false);var carton=go.AddComponent<WorkshopCarton>();carton.Build(width,depth,packing?Mathf.Max(height,contentsTop+.25f):height,packing,contentsTop);return carton;
+        }
+        // Measure in the upright packing pose, regardless of the current inspection rotation.
+        public static float PackedTop(Transform board,float baseHeight){
+            float top=0;
+            foreach(var filter in board.GetComponentsInChildren<MeshFilter>()){
+                var renderer=filter.GetComponent<MeshRenderer>();
+                if(!renderer||!renderer.enabled||!filter.sharedMesh)continue;
+                var b=filter.sharedMesh.bounds;
+                for(int i=0;i<8;i++){
+                    var corner=new Vector3((i&1)==0?b.min.x:b.max.x,(i&2)==0?b.min.y:b.max.y,(i&4)==0?b.min.z:b.max.z);
+                    top=Mathf.Max(top,board.InverseTransformPoint(filter.transform.TransformPoint(corner)).y);
+                }
+            }
+            return baseHeight+top*board.lossyScale.y;
         }
         Transform Panel(string name,Transform parent,Vector3 position,Vector3 size,Material material){
             var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.transform.SetParent(parent,false);go.transform.localPosition=position;go.transform.localScale=size;Destroy(go.GetComponent<Collider>());go.GetComponent<MeshRenderer>().sharedMaterial=material;if(shadow){var shade=new GameObject("Soft carton shadow");shade.transform.SetParent(go.transform,false);shade.AddComponent<MeshFilter>().sharedMesh=go.GetComponent<MeshFilter>().sharedMesh;shade.AddComponent<MeshRenderer>().sharedMaterial=shadow;}return go.transform;
         }
-        void Build(float w,float d,float h,bool packing){
+        void Build(float w,float d,float h,bool packing,float contentsTop){
             shadow=new Material(Shader.Find("CozyBoard/PaintedSilhouette"));shadow.SetFloat("_Opacity",.20f);owned.Add(shadow);
             kraft=Material("Uncoated ochre cardboard",new Color(.71f,.57f,.39f));edge=Material("Cut cardboard edge",new Color(.45f,.28f,.16f));paper=Material("Crumpled packing paper",new Color(.96f,.88f,.72f));
             if(PaperTexture)paper.SetTexture("_BaseMap",PaperTexture);paper.SetFloat("_Shading",.25f);
@@ -41,8 +55,8 @@ namespace CozyBoard {
             for(int side=-1;side<=1;side+=2){for(int k=0;k<16;k++){var tick=Panel("Corrugated cut",Lid,new Vector3(side*w/2,.027f,-d*(k+.5f)/16),new Vector3(.044f,.004f,.018f),edge);tick.localRotation=Quaternion.Euler(0,24,0);}}
             if(packing){
                 Wrap=new GameObject("Folding tissue wings");Wrap.transform.SetParent(transform,false);
-                leftPaper=new GameObject("Left paper hinge").transform;leftPaper.SetParent(Wrap.transform,false);leftPaper.localPosition=new Vector3(-w*.46f,1.04f,0);
-                rightPaper=new GameObject("Right paper hinge").transform;rightPaper.SetParent(Wrap.transform,false);rightPaper.localPosition=new Vector3(w*.46f,1.065f,0);
+                leftPaper=new GameObject("Left paper hinge").transform;leftPaper.SetParent(Wrap.transform,false);leftPaper.localPosition=new Vector3(-w*.46f,Mathf.Max(1.04f,contentsTop+.06f),0);
+                rightPaper=new GameObject("Right paper hinge").transform;rightPaper.SetParent(Wrap.transform,false);rightPaper.localPosition=new Vector3(w*.46f,Mathf.Max(1.04f,contentsTop+.06f)+.025f,0);
                 var lp=Tissue("Left tissue sheet",w*.49f,d-.30f,0,1);lp.SetParent(leftPaper,false);lp.localPosition=new Vector3(w*.245f,0,0);
                 var rp=Tissue("Right tissue sheet",w*.49f,d-.30f,0,2);rp.SetParent(rightPaper,false);rp.localPosition=new Vector3(-w*.245f,0,0);FoldPaper(0);Wrap.SetActive(false);packDepth=d;
                 var tape=Material("Paper sealing tape",new Color(.91f,.78f,.50f));Tape=Panel("Sealed kraft tape",transform,new Vector3(0,h+.027f,0),new Vector3(.65f,.015f,d+.10f),tape).gameObject;Tape.SetActive(false);

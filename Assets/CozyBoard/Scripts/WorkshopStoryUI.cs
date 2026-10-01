@@ -25,8 +25,8 @@ namespace CozyBoard {
             panel.SetActive(false);
         }
         public void OpenNotebook(bool opening=false){
-            if(!panel||game.Experience.MainVisible||game.Experience.Packing||game.Tools&&game.Tools.Busy)return;
-            if(game.Shop)game.Shop.Close();game.Menu.ClosePanels();game.Controller.CancelDrag();game.Painter.CloseEditor();if(game.Testing)game.Testing.End();game.Experience.EndInspection();
+            if(!panel||game.Experience.MainVisible||game.ScreenChangeBlocked||game.RepairBench&&game.RepairBench.DetailOpen)return;
+            if(game.Shop){game.Shop.EndLaptopMove(true);game.Shop.Close();}game.Menu.ClosePanels();if(game.Tools)game.Tools.Deselect();game.Controller.CancelDrag();game.Painter.CloseEditor();if(game.Testing)game.Testing.End();game.Experience.EndInspection();
             introduction=opening;heading.text=opening?"Anahtar paspasın altında":"Nermin'in atölye defteri";
             body.text=game.Story.FirstDelivered?
                 "Ece'nin klavyesi yeni masasına ulaştı. Kitapçının pencere kenarında boş bir masa varmış; Ece oraya bir şeyler yakıştırıyor.\n\nNermin'in defterine ilk notumuzu düşelim:\n\"Bugün bir klavye yaptım. Bir de komşu tanıdım.\"\n\nBirlikte hazırlayacağımız Mola Köşesi'nin hikâyesi burada başlayacak.":WorkshopStory.OpeningNote;

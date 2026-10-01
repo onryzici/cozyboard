@@ -42,6 +42,7 @@ namespace CozyBoard {
   void SelectMailbox(bool value,bool readLatest=true){
    if(!mailView)return;if(ordersView)ordersView.SetActive(false);
    var screen=panel.transform.Find("Laptop catalogue");foreach(Transform child in screen)if(child.name.StartsWith("Category ")||child.name.StartsWith("Product ")||child.name=="Shop message"||child.name=="Workshop economy")child.gameObject.SetActive(!value);
+   if(!value)Refresh();
    mailView.SetActive(value);if(value&&readLatest)ReadMail(Game.DeliveryMail.Count-1);
   }
   public void ReadMail(int index){

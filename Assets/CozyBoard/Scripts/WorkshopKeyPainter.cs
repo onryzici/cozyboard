@@ -136,16 +136,15 @@ namespace CozyBoard {
         static void SetOutline(Button button,bool selected){if(!button||!button.targetGraphic)return;var graphic=button.targetGraphic;var outline=graphic.GetComponent<Outline>()??graphic.gameObject.AddComponent<Outline>();outline.effectColor=new Color(.98f,.88f,.61f,.8f);outline.effectDistance=selected?new Vector2(2,-2):Vector2.zero;graphic.color=selected?Color.white:new Color(.86f,.86f,.86f);}
 
         void Update(){
-            if(!Active||!Game||!Game.SessionActive||Game.Menu.InputBlocked){ShowCursor(false);return;}
+            if(!Active||!Game||!Game.SessionActive||Game.Menu.InputBlocked||Game.Menu.EscapeHandledThisFrame){ShowCursor(false);return;}
             var mouse=Mouse.current;var keyboard=Keyboard.current;if(mouse==null)return;
-            if(keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame){if(editing){CloseEditor();return;}Game.Menu.SelectTool(0);return;}
             if(editing&&keyboard!=null&&(keyboard.leftCtrlKey.isPressed||keyboard.rightCtrlKey.isPressed||keyboard.leftMetaKey.isPressed||keyboard.rightMetaKey.isPressed)){if(keyboard.zKey.wasPressedThisFrame){Undo();return;}if(keyboard.yKey.wasPressedThisFrame){Redo();return;}}
             float wheel=mouse.scroll.ReadValue().y;if(Mathf.Abs(wheel)>.01f){if(editing&&(keyboard==null||!keyboard.shiftKey.isPressed))studio?.Zoom(wheel);else SetRadius(radius*Mathf.Exp(WorkshopAtelierStyle.WheelSteps(wheel)*.14f));}
             if(editing){UpdateEditor(mouse,keyboard);return;}
             bool overUI=EventSystem.current&&EventSystem.current.IsPointerOverGameObject();
             WorkshopItem item=null;
             if(!overUI&&Physics.Raycast(Game.Controller.ViewCamera.ScreenPointToRay(mouse.position.ReadValue()),out var hit,100,1<<8)){
-                item=hit.collider.GetComponent<WorkshopItem>();if(!(item&&item.Fitted&&item.Kind=="keycap"))item=null;
+                item=hit.collider.GetComponent<WorkshopItem>();if(!(item&&item.Fitted&&Game.CanPaint(item)))item=null;
             }
             ShowCursor(false);
             if(!overUI&&mouse.leftButton.wasPressedThisFrame&&item)Edit(item);
@@ -206,14 +205,14 @@ namespace CozyBoard {
         }
 
         public void PaintAtSurface(WorkshopItem item,Vector3 localPoint,Vector3 localNormal,Color color,float brushRadius){
-            if(!item||!item.Fitted||item.Kind!="keycap")return;
+            if(!item||!item.Fitted||!Game.CanPaint(item))return;
             var canvas=Canvas(item);var previous=selected;selected=color;BeginStroke();Touch(canvas);
             PaintSurface(canvas,localPoint,localNormal,brushRadius);canvas.Modified=true;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);studio?.Invalidate();EndStroke();selected=previous;
         }
         public Vector2 SurfaceUV(WorkshopItem item,Vector3 localPoint,Vector3 normal)=>Canvas(item).Surface.UV(localPoint,KeycapSurface.Face(normal));
 
         public void Edit(WorkshopItem item){
-            if(!item||!item.Fitted||item.Kind!="keycap")return;CloseEditor();editing=item;var canvas=Canvas(item);
+            if(!item||!item.Fitted||!Game.CanPaint(item))return;CloseEditor();editing=item;var canvas=Canvas(item);
             if(cachedSurface!=canvas.Surface){cachedSurface?.ReleaseSamples();cachedSurface=canvas.Surface;}
             ConfigureStudioUI();
             studio=new KeycapStudio(canvas.Surface,item.Visual.sharedMaterials,StudioShader?StudioShader:Shader.Find("CozyBoard/KeycapStudio"));
@@ -336,11 +335,11 @@ namespace CozyBoard {
         List<Snapshot> SwapSnapshots(List<Snapshot> source){var reverse=new List<Snapshot>();foreach(var snapshot in source){if(!Game.Controller.Lookup.TryGetValue(snapshot.Id,out var item))continue;var canvas=Canvas(item);reverse.Add(new Snapshot{Id=snapshot.Id,Pixels=(Color32[])canvas.Pixels.Clone(),Modified=canvas.Modified,LegendVisible=canvas.LegendVisible,Tape=canvas.Tape.ToArray()});canvas.Pixels=(Color32[])snapshot.Pixels.Clone();canvas.Modified=snapshot.Modified;canvas.LegendVisible=snapshot.LegendVisible;if(editing==item)studio?.ClearWetness();canvas.Tape.Clear();if(snapshot.Tape!=null)canvas.Tape.AddRange(snapshot.Tape);ApplyMaterials(canvas);if(editing==item){RefreshLegend(canvas);SyncTape();RefreshTapeUI();}canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);studio?.Invalidate();}return reverse;}
         public void ClearCurrent(){if(!editing)return;BeginStroke();var canvas=Canvas(editing);Touch(canvas);canvas.Pixels=(Color32[])canvas.BasePixels.Clone();studio?.ClearWetness();canvas.Modified=false;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);studio?.Invalidate();EndStroke();Game.Menu.Toast("Seçili tuş temizlendi.");}
         public void ToggleLegend(){if(!editing)return;BeginStroke();var canvas=Canvas(editing);Touch(canvas);canvas.LegendVisible=!canvas.LegendVisible;ApplyMaterials(canvas);RefreshLegend(canvas);EndStroke();Game.Menu.Toast(canvas.LegendVisible?"Tuş harfi gösteriliyor.":"Tuş harfi gizlendi.");}
-        void RefreshLegend(CanvasState canvas){if(EditorLegend)EditorLegend.gameObject.SetActive(false);studio?.UpdateMaterials(canvas.Item.Visual.sharedMaterials);if(LegendButtonLabel)LegendButtonLabel.text=canvas.LegendVisible?"HARF  AÇIK":"HARF  KAPALI";}
+        void RefreshLegend(CanvasState canvas){if(LegendButton)LegendButton.gameObject.SetActive(canvas.Item.Kind=="keycap");if(EditorLegend)EditorLegend.gameObject.SetActive(false);studio?.UpdateMaterials(canvas.Item.Visual.sharedMaterials);if(LegendButtonLabel)LegendButtonLabel.text=canvas.LegendVisible?"HARF  AÇIK":"HARF  KAPALI";}
 
         public void Fill(WorkshopItem item,Color color){var canvas=Canvas(item);if(canvas.Tape.Count>0){canvas.Surface.Visit(canvas.Surface.Bounds.center,canvas.Surface.Bounds.size.magnitude,t=>{if(!Masked(canvas,t.Position))canvas.Pixels[t.Index]=color;});}else for(int i=0;i<canvas.Pixels.Length;i++)canvas.Pixels[i]=color;canvas.Modified=true;canvas.Surface.PadEdges(canvas.Pixels);canvas.Texture.SetPixels32(canvas.Pixels);canvas.Texture.Apply(false);studio?.Invalidate();}
         public void DrawLine(WorkshopItem item,Vector2 from,Vector2 to,Color color,bool square=false){
-            if(!item||!item.Fitted||item.Kind!="keycap")return;
+            if(!item||!item.Fitted||!Game.CanPaint(item))return;
             var oldColor=selected;var oldBrush=brush;selected=color;brush=square?BrushShape.Flat:BrushShape.Detail;
             BeginStroke();previousId=null;
             var canvas=Canvas(item);float distance=Vector2.Distance(from,to)*canvas.Height;int steps=Mathf.Clamp(Mathf.CeilToInt(distance/Mathf.Max(1,radius*canvas.Height*.25f)),1,128);

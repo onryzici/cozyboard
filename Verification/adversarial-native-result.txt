@@ -1,0 +1,588 @@
+BEGIN Assembly
+PASS Assembly: New game opens the introduction before any order
+PASS Assembly: Reading the introduction opens the first offer
+PASS Assembly: First keyboard starts with zero installed parts
+PASS Assembly: All three later stages reject out-of-order placement
+PASS Assembly: Invalid screws and screws before internal assembly are rejected
+PASS Assembly: A physical PCB can be picked up
+PASS Assembly: Cancel drag restores the PCB position and orientation
+PASS Assembly: Dropping a PCB outside the case returns it to supply
+PASS Assembly: Opening the order while carrying a PCB cancels the held piece
+PASS Assembly: PCB installs through the normal placement path
+PASS Assembly: Double placement cannot consume a second PCB
+PASS Assembly: PCB-only save resumes at the plate stage
+PASS Assembly: Restart retains the already paid assembly materials
+PASS Assembly: Restarted keyboard reinstalls its reserved PCB without another purchase
+PASS Assembly: Plate unlocks switches
+PASS Assembly: Undoing the plate preserves the PCB and restores its stage
+PASS Assembly: A recovered plate can be reinstalled without buying another kit
+PASS Assembly: Full keyboard switch 0 installs
+PASS Assembly: Full keyboard switch 1 installs
+PASS Assembly: Full keyboard switch 2 installs
+PASS Assembly: Full keyboard switch 3 installs
+PASS Assembly: Full keyboard switch 4 installs
+PASS Assembly: Full keyboard switch 5 installs
+PASS Assembly: Full keyboard switch 6 installs
+PASS Assembly: Full keyboard switch 7 installs
+PASS Assembly: Full keyboard switch 8 installs
+PASS Assembly: Full keyboard switch 9 installs
+PASS Assembly: Full keyboard switch 10 installs
+PASS Assembly: Full keyboard switch 11 installs
+PASS Assembly: Full keyboard switch 12 installs
+PASS Assembly: Full keyboard switch 13 installs
+PASS Assembly: Full keyboard switch 14 installs
+PASS Assembly: Full keyboard switch 15 installs
+PASS Assembly: Full keyboard switch 16 installs
+PASS Assembly: Full keyboard switch 17 installs
+PASS Assembly: Full keyboard switch 18 installs
+PASS Assembly: Full keyboard switch 19 installs
+PASS Assembly: Full keyboard switch 20 installs
+PASS Assembly: Full keyboard switch 21 installs
+PASS Assembly: Full keyboard switch 22 installs
+PASS Assembly: Full keyboard switch 23 installs
+PASS Assembly: Full keyboard switch 24 installs
+PASS Assembly: Full keyboard switch 25 installs
+PASS Assembly: Full keyboard switch 26 installs
+PASS Assembly: Full keyboard switch 27 installs
+PASS Assembly: Full keyboard switch 28 installs
+PASS Assembly: Full keyboard switch 29 installs
+PASS Assembly: Thirty-switch save keeps stage and exact part count
+PASS Assembly: Full keyboard switch 30 installs
+PASS Assembly: Full keyboard switch 31 installs
+PASS Assembly: Full keyboard switch 32 installs
+PASS Assembly: Full keyboard switch 33 installs
+PASS Assembly: Full keyboard switch 34 installs
+PASS Assembly: Full keyboard switch 35 installs
+PASS Assembly: Full keyboard switch 36 installs
+PASS Assembly: Full keyboard switch 37 installs
+PASS Assembly: Full keyboard switch 38 installs
+PASS Assembly: Full keyboard switch 39 installs
+PASS Assembly: Full keyboard switch 40 installs
+PASS Assembly: Full keyboard switch 41 installs
+PASS Assembly: Full keyboard switch 42 installs
+PASS Assembly: Full keyboard switch 43 installs
+PASS Assembly: Full keyboard switch 44 installs
+PASS Assembly: Full keyboard switch 45 installs
+PASS Assembly: Full keyboard switch 46 installs
+PASS Assembly: Full keyboard switch 47 installs
+PASS Assembly: Full keyboard switch 48 installs
+PASS Assembly: Full keyboard switch 49 installs
+PASS Assembly: Full keyboard switch 50 installs
+PASS Assembly: Full keyboard switch 51 installs
+PASS Assembly: Full keyboard switch 52 installs
+PASS Assembly: Full keyboard switch 53 installs
+PASS Assembly: Full keyboard switch 54 installs
+PASS Assembly: Full keyboard switch 55 installs
+PASS Assembly: Full keyboard switch 56 installs
+PASS Assembly: Full keyboard switch 57 installs
+PASS Assembly: Full keyboard switch 58 installs
+PASS Assembly: Full keyboard switch 59 installs
+PASS Assembly: Full keyboard switch 60 installs
+PASS Assembly: Sixty-one switches unlock all caps
+PASS Assembly: A stock cap previews the wide spacebar destination
+PASS Assembly: Cancelling a wide-key preview restores the original supply mesh
+PASS Assembly: Full keyboard cap 0 installs
+PASS Assembly: Full keyboard cap 1 installs
+PASS Assembly: Full keyboard cap 2 installs
+PASS Assembly: Full keyboard cap 3 installs
+PASS Assembly: Full keyboard cap 4 installs
+PASS Assembly: Full keyboard cap 5 installs
+PASS Assembly: Full keyboard cap 6 installs
+PASS Assembly: Full keyboard cap 7 installs
+PASS Assembly: Full keyboard cap 8 installs
+PASS Assembly: Full keyboard cap 9 installs
+PASS Assembly: Full keyboard cap 10 installs
+PASS Assembly: Full keyboard cap 11 installs
+PASS Assembly: Full keyboard cap 12 installs
+PASS Assembly: Full keyboard cap 13 installs
+PASS Assembly: Full keyboard cap 14 installs
+PASS Assembly: Full keyboard cap 15 installs
+PASS Assembly: Full keyboard cap 16 installs
+PASS Assembly: Full keyboard cap 17 installs
+PASS Assembly: Full keyboard cap 18 installs
+PASS Assembly: Full keyboard cap 19 installs
+PASS Assembly: Full keyboard cap 20 installs
+PASS Assembly: Full keyboard cap 21 installs
+PASS Assembly: Full keyboard cap 22 installs
+PASS Assembly: Full keyboard cap 23 installs
+PASS Assembly: Full keyboard cap 24 installs
+PASS Assembly: Full keyboard cap 25 installs
+PASS Assembly: Full keyboard cap 26 installs
+PASS Assembly: Full keyboard cap 27 installs
+PASS Assembly: Full keyboard cap 28 installs
+PASS Assembly: Full keyboard cap 29 installs
+PASS Assembly: Thirty-cap save keeps every mounted switch and cap
+PASS Assembly: Full keyboard cap 30 installs
+PASS Assembly: Full keyboard cap 31 installs
+PASS Assembly: Full keyboard cap 32 installs
+PASS Assembly: Full keyboard cap 33 installs
+PASS Assembly: Full keyboard cap 34 installs
+PASS Assembly: Full keyboard cap 35 installs
+PASS Assembly: Full keyboard cap 36 installs
+PASS Assembly: Full keyboard cap 37 installs
+PASS Assembly: Full keyboard cap 38 installs
+PASS Assembly: Full keyboard cap 39 installs
+PASS Assembly: Full keyboard cap 40 installs
+PASS Assembly: Full keyboard cap 41 installs
+PASS Assembly: Full keyboard cap 42 installs
+PASS Assembly: Full keyboard cap 43 installs
+PASS Assembly: Full keyboard cap 44 installs
+PASS Assembly: Full keyboard cap 45 installs
+PASS Assembly: Full keyboard cap 46 installs
+PASS Assembly: Full keyboard cap 47 installs
+PASS Assembly: Full keyboard cap 48 installs
+PASS Assembly: Full keyboard cap 49 installs
+PASS Assembly: Full keyboard cap 50 installs
+PASS Assembly: Full keyboard cap 51 installs
+PASS Assembly: Full keyboard cap 52 installs
+PASS Assembly: Full keyboard cap 53 installs
+PASS Assembly: Full keyboard cap 54 installs
+PASS Assembly: Full keyboard cap 55 installs
+PASS Assembly: Full keyboard cap 56 installs
+PASS Assembly: Full keyboard cap 57 installs
+PASS Assembly: Full keyboard cap 58 installs
+PASS Assembly: Full keyboard cap 59 installs
+PASS Assembly: Full keyboard cap 60 installs
+PASS Assembly: A full keyboard completes all 124 normal placements
+PASS Assembly: All installation animations settle at their mounting positions
+PASS Assembly: Clicking a fitted cap presses it without removing it
+PASS Assembly: All sixty-one distinct keys pass the first keyboard test
+PASS Assembly: A cap cannot be removed without the correct tool selected
+PASS Assembly: A switch cannot be pulled through its cap
+PASS Assembly: Passed cap can be physically removed
+PASS Assembly: Repeated pull input cannot create another tool operation
+PASS Assembly: Pulling a tested cap invalidates its test result
+PASS Assembly: Recovered tested cap reinstalls from supply
+PASS Assembly: Retesting the replaced cap completes the keyboard again
+PASS Assembly: Delivery before fastening screws selects the required tool
+PASS Assembly: Case screw 0 starts
+PASS Assembly: Screw operation rejects another simultaneous screw
+PASS Assembly: Case screw 0 finishes
+PASS Assembly: Case screw 1 starts
+PASS Assembly: Screw operation rejects another simultaneous screw
+PASS Assembly: Case screw 1 finishes
+PASS Assembly: Case screw 2 starts
+PASS Assembly: Screw operation rejects another simultaneous screw
+PASS Assembly: Case screw 2 finishes
+PASS Assembly: Case screw 3 starts
+PASS Assembly: Screw operation rejects another simultaneous screw
+PASS Assembly: Case screw 3 finishes
+PASS Assembly: All four full-keyboard screws are fastened
+PASS Assembly: Spacebar opens its prepared painting studio
+PASS Assembly: One brush contact applies the selected colour directly
+PASS Assembly: A new colour covers existing paint without wet mixing
+PASS Assembly: Undo restores the previous direct brush colour
+PASS Assembly: Redo restores the replacement colour
+PASS Assembly: A tape strip can be laid across the key
+PASS Assembly: Tape completely protects the surface beneath a brush stroke
+PASS Assembly: Tape protection continues from the top onto the key side
+PASS Assembly: Fill respects tape while colouring exposed surface
+PASS Assembly: Peeling reveals a clean unpainted stripe
+PASS Assembly: Undo restores peeled tape
+PASS Assembly: Redo peels the tape again
+PASS Assembly: Saving and loading preserve tape and protected artwork
+PASS Assembly: Version 9 artwork loads without inventing masking tape
+PASS Assembly: Direct side strokes do not bleed through to the opposite wall (base=RGBA(0.741, 0.463, 0.365, 1.000), side=RGBA(0.980, 0.000, 0.000, 1.000), opposite=RGBA(0.741, 0.463, 0.365, 1.000))
+PASS Assembly: Returning from paint regression restores tested and fastened keyboard
+PASS Assembly: Completed keyboard enters the carton stage
+PASS Assembly: Cancelling a moving carton step restores pose without payment
+PASS Assembly: Double packing input advances stage 1 only once
+PASS Assembly: Double packing input advances stage 2 only once
+PASS Assembly: Double packing input advances stage 3 only once
+PASS Assembly: Keyboard shipment unlocks new jobs and creates one receipt
+PASS Assembly: Repeated shipment cannot duplicate keyboard reward or mail
+END Assembly
+BEGIN Transition
+PASS Transition: Transition scenarios use an isolated save
+PASS Transition: Transition fixture accepts a macro order
+PASS Transition: A PCB can be picked up for the drag interruption fixture
+PASS Transition: Settings cancels carried PCB without losing or installing it
+PASS Transition: One Escape closes settings and leaves the workshop open
+PASS Transition: Laptop catalogue safely cancels carried PCB
+PASS Transition: One Escape closes laptop without also returning home
+PASS Transition: Home restores a carried component to stock
+PASS Transition: Laptop cannot open behind the main menu
+PASS Transition: Transition fixture macro placement: PCB
+PASS Transition: Transition fixture macro placement: Plate
+PASS Transition: Transition fixture macro placement: Switch_01
+PASS Transition: Transition fixture macro placement: Switch_02
+PASS Transition: Transition fixture macro placement: Switch_03
+PASS Transition: Transition fixture macro placement: Switch_04
+PASS Transition: Transition fixture macro placement: Switch_05
+PASS Transition: Transition fixture macro placement: Switch_06
+PASS Transition: Transition fixture macro placement: Keycap_01
+PASS Transition: Transition fixture macro placement: Keycap_02
+PASS Transition: Transition fixture macro placement: Keycap_03
+PASS Transition: Transition fixture macro placement: Keycap_04
+PASS Transition: Transition fixture macro placement: Keycap_05
+PASS Transition: Transition fixture macro placement: Keycap_06
+PASS Transition: Transition fixture assembles a complete macro pad
+PASS Transition: Laptop drag begins before catalogue
+PASS Transition: Opening catalogue cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before settings
+PASS Transition: Opening settings cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before order
+PASS Transition: Opening order cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before home
+PASS Transition: Opening home cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before notebook
+PASS Transition: Opening notebook cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before desk
+PASS Transition: Opening desk cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before pointer
+PASS Transition: Opening pointer cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before move
+PASS Transition: Opening move cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before paint
+PASS Transition: Opening paint cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before inspection
+PASS Transition: Opening inspection cancels laptop drag and restores its position
+PASS Transition: Laptop drag begins before test
+PASS Transition: Opening test cancels laptop drag and restores its position
+PASS Transition: New game asks before replacing an existing workshop
+PASS Transition: Escape cancels new game without changing progress
+PASS Transition: Cancel button retains the same workshop
+PASS Transition: Main settings replaces new game confirmation with one visible layer
+PASS Transition: One Escape closes main settings and preserves progress
+PASS Transition: Continue dismisses pending confirmation without starting over
+PASS Transition: Rotate toolbar opens keyboard inspection
+PASS Transition: Repeated inspection clicks preserve the original desk pose
+PASS Transition: Toolbar mode 0 exits inspection and restores the keyboard
+PASS Transition: Toolbar mode 1 exits inspection and restores the keyboard
+PASS Transition: Toolbar mode 3 exits inspection and restores the keyboard
+PASS Transition: Settings replaces inspection and restores its pose
+PASS Transition: Order card replaces inspection and restores its pose
+PASS Transition: Laptop replaces inspection without moving the product
+PASS Transition: Save restores inspected product before recording the desk pose
+PASS Transition: Complete macro pad opens native test
+PASS Transition: Macro function picker opens above the test
+PASS Transition: First Escape closes only the macro function picker
+PASS Transition: Second Escape closes only the test card
+PASS Transition: L opens laptop after closing the keyboard test
+PASS Transition: Settings replaces the keyboard test card
+PASS Transition: Order card replaces the keyboard test card
+PASS Transition: Home disconnects the keyboard test
+PASS Transition: Paint toolbar opens a fitted keycap in the studio
+PASS Transition: Settings closes the paint studio and its preparation work
+PASS Transition: Order card closes the paint studio
+PASS Transition: Desk travel cannot interrupt an active paint studio
+PASS Transition: Paint completion releases editor and surface preparation
+PASS Transition: Notebook replaces laptop catalogue
+PASS Transition: L cannot stack laptop and notebook modals
+PASS Transition: Travel to repair desk starts from assembly
+PASS Transition: Rapid opposite travel request is rejected while camera moves
+PASS Transition: Home and laptop cannot interrupt camera travel
+PASS Transition: Camera reaches repair desk after ignored interruptions
+PASS Transition: Test requested away from the product first returns to assembly
+PASS Transition: Test opens once the camera reaches the product
+PASS Transition: Native screw animation starts for interruption scenarios
+PASS Transition: Undo cannot remove a component during the screwdriver animation
+PASS Transition: Home, laptop, save and travel cannot interrupt a working screwdriver
+PASS Transition: Settings and order card cannot interrupt a working screwdriver
+PASS Transition: Rejected interruptions allow the screw to finish exactly once
+PASS Transition: Packing transition fixture has six validated functions
+PASS Transition: Packing opens before cancellation stage 1
+PASS Transition: Laptop and desk travel are blocked while packing stage 1
+PASS Transition: Cancel during packing animation 1 restores product and stops later steps
+PASS Transition: Packing cancellation 1 preserves assembly, tests and screws
+PASS Transition: Packing opens before cancellation stage 2
+PASS Transition: Laptop and desk travel are blocked while packing stage 2
+PASS Transition: Cancel during packing animation 2 restores product and stops later steps
+PASS Transition: Packing cancellation 2 preserves assembly, tests and screws
+PASS Transition: Packing opens before cancellation stage 3
+PASS Transition: Laptop and desk travel are blocked while packing stage 3
+PASS Transition: Cancel during packing animation 3 restores product and stops later steps
+PASS Transition: Packing cancellation 3 preserves assembly, tests and screws
+PASS Transition: Save during packing cancels the parcel and records the original desk pose
+PASS Transition: Reload after packing save preserves the assembled product without transient parcel state
+PASS Transition: Shipment cancellation fixture reaches final sealed parcel
+PASS Transition: Cancel during shipment curtain prevents delayed delivery and reward
+PASS Transition: Shipment cancellation restores the product to its original desk
+PASS Transition: Failed shipment save preserves the same tested product and wallet
+PASS Transition: Failed shipment save restores the original desk pose
+PASS Transition: Transition fixture accepts a repair order
+PASS Transition: Repair transition fixture arrives at assembled repair product
+PASS Transition: Repair transition fixture diagnoses the fault
+PASS Transition: Repair transition fixture purchases a single spare
+PASS Transition: Repair transition fixture removes the cap
+PASS Transition: Repair transition fixture removes the fault
+PASS Transition: Old-part detail opens for modal tests
+PASS Transition: Home cannot interrupt part detail
+PASS Transition: One Escape closes part detail and leaves repair desk open
+PASS Transition: Old-part detail can reopen after Escape
+PASS Transition: Sealed spare begins a native unpacking animation
+PASS Transition: Laptop, home and desk travel cannot interrupt opening the spare
+PASS Transition: Spare opening completes after ignored interruptions
+PASS Transition: New-part detail opens after packet animation
+PASS Transition: Closing unchecked new-part detail preserves its required pin check across reload
+PASS Transition: Reload closes transient repair UI and restores the repair station
+END Transition
+BEGIN Repair
+PASS Repair: Repair scenarios use an isolated save
+PASS Repair: Repair offer has a real accept button
+PASS Repair: Repair begins fully assembled
+PASS Repair: Fresh repair has no diagnosis or replacement flags
+PASS Repair: Neither inspection opens before any part is removed
+PASS Repair: Cannot unbox before inspecting the old part
+PASS Repair: Undiagnosed cap and healthy cap cannot be removed
+PASS Repair: Untested faulty repair cannot enter shipping
+PASS Repair: One healthy key does not diagnose the faulty key
+PASS Repair: Leaving repair station disconnects active tester
+PASS Repair: Part inspection cannot open from the assembly station
+PASS Repair: Test requested from the wrong station first travels to the repair desk
+PASS Repair: Requested repair return settles
+PASS Repair: Repeated failing presses diagnose without passing or duplicating measurements
+PASS Repair: Diagnosed assembled reload: isolated save succeeds
+PASS Repair: Diagnosis and original fault survive reload
+PASS Repair: Switch cannot be pulled through its fitted cap
+PASS Repair: Diagnosis never permits removal of a healthy neighbour
+PASS Repair: Faulty cap removal starts
+PASS Repair: Double removal input cannot start a second animation
+PASS Repair: Station change is rejected during cap pull
+PASS Repair: Home is rejected during cap pull
+PASS Repair: Shop is rejected during cap pull
+PASS Repair: Tester is rejected during cap pull
+PASS Repair: Saving halfway through a physical pull is rejected
+PASS Repair: Rapid rejected actions leave cap pull complete
+PASS Repair: Recovered cap can be put back before continuing repair
+PASS Repair: Recovering an accidentally removed cap uses normal placement
+PASS Repair: Putting original cap back cannot falsely repair the switch
+PASS Repair: Second cap pull: select tool
+PASS Repair: Second cap pull: begin removal
+PASS Repair: Second cap pull: complete removal
+PASS Repair: Cap-only removal reload: isolated save succeeds
+PASS Repair: Cap-only reload preserves all sixty healthy caps
+PASS Repair: A keyboard missing its cap cannot start final test
+PASS Repair: Old-switch inspection stays unavailable while the switch is still fitted
+PASS Repair: Faulty switch pull: select tool
+PASS Repair: Faulty switch pull: begin removal
+PASS Repair: Faulty switch pull: complete removal
+PASS Repair: Cap cannot precede switch, sealed spare cannot be installed
+PASS Repair: New-pin inspection cannot inspect a sealed spare
+PASS Repair: Both parts removed reload: isolated save succeeds
+PASS Repair: Both-part reload does not invent inspections
+PASS Repair: Removed original switch opens inspection
+PASS Repair: Closing inspection without turning does not approve the old switch
+PASS Repair: Closed but unturned old inspection still blocks unboxing
+PASS Repair: Home cannot strand an open part inspection
+PASS Repair: Turning back does not forget the old underside check
+PASS Repair: Old switch inspection reload: isolated save succeeds
+PASS Repair: Only completed old-part inspection survives reload
+PASS Repair: Without a spare the packet action opens supply catalogue
+PASS Repair: No credits cannot create a spare
+PASS Repair: Repair purchase provides precisely one switch
+PASS Repair: First unboxing attempt begins
+PASS Repair: Reload during unboxing animation: isolated save succeeds
+PASS Repair: Reload interrupts unfinished unboxing and preserves a sealed non-installable spare
+PASS Repair: Cancelled unboxing coroutine cannot open a later restored repair behind the scenes
+PASS Repair: Interrupted unboxing can be retried as an exclusive physical operation
+PASS Repair: Double packet click cannot duplicate unboxing
+PASS Repair: Unboxing rejects travel, premature inspection, and test instrument
+PASS Repair: Unboxing rejects home transition
+PASS Repair: Unboxing rejects the laptop shortcut
+PASS Repair: Unboxing rejects the visible whole-product inspection toolbar
+PASS Repair: Unboxing ends once and does not automatically approve pins
+PASS Repair: Opened but unchecked new switch still cannot be installed
+PASS Repair: Picking an unchecked spare opens the correct pin inspection
+PASS Repair: Closing new-part inspection without turning keeps pins unchecked
+PASS Repair: Opened packet reload: isolated save succeeds
+PASS Repair: Open packet and unchecked pins remain distinct after reload
+PASS Repair: New pins approved reload: isolated save succeeds
+PASS Repair: Checked spare remains the only installable repair switch
+PASS Repair: Last unopened supply set can be refunded
+PASS Repair: Refunding the final supply withdraws the loose switch
+PASS Repair: Withdrawing the spare hides its electrical pins too
+PASS Repair: Replacement supply can be repurchased without replaying completed pin inspection
+PASS Repair: Incomplete repair still cannot enter test despite all approval flags
+PASS Repair: Checked replacement installs
+PASS Repair: Replacement consumes one spare and invalidates every earlier measurement
+PASS Repair: Undoing the new switch preserves its identity and requests refitting before the cap
+PASS Repair: Undone new switch refits without buying another spare
+PASS Repair: Refitting consumes no second spare and still requires final tests
+PASS Repair: Replacement fitted but cap missing reload: isolated save succeeds
+PASS Repair: Fitted replacement reload restores missing original cap and supply-free recovery
+PASS Repair: Recovered original cap completes repair assembly
+PASS Repair: Repeated same-key retest cannot satisfy three different targets
+PASS Repair: Partial final test cannot ship or pay a reward
+PASS Repair: One retest reload: isolated save succeeds
+PASS Repair: A partial final test stays partial after reload
+PASS Repair: Three distinct retested targets validate the repaired keyboard
+PASS Repair: Post-test cap removal: select tool
+PASS Repair: Post-test cap removal: begin removal
+PASS Repair: Post-test cap removal: complete removal
+PASS Repair: Removing a passed cap invalidates that target and delivery
+PASS Repair: Passed cap can be refitted without purchasing keycaps
+PASS Repair: Refitting a removed cap requires its new retest
+PASS Repair: Single invalidated cap retest restores the complete result
+PASS Repair: Legacy completed v12 repair remains deliverable without new inspection flags
+PASS Repair: Completed legacy repair enters packing
+PASS Repair: Cancelling repair packing restores the product and view to its repair station
+PASS Repair: Repair shipment finishes exactly its accepted order
+PASS Repair: Repeated repair delivery cannot pay again
+PASS Repair: Second repair offer can be accepted after shipping
+PASS Repair: Second repair receives a fresh identity and all fresh part flags
+PASS Repair: Second repair resets final test and receives its own faulty switch
+PASS Repair: Previous customer's removed switch is absent before second repair diagnosis
+PASS Repair: Second repair starts with sixty-one intact caps and switches
+PASS Repair: Second repair fresh reload: isolated save succeeds
+PASS Repair: Second repair reload cannot inherit the first repair's approvals
+END Repair
+BEGIN Progression
+PASS Progression: Progression scenarios require an isolated save path
+PASS Progression: Idle story exposes no installable product
+PASS Progression: Unknown offer is rejected without changing inventory or story
+PASS Progression: Waiting for an order cannot consume a PCB
+PASS Progression: Keyboard order can be selected after first story milestone
+PASS Progression: An accepted empty workbench cannot be replaced by another offer
+PASS Progression: Clicky purchase charges the catalogue price and changes the sound profile
+PASS Progression: Cap variant purchase selects the new material before assembly
+PASS Progression: Unopened unused switch kit refunds exactly once
+PASS Progression: Repeated kit refund cannot create money
+PASS Progression: Insufficient funds do not create a kit or negative balance
+PASS Progression: Catalogue boundaries reject invalid product identifiers
+PASS Progression: First full keyboard: stage 1 installs through normal stock and placement rules
+PASS Progression: First full keyboard: stage 2 installs through normal stock and placement rules
+PASS Progression: First full keyboard: stage 3 installs through normal stock and placement rules
+PASS Progression: First full keyboard: stage 4 installs through normal stock and placement rules
+PASS Progression: First full keyboard: all required parts are fitted
+PASS Progression: Installed switches lock the voice and selected variant
+PASS Progression: Full keyboard consumes one PCB kit, switch kit and cap kit
+PASS Progression: First full keyboard: actual key presses complete the final test
+PASS Progression: First full keyboard: repeated press cannot inflate test coverage
+PASS Progression: Completed but unshipped work cannot be replaced by a repair offer
+PASS Progression: Reload keeps identity, completed product, tests and board pose
+PASS Progression: Reload restores the installed switch sound profile
+PASS Progression: Failed save rolls delivery, credits, order identity and mail back together
+PASS Progression: First full keyboard: delivery starts physical packing
+PASS Progression: First full keyboard: double-click cannot skip packing step 1
+PASS Progression: First full keyboard: packing step 1 completes
+PASS Progression: First full keyboard: double-click cannot skip packing step 2
+PASS Progression: First full keyboard: packing step 2 completes
+PASS Progression: First full keyboard: double-click cannot skip packing step 3
+PASS Progression: First full keyboard: packing step 3 completes
+PASS Progression: First full keyboard: shipment curtain completes and returns to offers
+PASS Progression: First full keyboard: final packing sends and rewards the product
+PASS Progression: Matching full keyboard pays 300 once and preserves the chosen customer
+PASS Progression: New offer list keeps the shipment letter unread
+PASS Progression: Duplicate shipment cannot produce another receipt or reward
+PASS Progression: Campaign can transition from a full keyboard to repair
+PASS Progression: Repair creates an assembled keyboard without inheriting macro bindings
+PASS Progression: Assembled incoming repair still counts as an active order
+PASS Progression: Repair station settles for progression fixture
+PASS Progression: Repair diagnosis produces exactly two working keys and one fault
+PASS Progression: Repair catalogue sells one eight-credit switch without manufacturing a full kit
+PASS Progression: Campaign repair starts cap extraction
+PASS Progression: Campaign cap extraction finishes
+PASS Progression: Campaign repair starts switch extraction
+PASS Progression: Campaign switch extraction finishes
+PASS Progression: Campaign inspects the old part
+PASS Progression: Campaign opens the sealed replacement
+PASS Progression: Campaign spare package finishes opening
+PASS Progression: Campaign inspects the new spare pins
+PASS Progression: Campaign installs the inspected replacement
+PASS Progression: Campaign restores the saved customer cap
+PASS Progression: Repair consumes exactly its purchased single switch
+PASS Progression: Campaign repair: actual key presses complete the final test
+PASS Progression: Campaign repair: repeated press cannot inflate test coverage
+PASS Progression: Campaign repair: delivery starts physical packing
+PASS Progression: Campaign repair: double-click cannot skip packing step 1
+PASS Progression: Campaign repair: packing step 1 completes
+PASS Progression: Campaign repair: double-click cannot skip packing step 2
+PASS Progression: Campaign repair: packing step 2 completes
+PASS Progression: Campaign repair: double-click cannot skip packing step 3
+PASS Progression: Campaign repair: packing step 3 completes
+PASS Progression: Campaign repair: shipment curtain completes and returns to offers
+PASS Progression: Campaign repair: final packing sends and rewards the product
+PASS Progression: Repair reward and chapter event coexist with the archived keyboard receipt
+PASS Progression: Campaign can transition from repair to macro pad
+PASS Progression: Macro starts empty and clears all repair state and old shortcut assignments
+PASS Progression: Macro hides and disables all 55 unused key pairs after a full-size repair
+PASS Progression: Campaign restocks three macro assembly materials
+PASS Progression: Unused alternate macro switch kit can be returned at its original price
+PASS Progression: Returning an alternate set allows reselection of the stocked linear set
+PASS Progression: Campaign macro: stage 1 installs through normal stock and placement rules
+PASS Progression: Campaign macro: stage 2 installs through normal stock and placement rules
+PASS Progression: Campaign macro: stage 3 installs through normal stock and placement rules
+PASS Progression: Campaign macro: stage 4 installs through normal stock and placement rules
+PASS Progression: Campaign macro: all required parts are fitted
+PASS Progression: Six-key job leaves 55 switches and 55 caps from opened full kits
+PASS Progression: An opened partial kit cannot be refunded as an unopened full kit
+PASS Progression: Macro binding input rejects out-of-range slots and unknown functions
+PASS Progression: Six duplicate shortcuts cannot pass the requested macro layout
+PASS Progression: Correct bindings and actual key presses pass all six macro keys
+PASS Progression: Changing a previously tested binding invalidates that key's test
+PASS Progression: Reload keeps compact geometry, bindings, per-key results and partial stock
+PASS Progression: Campaign macro: delivery starts physical packing
+PASS Progression: Campaign macro: double-click cannot skip packing step 1
+PASS Progression: Campaign macro: packing step 1 completes
+PASS Progression: Campaign macro: double-click cannot skip packing step 2
+PASS Progression: Campaign macro: packing step 2 completes
+PASS Progression: Campaign macro: double-click cannot skip packing step 3
+PASS Progression: Campaign macro: packing step 3 completes
+PASS Progression: Campaign macro: shipment curtain completes and returns to offers
+PASS Progression: Campaign macro: final packing sends and rewards the product
+PASS Progression: Linear macro for Deniz pays 115 and appends a third unique receipt
+PASS Progression: Reading every archived letter and rereading old letters never changes credits
+PASS Progression: Reload preserves all chapter events and read states across three product kinds
+PASS Progression: Campaign returns from macro to a second full keyboard
+PASS Progression: Full keyboard restores full geometry and clears the previous product's state
+PASS Progression: 55 remaining loose switches or caps cannot satisfy a 61-key job
+PASS Progression: Full keyboard can restock alongside partial kits
+PASS Progression: Second full keyboard: stage 1 installs through normal stock and placement rules
+PASS Progression: Second full keyboard: stage 2 installs through normal stock and placement rules
+PASS Progression: Second full keyboard: stage 3 installs through normal stock and placement rules
+PASS Progression: Second full keyboard: stage 4 installs through normal stock and placement rules
+PASS Progression: Second full keyboard: all required parts are fitted
+PASS Progression: 61-key assembly combines stock without losing the existing 55 leftover parts
+PASS Progression: Returning to a keyboard restores all 61 physical and test keys
+PASS Progression: Second full keyboard: actual key presses complete the final test
+PASS Progression: Second full keyboard: repeated press cannot inflate test coverage
+PASS Progression: Version 10 keyboard migrates into playable free workshop without a fabricated customer order
+PASS Progression: Legacy free workshop can complete its existing delivery
+PASS Progression: Legacy shipment pays once and unlocks repair/macro offers without fabricating the first chapter
+PASS Progression: Reload retains migrated free-to-story offers
+PASS Progression: Persistence boundary fixture accepts a fresh keyboard
+PASS Progression: Unsupported save version 0 leaves current work untouched
+PASS Progression: Unsupported save version 13 leaves current work untouched
+PASS Progression: Malformed JSON load leaves current live progress untouched
+PASS Progression: Unknown parts and unsupported orphan caps are ignored on restore
+PASS Progression: A null entry in saved fitted parts is ignored while all legitimate fitted parts and tests survive
+END Progression
+BEGIN Pointer
+PASS Pointer: Pointer scenarios use an isolated save
+PASS Pointer: Pointer fixture accepts a six-key order
+PASS Pointer: Real mouse click opens settings
+PASS Pointer: Escape closes mouse-opened settings without leaving the desk
+PASS Pointer: Real mouse click opens order
+PASS Pointer: Escape closes mouse-opened order
+PASS Pointer: Real supply click picks up PCB in click-carry mode
+PASS Pointer: Escape returns mouse-carried PCB to its original supply
+PASS Pointer: Outside drop fixture picks up PCB [current=True, held=True, pointer=(740.57, 880.20), dragged=PCB, ui=False]
+PASS Pointer: Dropping a dragged PCB over the laptop returns it to supply without swallowing release [current=True, held=False, pointer=(228.57, 200.95), dragged=none, ui=False]
+PASS Pointer: Real mouse starts stage 1 drag
+PASS Pointer: Real drag installs stage 1 (target=(937.14, 572.52, 20.05), source=(740.57, 880.20)) [current=True, held=False, pointer=(937.14, 572.52), dragged=none, ui=False]
+PASS Pointer: Real mouse starts stage 2 drag
+PASS Pointer: Real drag installs stage 2 (target=(937.14, 577.00, 19.86), source=(1179.43, 880.20)) [current=True, held=False, pointer=(937.14, 577.00), dragged=none, ui=False]
+PASS Pointer: Real mouse picks up stage 3 supply
+PASS Pointer: Holding mouse across six sockets installs exactly six stage 3 parts
+PASS Pointer: Real mouse picks up stage 4 supply
+PASS Pointer: Holding mouse across six sockets installs exactly six stage 4 parts
+PASS Pointer: Real mouse assembly completes all fourteen macro parts
+PASS Pointer: Real rotate-button click opens inspection
+PASS Pointer: Real pointer-button click exits inspection
+PASS Pointer: Real mouse opens macro function selection
+PASS Pointer: Real mouse selects and closes the function picker
+PASS Pointer: Real mouse assigns and tests macro key 1 [count=1, binding=Geri al, measured=Keycap_01, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 2 [count=2, binding=Yinele, measured=Keycap_02, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 3 [count=3, binding=Kaydet, measured=Keycap_03, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 4 [count=4, binding=Bul, measured=Keycap_04, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 5 [count=5, binding=Önceki sayfa, measured=Keycap_05, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 6 [count=6, binding=Sonraki sayfa, measured=Keycap_06, hit=Atelier paper,Atelier paper]
+PASS Pointer: Six mouse-selected bindings and distinct clicks pass the macro test
+PASS Pointer: Real close-button click exits the test
+PASS Pointer: Keyboard laptop shortcut works after a mouse-completed test
+PASS Pointer: Escape closes laptop as the only active layer
+PASS Pointer: Real brush-button and physical key click open the prepared paint studio
+PASS Pointer: Real paint completion button returns to the desk
+END Pointer
+TOTAL PASS 577 FAIL 0

@@ -11,6 +11,7 @@ namespace CozyBoard {
         int previous=-1;
         AudioSource assemblySource;
         AudioClip screwTurn,screwStop;
+        AudioClip[] mouseClicks;AudioSource mouseSource;
         void Awake(){
             var assembly=new GameObject("Assembly feedback");assembly.transform.SetParent(transform,false);
             assemblySource=assembly.AddComponent<AudioSource>();
@@ -25,6 +26,20 @@ namespace CozyBoard {
             assemblySource.volume=EffectsVolume;assemblySource.pitch=1;
             assemblySource.PlayOneShot(clip,volume);
         }
+        public void MouseClick(int feel){
+            if(!Application.isPlaying)return;feel=Mathf.Clamp(feel,0,2);
+            if(mouseClicks==null){
+                mouseClicks=new AudioClip[3];var random=new System.Random(714);
+                for(int voice=0;voice<3;voice++){
+                    const int rate=48000;var samples=new float[1920];float smooth=0;
+                    for(int i=0;i<samples.Length;i++){float t=(float)i/rate;float noise=(float)random.NextDouble()*2-1;smooth=Mathf.Lerp(smooth,noise,.18f+voice*.15f);float attack=Mathf.Min(1,t*4000);float decay=Mathf.Exp(-t*(voice==0?155:voice==1?225:330));samples[i]=(smooth*.62f+Mathf.Sin(t*(1850+voice*750)*Mathf.PI*2)*.18f)*decay*attack;}
+                    mouseClicks[voice]=AudioClip.Create("Mouse click "+voice,samples.Length,1,rate,false);mouseClicks[voice].SetData(samples,0);
+                }
+                mouseSource=new GameObject("Mouse click feedback").AddComponent<AudioSource>();mouseSource.transform.SetParent(transform,false);mouseSource.playOnAwake=false;if(EffectsSource)mouseSource.outputAudioMixerGroup=EffectsSource.outputAudioMixerGroup;
+            }
+            mouseSource.mute=EffectsSource&&EffectsSource.mute;mouseSource.volume=EffectsVolume;mouseSource.pitch=1;mouseSource.PlayOneShot(mouseClicks[feel],feel==0?.30f:feel==1?.40f:.50f);
+        }
+        void OnDestroy(){if(mouseClicks!=null)foreach(var clip in mouseClicks)if(clip)Destroy(clip);}
         public void AssemblyContact()=>AssemblySound(Pickup,.12f);
         public void AssemblySeat(int stage)=>AssemblySound(stage==3?Snap:stage==4?Place:Pickup,stage==3?.58f:.32f);
         public void ScrewTurn()=>AssemblySound(screwTurn,.42f);

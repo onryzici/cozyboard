@@ -1,0 +1,443 @@
+[
+  {
+    "status": "completed",
+    "buildId": "build_2bffbe114caf",
+    "result": "Succeeded",
+    "platform": "StandaloneOSX",
+    "outputPath": "/Users/trexoinnovation/cozyBoard/CozyBoardUnity/Builds/QA/CozyBoardQA.app",
+    "totalSizeBytes": 391246498,
+    "buildTimeMs": 14122,
+    "buildStartedAt": "2026-10-01T06:35:10.3119450Z",
+    "buildEndedAt": "2026-10-01T06:35:24.4343800Z",
+    "totalWarnings": 25,
+    "totalErrors": 0,
+    "errors": [],
+    "warnings": [
+      {
+        "message": "Pipeline: No RuntimePipelineConfig asset found (Project Settings > Pipeline > Runtime). Pipeline will be disabled in Player builds."
+      },
+      {
+        "message": "You are building a player, but you have uncompiled code changes. This means that any post-processing or importing code you may have changed will not affect this player build."
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopCursor.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopScenarioRunner.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopScenarioRunner.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0414: The field 'WorkshopKeyPainter.stabilizerReady' is assigned but its value is never used",
+        "file": "Assets/CozyBoard/Scripts/WorkshopKeyPainter.cs"
+      }
+    ]
+  },
+  {
+    "status": "completed",
+    "buildId": "build_3e2da0996f89",
+    "result": "Succeeded",
+    "platform": "StandaloneWindows64",
+    "outputPath": "/Users/trexoinnovation/cozyBoard/CozyBoardUnity/Builds/QAWindows/CozyBoardQA.exe",
+    "totalSizeBytes": 266549843,
+    "buildTimeMs": 37770,
+    "buildStartedAt": "2026-10-01T06:36:13.3983740Z",
+    "buildEndedAt": "2026-10-01T06:36:51.1686390Z",
+    "totalWarnings": 89,
+    "totalErrors": 0,
+    "errors": [],
+    "warnings": [
+      {
+        "message": "Pipeline: No RuntimePipelineConfig asset found (Project Settings > Pipeline > Runtime). Pipeline will be disabled in Player builds."
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopCursor.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopScenarioRunner.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopScenarioRunner.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0414: The field 'WorkshopKeyPainter.stabilizerReady' is assigned but its value is never used",
+        "file": "Assets/CozyBoard/Scripts/WorkshopKeyPainter.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopScenarioRunner.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopSmokeProbe.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopPointerScenarios.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindFirstObjectByType<T>()' is obsolete: 'FindFirstObjectByType has been deprecated because it relies on instance ID ordering. Use FindAnyObjectByType instead, which does not depend on ordering.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'",
+        "file": "Assets/CozyBoard/Scripts/WorkshopShopSmoke.cs"
+      },
+      {
+        "message": "warning CS0414: The field 'WorkshopKeyPainter.stabilizerReady' is assigned but its value is never used",
+        "file": "Assets/CozyBoard/Scripts/WorkshopKeyPainter.cs"
+      },
+      {
+        "message": "Shader warning in 'TraceRays': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapShadowMaskIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapGBufferDebug': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'PunctualLightSampling': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapNormalIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceRenderingLayerMask': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'Estimation': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceTransparentRays': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapIndirectIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapGBufferIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'DynamicGISkyOcclusion': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapDirectIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceRaysAndFetchAttributes': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapAOIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationValidity': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapValidityIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationIndirect': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'PathIteratorTest': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationOcclusion': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationDirect': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceVirtualOffset': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapShadowMaskIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceTransparentRays': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceRenderingLayerMask': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapGBufferIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceRaysAndFetchAttributes': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapDirectIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'PunctualLightSampling': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapIndirectIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapNormalIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'DynamicGISkyOcclusion': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapAOIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationIndirect': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapGBufferDebug': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceVirtualOffset': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'LightmapValidityIntegration': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationValidity': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'TraceRays': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationDirect': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'PathIteratorTest': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'ProbeIntegrationOcclusion': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'Estimation': Compilation failed: Platform doesn't support Ray Tracing Shader compilation."
+      },
+      {
+        "message": "Shader warning in 'CozyBoard/WorkMat': integer modulus may be much slower, try using uints if possible. at Assets/CozyBoard/Shaders/WorkMat.shader(25) (on d3d11)\n\nCompiling Subshader: 0, Pass: , Fragment program with <no keywords>\nPlatform defines: SHADER_API_DESKTOP UNITY_ENABLE_DETAIL_NORMALMAP UNITY_ENABLE_REFLECTION_BUFFERS UNITY_LIGHTMAP_FULL_HDR UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_PBS_USE_BRDF1 UNITY_PLATFORM_SUPPORTS_DEPTH_FETCH UNITY_SPECCUBE_BLENDING UNITY_SPECCUBE_BOX_PROJECTION UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS\nDisabled keywords: SHADER_API_GLES30 SHADER_API_GLES31 SHADER_API_GLES32 UNITY_ASTC_NORMALMAP_ENCODING UNITY_COLORSPACE_GAMMA UNITY_FRAMEBUFFER_FETCH_AVAILABLE UNITY_HARDWARE_TIER1 UNITY_HARDWARE_TIER2 UNITY_HARDWARE_TIER3 UNITY_LIGHTMAP_DLDR_ENCODING UNITY_LIGHTMAP_RGBM_ENCODING UNITY_METAL_SHADOWS_USE_POINT_FILTERING UNITY_NO_DXT5nm UNITY_NO_SCREENSPACE_SHADOWS UNITY_PBS_USE_BRDF2 UNITY_PBS_USE_BRDF3 UNITY_PRETRANSFORM_TO_DISPLAY_ORIENTATION UNITY_UNIFIED_SHADER_PRECISION_MODEL UNITY_VIRTUAL_TEXTURING"
+      },
+      {
+        "message": "Shader warning in 'CozyBoard/WorkMat': integer modulus may be much slower, try using uints if possible. at Assets/CozyBoard/Shaders/WorkMat.shader(25) (on metal)\n\nCompiling Subshader: 0, Pass: <Unnamed Pass 0>, Fragment program with <no keywords>\nPlatform defines: SHADER_API_DESKTOP UNITY_ENABLE_DETAIL_NORMALMAP UNITY_ENABLE_REFLECTION_BUFFERS UNITY_FRAMEBUFFER_FETCH_AVAILABLE UNITY_LIGHTMAP_FULL_HDR UNITY_LIGHT_PROBE_PROXY_VOLUME UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BLENDING UNITY_SPECCUBE_BOX_PROJECTION UNITY_USE_DITHER_MASK_FOR_ALPHABLENDED_SHADOWS\nDisabled keywords: SHADER_API_GLES30 SHADER_API_GLES31 SHADER_API_GLES32 UNITY_ASTC_NORMALMAP_ENCODING UNITY_COLORSPACE_GAMMA UNITY_HARDWARE_TIER1 UNITY_HARDWARE_TIER2 UNITY_HARDWARE_TIER3 UNITY_LIGHTMAP_DLDR_ENCODING UNITY_LIGHTMAP_RGBM_ENCODING UNITY_METAL_SHADOWS_USE_POINT_FILTERING UNITY_NO_DXT5nm UNITY_NO_SCREENSPACE_SHADOWS UNITY_PBS_USE_BRDF2 UNITY_PBS_USE_BRDF3 UNITY_PRETRANSFORM_TO_DISPLAY_ORIENTATION UNITY_UNIFIED_SHADER_PRECISION_MODEL UNITY_VIRTUAL_TEXTURING"
+      }
+    ]
+  }
+]

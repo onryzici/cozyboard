@@ -38,6 +38,7 @@ namespace CozyBoard {
         public IReadOnlyDictionary<string, WorkshopItem> Lookup => byId;
 
         void Awake() { Initialize(); }
+        public void RegisterPart(WorkshopItem item){item.Cache();Items=Items.Append(item).ToArray();byId.Add(item.Id,item);if(Application.isPlaying)CreateShadow(item);}
         public void Initialize() {
             shadowProperties ??= new MaterialPropertyBlock();
             byId.Clear();
@@ -56,7 +57,10 @@ namespace CozyBoard {
         }
         void Update() {
             var mouse=Mouse.current;var keyboard=Keyboard.current;if(mouse==null)return;
-            if(Game&&Game.Menu&&Game.Menu.InputBlocked){if(keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame)Game.Menu.ClosePanels();return;}
+            if(Game&&Game.ScreenChangeBlocked)return;
+            if(Game&&Game.Menu&&Game.Menu.EscapeHandledThisFrame)return;
+            if(Game&&Game.RepairBench&&(Game.RepairBench.Moving||Game.RepairBench.AwayFromProduct))return;
+            if(Game&&Game.Menu&&Game.Menu.InputBlocked)return;
             if(Game&&Game.Shop&&Game.Shop.HandlePointer())return;
             if(Game&&Game.Tools&&(Game.Tools.Active||Game.Tools.Busy)){Game.Tools.HandleInput();return;}
             if(Game&&Game.Menu&&Game.Menu.ToolMode==3) {
@@ -90,10 +94,10 @@ namespace CozyBoard {
             if(!Dragged&&!overUI) {
                 Vector2 delta=mouse.delta.ReadValue();
                 if(mouse.rightButton.isPressed){Yaw=Mathf.Clamp(Yaw+delta.x*.06f,-5,5);Pitch=Mathf.Clamp(Pitch-delta.y*.06f,68,83);}
-                else if(mouse.middleButton.isPressed){ViewTarget.x=Mathf.Clamp(ViewTarget.x-delta.x*.008f,-.15f,.15f);ViewTarget.z=Mathf.Clamp(ViewTarget.z-delta.y*.008f,-.10f,.10f);}
+                else if(mouse.middleButton.isPressed){float center=Game&&Game.RepairBench?Game.RepairBench.ViewOrigin.x:0;ViewTarget.x=Mathf.Clamp(ViewTarget.x-delta.x*.008f,center-.15f,center+.15f);ViewTarget.z=Mathf.Clamp(ViewTarget.z-delta.y*.008f,-.10f,.10f);}
                 ViewWidth=Mathf.Clamp(ViewWidth*Mathf.Exp(-WorkshopAtelierStyle.WheelSteps(mouse.scroll.ReadValue().y)*.10f),15,24);
             }
-            if(keyboard!=null){if(keyboard.escapeKey.wasPressedThisFrame)CancelDrag();if(Selected&&!Selected.Fitted){if(keyboard.qKey.wasPressedThisFrame)Selected.transform.Rotate(0,15,0,Space.World);if(keyboard.eKey.wasPressedThisFrame)Selected.transform.Rotate(0,-15,0,Space.World);}}
+            if(keyboard!=null&&Selected&&!Selected.Fitted){if(keyboard.qKey.wasPressedThisFrame)Selected.transform.Rotate(0,15,0,Space.World);if(keyboard.eKey.wasPressedThisFrame)Selected.transform.Rotate(0,-15,0,Space.World);}
             UpdateCamera();
         }
         public void UpdateCamera() {
@@ -108,6 +112,7 @@ namespace CozyBoard {
             return new Plane(Vector3.up, new Vector3(0, height, 0)).Raycast(ray, out float distance) ? ray.GetPoint(distance) : Vector3.zero;
         }
         public void BeginDragAt(Vector2 point) {
+            if(Game&&Game.Tools&&Game.Menu.ToolMode==0&&Game.Tools.TryPickScrewDish(ViewCamera.ScreenPointToRay(point)))return;
             if(!Physics.Raycast(ViewCamera.ScreenPointToRay(point),out var hit,100,1<<8))return;
             var supply=hit.collider.GetComponent<WorkshopSupply>();
             var item=supply&&Game?Game.SupplyItem(supply.Stage):hit.collider.GetComponent<WorkshopItem>();if(supply&&Game&&!item){Game.RejectStage(supply.Stage);return;}
@@ -129,13 +134,15 @@ namespace CozyBoard {
             dragHeight = item.Stage>0?byId["Case"].transform.TransformPoint(item.Slot).y+.24f:Mathf.Max(t.position.y+.16f,.38f);
             if(Game&&Game.SessionActive&&item.Stage>0){t.rotation=byId["Case"].transform.rotation;t.localScale=Vector3.one*Game.ProductScale;}
             dragOffset = item.Stage>0?Vector3.zero:t.position - MousePlane(point, dragHeight); dragOffset.y = 0;
-            if (HintLabel) HintLabel.text = item.Label + " · Klavyenin üzerine bırak veya tıkla · Esc: geri koy";
+            if (HintLabel) HintLabel.text = item.Label + (Game&&Game.IsMouse?" · İşaretli yuvaya bırak · Esc: geri koy":" · Klavyenin üzerine bırak veya tıkla · Esc: geri koy");
             if(Game&&Game.SessionActive)Game.Picked(item);
         }
+        public void BeginClickCarry(WorkshopItem item,Vector2 point){BeginDrag(item,point);if(Dragged==item){clickCarry=true;pickupScreen=point;dragOffset=Vector3.zero;MoveDrag(point);}}
         public void MoveDrag(Vector2 point) {
             if(!Dragged)return;
             Vector3 p=MousePlane(point,dragHeight)+dragOffset;
-            Dragged.transform.position=new Vector3(Mathf.Clamp(p.x,-10.3f,10.3f),dragHeight,Mathf.Clamp(p.z,-4.5f,4.9f));
+            float center=Game&&Game.RepairBench?Game.RepairBench.ProductOrigin.x:0;
+            Dragged.transform.position=new Vector3(Mathf.Clamp(p.x,center-10.3f,center+10.3f),dragHeight,Mathf.Clamp(p.z,-4.5f,4.9f));
             var candidate=SnapCandidate(Dragged);
             if(Dragged.Stage==4&&candidate&&candidate!=Dragged){Dragged.Visual.GetComponent<MeshFilter>().sharedMesh=candidate.Visual.GetComponent<MeshFilter>().sharedMesh;Dragged.Visual.sharedMaterials=candidate.Visual.sharedMaterials;}
             else RestorePreview();
@@ -148,6 +155,7 @@ namespace CozyBoard {
             item.transform.localScale=Vector3.one;item.Fitted=true;
         }
         public WorkshopItem FindSocket(int stage,Vector3 world) {
+            if(Game&&Game.IsMouse)return Game.MouseProduct.FindSlot(stage,world);
             var local=byId["Case"].transform.InverseTransformPoint(world);
             if(stage<3){var item=byId[stage==1?"PCB":"Plate"];return Mathf.Abs(local.x)<(Game&&Game.IsMacro?.89f:3.3f)&&Mathf.Abs(local.z)<(Game&&Game.IsMacro?.66f:1.3f)&&!item.Fitted?item:null;}
             WorkshopItem nearest=null;float best=float.MaxValue;
@@ -170,6 +178,7 @@ namespace CozyBoard {
             var candidate=SnapCandidate(item);
             Vector3 from=item.transform.position;RestorePreview();
             if(candidate) {
+                if(Game&&Game.IsMouse&&item.Stage==5&&candidate!=item)Game.MouseProduct.TransferFootPreparation(item,candidate);
                 if(candidate!=item) {
                     item.transform.SetPositionAndRotation(dragPosition,dragRotation);
                     item.transform.localScale=dragScale;

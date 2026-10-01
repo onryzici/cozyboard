@@ -26,8 +26,8 @@ namespace CozyBoard.Editor {
    void Seed(){game.StoryUI.Hide();game.StartStory();game.Story.openingRead=true;game.Story.Record(WorkshopStory.FirstEvent);game.Experience.Continue();game.Shop.Close();}
    try{
     var originalCase=controller.Lookup["Case"].Visual.GetComponent<MeshFilter>().sharedMesh;var originalSlot=controller.Lookup["Keycap_01"].Slot;
-    Seed();var offers=WorkshopStory.Offers(game.Story);Check(offers.Select(x=>x.Kind).Distinct().Count()==3,"Offer board contains repair, macro pad and keyboard jobs");game.Shop.OpenOrders();Fits(GameObject.Find("Available orders").transform);Capture(controller,"Logs/variety-orders.png");
-    Check(game.AcceptOrder("ece-repair"),"Ece's old keyboard repair can be accepted");
+    Seed();var offers=WorkshopStory.Offers(game.Story);Check(offers.Select(x=>x.Kind).Distinct().Count()==4,"Offer board contains repair, macro pad, mouse and keyboard jobs");game.Shop.OpenOrders();Fits(GameObject.Find("Available orders").transform);Capture(controller,"Logs/variety-orders.png");
+    Check(game.AcceptOrder("ece-repair"),"Ece's old keyboard repair can be accepted");game.RepairBench.Visit(true,false);
     Check(game.IsRepair&&game.Completed&&game.TestCount==3&&!game.Testing.Passed,"Repair arrives assembled and only three neighbouring keys need testing");
     Check(game.Shop.Data.used[0]&&game.Shop.Data.used[2]&&!game.Shop.Data.used[1],"Repair reserves existing body and recovered caps, not a new keyboard kit");
     Fits(game.Menu.OrderPanel.transform);game.Menu.ClosePanels();var faultCap=controller.Lookup[game.Repair.capId];var faultSwitch=controller.Lookup[game.Repair.switchId];
@@ -37,7 +37,8 @@ namespace CozyBoard.Editor {
     int[] inventory=game.Shop.Data.stock.ToArray();int money=game.Shop.Data.credits;Check(game.Shop.Purchase(3)&&game.Shop.Data.credits==money-8&&game.Shop.Data.looseParts[3]==1,"A repair switch can be bought singly for eight Tık");game.Shop.Close();
     Remove(faultCap);string disassembled=game.SerializeProgress();game.RestoreProgress(disassembled);faultCap=controller.Lookup[game.Repair.capId];faultSwitch=controller.Lookup[game.Repair.switchId];
     Check(!faultCap.Fitted&&game.Repair.diagnosed&&game.TestCount==3&&game.TestKeys.Length==3,"Repair reload retains the removed cap, diagnosis and three test targets");
-    Remove(faultSwitch);Check(controller.PaintAt(3,At(faultSwitch))&&game.Repair.replaced,"Installing the spare marks the repair as replaced");
+    Remove(faultSwitch);game.RepairBench.OpenPartInspection();game.RepairBench.TurnInspectedSwitch();game.RepairBench.ClosePartInspection();game.RepairBench.OpenReplacementPacket();game.RepairBench.OpenPartInspection(true);game.RepairBench.TurnInspectedSwitch();game.RepairBench.ClosePartInspection();
+    Check(controller.PaintAt(3,At(faultSwitch))&&game.Repair.replaced,"Installing the spare marks the repair as replaced");
     Check(game.Shop.Data.stock.SequenceEqual(inventory)&&game.Shop.Data.looseParts[3]==0,"Repair consumes one loose switch, leaving complete kits untouched");Check(controller.PaintAt(4,At(faultCap)),"Original cap can be put back without another kit");
     game.Testing.Begin();foreach(var cap in game.TestKeys)game.Press(cap);Check(game.Testing.Passed&&game.Testing.Count==3,"Three working neighbour tests finish the repair");game.Testing.End();
     Check(game.FinishDelivery()&&game.LastDelivery.reward==90&&game.LastDelivery.kind=="repair"&&game.Story.Has(WorkshopStory.RepairEvent),"Repair pays ninety Tık and advances Ece's story once");
@@ -67,7 +68,7 @@ namespace CozyBoard.Editor {
     File.WriteAllLines("Logs/variety-checks.txt",report);Debug.Log("COZY_VARIETY_VERIFIED "+report.Count);
    }finally{game.VerificationSavePath=null;game.Painter.ResetPaint();EditorSceneManager.OpenScene(Scene);}
   }
-  static void Capture(WorkshopController controller,string path){
+  internal static void Capture(WorkshopController controller,string path){
    controller.Game.Experience.SendMessage("Update");controller.Game.Shop.SendMessage("Update");controller.Game.Menu.ToastLabel.gameObject.SetActive(false);controller.SendMessage("LateUpdate");
    var camera=controller.ViewCamera;var target=new RenderTexture(1920,1080,24){antiAliasing=4};target.Create();camera.targetTexture=target;camera.aspect=16f/9;controller.UpdateCamera();
    foreach(var canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include))if(canvas.isRootCanvas){canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;}

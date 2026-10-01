@@ -1,0 +1,56 @@
+PASS Both desks use the same authored surface and mat shader
+PASS Repair mat uses the assembly mat colour
+PASS Both desks share the original surface geometry
+PASS Shader compiles: CozyBoard/FlatWorkspace
+PASS Shader compiles: CozyBoard/Painted
+PASS Shader compiles: CozyBoard/KeycapStudio
+PASS Empty repair desk can be visited before accepting a job
+PASS Empty instrument reports no connected product instead of silently opening a test
+PASS Return to assembly desk
+PASS Accept repair order
+PASS Customer product arrives at repair desk while player stays at assembly desk
+PASS Travel to repair desk
+PASS Travel moves the camera, not the product
+PASS Repair tools are on the repair desk
+PASS Repair desk does not use assembly supply cartons
+PASS Physical test dial starts measurement and connects its USB lead
+PASS USB lead attaches to the physical keyboard socket
+PASS A measured healthy key lights its corresponding physical indicator green
+PASS Instrument LCD reports the measured healthy signal
+PASS Only the measured faulty key lights its physical indicator red
+PASS LCD identifies the actual key with no signal
+PASS Test instrument identifies one faulty key
+PASS Pressing the physical dial again stops measurement and disconnects the lead
+PASS Device explains why measurement cannot start with missing parts
+PASS Recovered cap remains visible in repair tray during switch stage
+PASS Recovered cap and spare have separate tray compartments
+PASS A single replacement switch can be purchased
+PASS Purchased spare remains sealed and cannot reuse the removed switch
+PASS Removed faulty switch is a separate inspectable object with no installation identity
+PASS Packet cannot open before the removed switch is inspected
+PASS Faulty part opens a live close-up inspection
+PASS Turning the old switch reveals its actual underside and records inspection
+PASS Opening the sealed packet reveals a distinct new switch
+PASS Fresh switch must have its pins checked before insertion
+PASS Fresh spare opens its own pin inspection
+PASS Fresh spare pin inspection is recorded separately
+PASS Only the opened and checked new spare becomes installable
+PASS Reload returns to repair desk and preserves diagnosis and removed cap
+PASS Reload retains all sixty unaffected keycaps while the faulty switch is removed
+PASS Reload preserves old-part separation, unboxing and fresh pin inspection
+PASS Pointer drag stays within repair desk bounds
+PASS Dragged replacement snaps into repaired keyboard
+PASS Old faulty switch stays in its dish after the new switch is fitted
+PASS Replacing the faulty switch clears all old measurements for a fresh three-key retest
+PASS Recovered cap reinstalls from tray
+PASS Testing only the replaced key cannot complete final verification
+PASS Repaired keyboard passes final three-key check (complete=True, active=True, count=3, loose=, ready=True, away=False)
+PASS All three physical indicators turn green after final verification
+PASS Physical LCD confirms the completed three-key retest
+PASS Completed repair enters packaging
+PASS Cancelling packaging restores repair station and camera
+PASS Leaving repair desk keeps customer's keyboard in place
+PASS Repair delivery finishes normally
+PASS Delivery returns to assembly desk and restores tools
+PASS Navigation text fits: Tamir masası · 1 iş  →
+PASS Navigation text fits: ←  Montaj masası

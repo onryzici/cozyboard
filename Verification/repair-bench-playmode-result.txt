@@ -1,0 +1,171 @@
+PASS Variety verification cannot overwrite the user's save
+PASS Runtime variety text fits: Order selection hint
+PASS Runtime variety text fits: Offer title
+PASS Runtime variety text fits: Offer brief
+PASS Runtime variety text fits: Offer payment
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Offer title
+PASS Runtime variety text fits: Offer brief
+PASS Runtime variety text fits: Offer payment
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Offer title
+PASS Runtime variety text fits: Offer brief
+PASS Runtime variety text fits: Offer payment
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Repair offer button opens an assembled keyboard with three test targets
+PASS Runtime variety text fits: Customer
+PASS Runtime variety text fits: Request
+PASS Runtime variety text fits: ActionLabel
+PASS Station travel blocks product input during the camera movement
+PASS Smooth camera travel settles on repair workbench
+PASS Runtime variety text fits: Repair note heading
+PASS Runtime variety text fits: Repair customer
+PASS Runtime variety text fits: Repair complaint
+PASS Runtime variety text fits: Repair current step
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Puller cannot remove the fault before diagnosis
+PASS Real key presses diagnose one faulty neighbour
+PASS Runtime variety text fits: Test progress
+PASS Runtime variety text fits: Test instructions
+PASS Runtime variety text fits: Test section label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Repair catalogue sells one spare switch instead of a full set
+PASS Keycap puller begins the diagnosed cap removal
+PASS Animated cap removal completes
+PASS Mid-repair reload keeps the missing cap and diagnosis
+PASS Switch puller begins removal of the faulty switch
+PASS Animated switch removal completes
+PASS Recovered cap stays visible on repair tray while switch is removed
+PASS Native repair reload keeps sixty intact caps and the repair station
+PASS Native sealed spare cannot reuse the removed switch
+PASS Native old switch inspection opens
+PASS Runtime variety text fits: Inspection title
+PASS Runtime variety text fits: Inspection findings
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Native sealed packet starts opening
+PASS Packet opening animation completes before the spare becomes available
+PASS Native fresh switch pin inspection opens
+PASS Runtime variety text fits: Inspection title
+PASS Runtime variety text fits: Inspection findings
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Native reload preserves both inspections and the opened spare
+PASS Replacement switch installs through normal placement
+PASS Recovered cap installs without buying another cap set
+PASS Only one purchased spare was consumed during repair
+PASS Three retests complete the repair
+PASS Animated repair shipment pays the short-job reward
+PASS Opening new offers does not silently read the repair letter
+PASS Macro offer button opens the six-key product
+PASS Runtime variety text fits: Customer
+PASS Runtime variety text fits: Request
+PASS Runtime variety text fits: ActionLabel
+PASS Native macro placement: PCB
+PASS Native macro placement: Plate
+PASS Native macro placement: Switch_01
+PASS Native macro placement: Switch_02
+PASS Native macro placement: Switch_03
+PASS Native macro placement: Switch_04
+PASS Native macro placement: Switch_05
+PASS Native macro placement: Switch_06
+PASS Native macro placement: Keycap_01
+PASS Native macro placement: Keycap_02
+PASS Native macro placement: Keycap_03
+PASS Native macro placement: Keycap_04
+PASS Native macro placement: Keycap_05
+PASS Native macro placement: Keycap_06
+PASS Macro assembly uses six parts from each set and keeps the rest
+PASS Unused keyboard keys are neither visible nor clickable
+PASS Compact case screw starts: 0
+PASS Compact case screw finishes: 0
+PASS Compact case screw starts: 1
+PASS Compact case screw finishes: 1
+PASS Compact case screw starts: 2
+PASS Compact case screw finishes: 2
+PASS Compact case screw starts: 3
+PASS Compact case screw finishes: 3
+PASS All compact case screws fasten at the macro pad corners
+PASS Native macro test contains only six keys
+PASS Runtime variety text fits: Choose function
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Choose function
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Choose function
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Choose function
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Choose function
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Choose function
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Six function picker selections and presses validate the requested shortcuts
+PASS Runtime variety text fits: Test progress
+PASS Runtime variety text fits: Test instructions
+PASS Runtime variety text fits: Test section label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Native reload preserves compact product and six shortcut results
+PASS Macro pad gets a smaller shipping carton
+PASS Macro shipment preserves both character story milestones
+PASS Repeated delivery cannot duplicate a small-job reward
+PASS Macro receipt has a product-specific subject
+PASS Runtime variety text fits: Sender
+PASS Runtime variety text fits: Subject
+PASS Runtime variety text fits: Customer letter
+PASS Runtime variety text fits: Delivery summary
+PASS Runtime variety text fits: Message count
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Runtime variety text fits: Label
+PASS Repair letter remains archived after macro delivery
+PASS Runtime variety text fits: Story name
+PASS Runtime variety text fits: Notebook heading
+PASS Runtime variety text fits: Notebook letter
+PASS Runtime variety text fits: Notebook progress
+PASS Runtime variety text fits: Label

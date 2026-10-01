@@ -6,7 +6,12 @@ float pigment(float2 p){
  float2 brush=float2(p.x*.86+p.y*.5,p.y*.86-p.x*.5);
  return (paintNoise(brush*float2(3,14))-.5)*.016+(paintNoise(brush*float2(14,60))-.5)*.004+(paintNoise(p*.8)-.5)*.019;
 }
+// Both desks receive the same painted window light in their own local space.
+// Zero bounds leave the original single-desk appearance unchanged.
+float4 _WorkshopSecondarySurface;
 float windowShade(float2 p){
+ float2 local=p-_WorkshopSecondarySurface.xy;
+ if(_WorkshopSecondarySurface.z>0 && abs(local.x)<_WorkshopSecondarySurface.z && abs(local.y)<_WorkshopSecondarySurface.w) p=local;
  // A single unseen window to the upper left. Parallel mullions, soft painted edges.
  float2 q=float2(p.x*.79-p.y*.61,p.x*.61+p.y*.79);
  float wobble=(paintNoise(p*3)-.5)*.035;

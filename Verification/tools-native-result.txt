@@ -1,0 +1,51 @@
+Extracted from the complete native player regression: workshop-native-result.txt
+BEGIN Tools
+PASS Tools: A fresh macro order provides the screw tray fixture
+PASS Tools: Screwdriver power grip, puller grip and screw pinch ship as distinct native meshes
+PASS Tools: Four loose screws start in the dish and the product sockets are empty
+PASS Tools: Loose screws cannot install before the internal parts
+PASS Tools: Internal part 1 installs normally
+PASS Tools: Internal part 2 installs normally
+PASS Tools: An empty socket cannot tighten without taking a screw
+PASS Tools: Top-side pickup asks the player to turn the keyboard over first
+PASS Tools: The actual flip button exposes the keyboard underside
+PASS Tools: Bottom view prevents top assembly, supply pickup and extraction
+PASS Tools: Bottom screw heads face the player and sit beneath the case
+PASS Tools: Clicking the physical bowl picks one screw and holds the driver in a glove
+PASS Tools: Repeated pickup cannot take or lose a second screw
+PASS Tools: Held tool leaves its mat and cannot intercept the product raycast
+PASS Tools: The glove and held driver follow the pointer across the workbench
+PASS Tools: Reload returns a carried screw to the bowl without mounting or consuming it
+PASS Tools: Bottom-side save restores its original top pose and exactly one lift
+PASS Tools: Physical bowl pickup 0 succeeds
+PASS Tools: Physical empty-socket click 0 starts screw placement and torque
+PASS Tools: A second pickup is rejected while placing a screw
+PASS Tools: Laptop cannot interrupt the screw placement hand
+PASS Tools: Screw 0 mounts and tightens while the driver stays in the glove
+PASS Tools: Partial screw save restores one mounted screw and three loose screws
+PASS Tools: Physical bowl pickup 1 succeeds
+PASS Tools: Physical empty-socket click 1 starts screw placement and torque
+PASS Tools: Screw 1 mounts and tightens while the driver stays in the glove
+PASS Tools: Physical bowl pickup 2 succeeds
+PASS Tools: Physical empty-socket click 2 starts screw placement and torque
+PASS Tools: Screw 2 mounts and tightens while the driver stays in the glove
+PASS Tools: Physical bowl pickup 3 succeeds
+PASS Tools: Physical empty-socket click 3 starts screw placement and torque
+PASS Tools: Screw 3 mounts and tightens while the driver stays in the glove
+PASS Tools: An empty bowl cannot generate extra screws
+PASS Tools: A mounted screw can still be loosened without another pickup
+PASS Tools: Loosening keeps the screw seated and preserves the tray inventory
+PASS Tools: The same seated screw can be retightened
+PASS Tools: Opening settings puts the tool back in its exact original mat pose
+PASS Tools: Opening settings safely restores the keyboard to its original top pose
+PASS Tools: The glove can hold KeyPuller
+PASS Tools: Putting down KeyPuller restores its exact desk pose
+PASS Tools: The glove can hold Tweezers
+PASS Tools: Putting down Tweezers restores its exact desk pose
+PASS Tools: Restoring a pre-installation save removes mounted screws and restores the full bowl
+PASS Tools: Switching to move mode returns the unused screw and both hands cleanly
+PASS Tools: Moving mode restores the top surface before dragging the case
+PASS Tools: Older saves retain their already seated four screws without creating duplicates
+PASS Tools: Legacy saves with no underside flag keep their normal top pose
+END Tools
+TOTAL PASS 47 FAIL 0

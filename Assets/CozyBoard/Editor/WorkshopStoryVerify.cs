@@ -59,7 +59,7 @@ namespace CozyBoard.Editor {
                 Check(!game.Story.Record(WorkshopStory.FirstEvent)&&game.Story.events.Length==1,"Repeated narrative event is idempotent");
                 var receipt=game.LastDelivery;
                 Check(receipt.CustomerId=="ece"&&receipt.orderId==activeId&&receipt.Letter.Contains("pencere"),"Receipt snapshots customer, accepted instance and story letter");
-                Check(WorkshopStory.Offers(game.Story).Length==3,"Three selectable keyboard offers unlock after first delivery");
+                Check(WorkshopStory.Offers(game.Story).Length==4,"Four selectable workshop offers unlock after first delivery");
                 game.Shop.OpenOrders();Fits(GameObject.Find("Available orders").transform);Capture(controller,"Logs/story-orders.png");
                 Check(game.AcceptOrder("mina-keyboard")&&game.OrderNumber==2,"Player can choose Mina for delivery number two");
                 Check(game.Shop.Purchase(5),"Mina's requested switch set can be purchased");Check(game.CurrentRequest.Name=="Mina"&&game.CurrentFit(5).Contains("Uygun ses"),"Shop requirements follow selected customer, not old rotation");

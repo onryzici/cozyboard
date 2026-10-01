@@ -1,0 +1,33 @@
+PASS Accept six-key order
+PASS PCB retains one submesh per authored material
+PASS Visible PCB material: Paint_trace
+PASS Visible PCB material: Paint_pcb_edge
+PASS Visible PCB material: Paint_pcb
+PASS Visible PCB material: Paint_black
+PASS Visible PCB material: Paint_copper
+PASS Visible PCB material: Paint_silk
+PASS Visible PCB material: Paint_metal
+PASS Exactly six authored footprints: Paint_copper
+PASS Paint_copper aligns with switch 1
+PASS Paint_copper aligns with switch 2
+PASS Paint_copper aligns with switch 3
+PASS Paint_copper aligns with switch 4
+PASS Paint_copper aligns with switch 5
+PASS Paint_copper aligns with switch 6
+PASS Exactly six authored footprints: Paint_trace
+PASS Paint_trace aligns with switch 1
+PASS Paint_trace aligns with switch 2
+PASS Paint_trace aligns with switch 3
+PASS Paint_trace aligns with switch 4
+PASS Paint_trace aligns with switch 5
+PASS Paint_trace aligns with switch 6
+PASS Exactly six authored footprints: Paint_silk
+PASS Paint_silk aligns with switch 1
+PASS Paint_silk aligns with switch 2
+PASS Paint_silk aligns with switch 3
+PASS Paint_silk aligns with switch 4
+PASS Paint_silk aligns with switch 5
+PASS Paint_silk aligns with switch 6
+PASS Circuitry fits compact case below plate
+PASS Picking bounds follow detailed PCB
+PASS Full keyboard restores original PCB mesh and bounds

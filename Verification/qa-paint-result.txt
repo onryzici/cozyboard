@@ -1,0 +1,15 @@
+PASS One brush contact applies the selected colour directly
+PASS A new colour covers existing paint without wet mixing
+PASS Undo restores the previous direct brush colour
+PASS Redo restores the replacement colour
+PASS A tape strip can be laid across the key
+PASS Tape completely protects the surface beneath a brush stroke
+PASS Tape protection continues from the top onto the key side
+PASS Fill respects tape while colouring exposed surface
+PASS Peeling reveals a clean unpainted stripe
+PASS Undo restores peeled tape
+PASS Redo peels the tape again
+PASS Saving and loading preserve tape and protected artwork
+PASS Version 9 artwork loads without inventing masking tape
+PASS Direct side strokes do not bleed through to the opposite wall (base=RGBA(0.741, 0.463, 0.365, 1.000), side=RGBA(0.980, 0.000, 0.000, 1.000), opposite=RGBA(0.741, 0.463, 0.365, 1.000))
+PASS Studio shader compiles with masking tape

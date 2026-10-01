@@ -1,0 +1,117 @@
+Extracted from the complete native player regression: workshop-native-result.txt
+BEGIN Mouse
+PASS Mouse: Idle desk exposes an open laptop instead of a keyboard casing
+PASS Mouse: An idle workbench cannot inspect a nonexistent product
+PASS Mouse: Mouse offer is independently selectable
+PASS Mouse: Mouse uses its own eighteen parts and eight functional checks
+PASS Mouse: No keyboard parts are included in the mouse
+PASS Mouse: Mouse replaces the keyboard chassis with its contoured base
+PASS Mouse: Keyboard circuitry and premature covers cannot install
+PASS Mouse: No mouse components can be installed before buying a kit
+PASS Mouse: Mouse kit charges exactly 120 Tık
+PASS Mouse: Only an unopened mouse kit refunds once
+PASS Mouse: Failed kit save restores credits and stock atomically
+PASS Mouse: Fresh mouse kit accepts the workshop cream palette
+PASS Mouse: Mouse PCB installs through normal socket placement
+PASS Mouse: One mouse kit is reserved without consuming keyboard stock
+PASS Mouse: Reserved kit cannot refund or silently recolor fitted parts
+PASS Mouse: PCB undo keeps the paid mouse kit available
+PASS Mouse: Undone PCB reinstalls without another kit
+PASS Mouse: PCB save restores the mouse identity and reservation
+PASS Mouse: Mouse_Sensor fits its dedicated socket
+PASS Mouse: Mouse_Lens fits its dedicated socket
+PASS Mouse: Mouse_Cable fits its dedicated socket
+PASS Mouse: Internal assembly must precede bottom screws
+PASS Mouse: Mouse_LeftSwitch fits its dedicated socket
+PASS Mouse: Mouse_RightSwitch fits its dedicated socket
+PASS Mouse: Mouse_SideSwitch_0 fits its dedicated socket
+PASS Mouse: Mouse_SideSwitch_1 fits its dedicated socket
+PASS Mouse: Mouse_Wheel fits its dedicated socket
+PASS Mouse: Balanced default clicks allow closing the housing without compulsory tuning
+PASS Mouse: Click tuning starts once for side 0
+PASS Mouse: Click adjustment blocks conflicting screens and undo
+PASS Mouse: Optional click adjustment changes side 0 to crisp feel
+PASS Mouse: Optional click cycling returns side 0 to balanced feel
+PASS Mouse: Click tuning starts once for side 1
+PASS Mouse: Click adjustment blocks conflicting screens and undo
+PASS Mouse: Optional click adjustment changes side 1 to crisp feel
+PASS Mouse: Optional click cycling returns side 1 to balanced feel
+PASS Mouse: Two independent adjustments unlock shell assembly
+PASS Mouse: Mouse_Shell closes on the continuous exterior
+PASS Mouse: Mouse_LeftButton closes on the continuous exterior
+PASS Mouse: Mouse_RightButton closes on the continuous exterior
+PASS Mouse: Mouse_SideButton_0 closes on the continuous exterior
+PASS Mouse: Mouse_SideButton_1 closes on the continuous exterior
+PASS Mouse: Closed housing retains both tuned click mechanisms
+PASS Mouse: Top view cannot fasten bottom screws or unpeeled feet
+PASS Mouse: Shell and buttons accept painting through the existing surface system
+PASS Mouse: Curved mouse shell opens the paint studio without keyboard lettering controls
+PASS Mouse: Turning the mouse uses an actual flip animation
+PASS Mouse: Mid-flip input cannot start tests or remove housing
+PASS Mouse: Bottom view exposes the actual underside
+PASS Mouse: Underside reload keeps its pose and painted curved shell without a second lift
+PASS Mouse: Mouse screw 0 is taken from the dish
+PASS Mouse: Bottom screw 0 starts and excludes concurrent operation
+PASS Mouse: Bottom screw 0 finishes
+PASS Mouse: Mouse screw 1 is taken from the dish
+PASS Mouse: Bottom screw 1 starts and excludes concurrent operation
+PASS Mouse: Bottom screw 1 finishes
+PASS Mouse: Mouse screw 2 is taken from the dish
+PASS Mouse: Bottom screw 2 starts and excludes concurrent operation
+PASS Mouse: Bottom screw 2 finishes
+PASS Mouse: Mouse screw 3 is taken from the dish
+PASS Mouse: Bottom screw 3 starts and excludes concurrent operation
+PASS Mouse: Bottom screw 3 finishes
+PASS Mouse: All four mouse screws are physically fastened and the driver is still held
+PASS Mouse: Only the next unprepared foot is presented
+PASS Mouse: Actual prepare-foot button peels its backing, puts down the driver and carries one foot
+PASS Mouse: A prepared foot cannot peel twice
+PASS Mouse: Physical foot 0 fits a freely chosen empty corner 3
+PASS Mouse: Mounted foot covers its screw 3
+PASS Mouse: Only the next unprepared foot is presented
+PASS Mouse: Actual prepare-foot button peels its backing, puts down the driver and carries one foot
+PASS Mouse: A prepared foot cannot peel twice
+PASS Mouse: Physical foot 1 fits a freely chosen empty corner 0
+PASS Mouse: Mounted foot covers its screw 0
+PASS Mouse: Half-finished feet restore freely chosen corners and their films
+PASS Mouse: Only the next unprepared foot is presented
+PASS Mouse: Actual prepare-foot button peels its backing, puts down the driver and carries one foot
+PASS Mouse: A prepared foot cannot peel twice
+PASS Mouse: Physical foot 2 fits a freely chosen empty corner 2
+PASS Mouse: Mounted foot covers its screw 2
+PASS Mouse: Only the next unprepared foot is presented
+PASS Mouse: Actual prepare-foot button peels its backing, puts down the driver and carries one foot
+PASS Mouse: A prepared foot cannot peel twice
+PASS Mouse: Physical foot 3 fits a freely chosen empty corner 1
+PASS Mouse: Mounted foot covers its screw 1
+PASS Mouse: All eighteen distinct mouse parts complete the assembly
+PASS Mouse: Visible PTFE feet use their own light surface and a dark backing instead of the body paint
+PASS Mouse: Completed mouse persists all feet and screws
+PASS Mouse: Mouse diagnostics open with the original top pose restored
+PASS Mouse: One left click cannot complete all eight diagnostics
+PASS Mouse: Repeated left click does not inflate functional coverage
+PASS Mouse: Actual right-button event records a separate diagnostic
+PASS Mouse: Actual upward wheel event passes upward scrolling [mask=7, pointer=(381.20, 131.83), center=(381.20, 131.83), enabled=True]
+PASS Mouse: Actual downward wheel event passes downward scrolling
+PASS Mouse: Pointer travel inside the diagnostic pad verifies movement
+PASS Mouse: Closing diagnostics mid-drag restores the test piece
+PASS Mouse: Six basic mouse diagnostics still require both macro buttons
+PASS Mouse: Actual assignment buttons set undo and save on the two side buttons
+PASS Mouse: Mouse diagnostics and two correctly assigned macro buttons complete testing
+PASS Mouse: All eight distinct functional measurements and macros persist
+PASS Mouse: Sensor removal requires the optical lens to be removed first
+PASS Mouse: Underside optical lens can be physically removed
+PASS Mouse: Sensor module can be physically pulled through its service opening
+PASS Mouse: Removing the sensor invalidates all measurements and exposes only the correct replacement
+PASS Mouse: Disassembled optical module reload keeps housing, covered screws and all feet
+PASS Mouse: Reserved sensor and lens reinstall without buying another kit
+PASS Mouse: A replaced optical module requires a fresh complete test
+PASS Mouse: Tested mouse starts its own fitting carton
+PASS Mouse: Mouse fits in the carton and both tissue sheets close
+PASS Mouse: Cancelling mouse packing returns the whole product without a payment
+PASS Mouse: Balanced mouse shipment pays 220 and unlocks its follow-up order
+PASS Mouse: Mouse shipment cannot duplicate a receipt or payment
+PASS Mouse: Returning from mouse restores the original keyboard model and assembly
+PASS Mouse: Mouse parts and controls remain hidden during keyboard work
+END Mouse
+TOTAL PASS 113 FAIL 0

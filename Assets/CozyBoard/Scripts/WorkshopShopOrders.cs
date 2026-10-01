@@ -9,6 +9,7 @@ namespace CozyBoard {
         readonly RawImage[] offerPortraits=new RawImage[3];
         readonly Button[] offerButtons=new Button[3];
         readonly GameObject[] offerCards=new GameObject[3];
+        int offerPage;UnityEngine.UI.Button nextOffers,previousOffers;
         string[] offerIds=new string[3];
         TMP_Text jobsSubtitle;
         void BuildOrdersUI(){
@@ -30,21 +31,23 @@ namespace CozyBoard {
             }
             WorkshopUI.Button("Show active order",view,font,"Masadaki siparişi aç",new Vector2(0,0),new Vector2(0,0),new Vector2(290,52),()=>{Close();Game.Menu.ShowOrder();});
             WorkshopUI.Button("Leave orders",view,font,"Atölyeye dön",new Vector2(1,0),new Vector2(0,0),new Vector2(220,52),Close);
+            previousOffers=WorkshopUI.Button("Previous offers",view,font,"←  Önceki işler",new Vector2(0,0),new Vector2(320,0),new Vector2(230,52),()=>{offerPage--;RefreshOffers();});
+            nextOffers=WorkshopUI.Button("Next offers",view,font,"Diğer işler  →",new Vector2(0,0),new Vector2(570,0),new Vector2(230,52),()=>{offerPage++;RefreshOffers();});
             ordersView.SetActive(false);
         }
         public void OpenOrders(){if(!IsOpen)Open();if(IsOpen)SelectOrders();}
-        void SelectOrders(){SelectMailbox(true,false);mailView.SetActive(false);ordersView.SetActive(true);RefreshOffers();}
+        void SelectOrders(){offerPage=0;SelectMailbox(true,false);mailView.SetActive(false);ordersView.SetActive(true);RefreshOffers();}
         public void RefreshOffers(){
             if(!ordersView)return;
             bool canAccept=Game.WaitingForOrder;
-            var offers=WorkshopStory.Offers(Game.Story);
+            var offers=WorkshopStory.Offers(Game.Story);int pages=(offers.Length+2)/3;offerPage=Mathf.Clamp(offerPage,0,pages-1);nextOffers.gameObject.SetActive(pages>1);previousOffers.gameObject.SetActive(pages>1);nextOffers.interactable=offerPage+1<pages;previousOffers.interactable=offerPage>0;
             jobsSubtitle.text=canAccept?(Game.Story.OrdersUnlocked?"Sıradaki işini seç. Aynı anda bir iş; acelemiz yok.":"Nermin'in bıraktığı ilk not · Önce Ece'nin masasıyla başlayalım."):"Masanda bir sipariş var. Önce onu tamamlayalım; teklifler burada kalır.";
             for(int i=0;i<3;i++){
-                offerCards[i].SetActive(i<offers.Length);if(i>=offers.Length)continue;
+                int index=offerPage*3+i;offerCards[i].SetActive(index<offers.Length);if(index>=offers.Length)continue;
                 ((RectTransform)offerCards[i].transform).anchoredPosition=new Vector2(offers.Length==1?435:i*435,-76);
-                var offer=offers[i];offerIds[i]=offer.Id;var request=WorkshopOrders.ForCustomer(offer.CustomerId);
+                var offer=offers[index];offerIds[i]=offer.Id;var request=WorkshopOrders.ForCustomer(offer.CustomerId);
                 offerTitles[i].text=request.Name+"\n"+offer.Title;
-                offerBodies[i].text=offer.Message+(offer.Kind=="repair"?"\n\nÜrün hazır gelir · 3 tuşluk kontrol":"\n\n"+request.Sound+"\n"+request.Feel);offerPayments[i].text=offer.Kind=="repair"?"Kısa tamir · Bir yedek switch\nÜcret: 90 Tık\nYedek switch: 8–12 Tık":offer.Kind=="macro"?"6 tuş · Kısayol seçimi ve boyama\nTeslimat: 100–130 Tık\nSetlerden yalnızca 6 parça kullanılır":"61 tuş · Boyama serbest\nTeslimat: 240–300 Tık\nSetler: 145–195 Tık (stok kullanılabilir)";
+                offerBodies[i].text=offer.Message+(offer.Kind=="mouse"?"\n\nİki düğme · Tekerlek · Sensör":offer.Kind=="repair"?"\n\nÜrün hazır gelir · 3 tuşluk kontrol":"\n\n"+request.Sound+"\n"+request.Feel);offerPayments[i].text=offer.Kind=="mouse"?"Kablolu mouse · Gövde boyama\nTeslimat: 180–220 Tık\nMouse kiti: 120 Tık":offer.Kind=="repair"?"Kısa tamir · Bir yedek switch\nÜcret: 90 Tık\nYedek switch: 8–12 Tık":offer.Kind=="macro"?"6 tuş · Kısayol seçimi ve boyama\nTeslimat: 100–130 Tık\nSetlerden yalnızca 6 parça kullanılır":"61 tuş · Boyama serbest\nTeslimat: 240–300 Tık\nSetler: 145–195 Tık (stok kullanılabilir)";
                 offerPortraits[i].uvRect=new Rect(WorkshopStory.PortraitIndex(offer.CustomerId)/3f,0,1f/3f,1);
                 offerButtons[i].interactable=canAccept;offerButtons[i].GetComponentInChildren<TMP_Text>().text=canAccept?"Bu işi al":"Önce masadaki işi bitir";
             }

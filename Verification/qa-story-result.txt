@@ -1,0 +1,102 @@
+PASS New game shows Nermin's opening note
+PASS Introduction blocks interaction and no stock appears before acceptance
+PASS Unaccepted offers cannot be assembled
+PASS An offer cannot be accepted through the opening overlay
+PASS Text fits: Story name
+PASS Text fits: Notebook heading
+PASS Text fits: Notebook letter
+PASS Text fits: Notebook progress
+PASS Text fits: Label
+PASS Closing the opening saves it and opens first offer
+PASS Only Ece's guided first job is offered
+PASS Text fits: Order selection hint
+PASS Text fits: Offer title
+PASS Text fits: Offer brief
+PASS Text fits: Offer payment
+PASS Text fits: Label
+PASS Text fits: Label
+PASS First offer can be accepted
+PASS Acceptance keeps stock and binds Ece by customer ID
+PASS A second job cannot overwrite an active job
+PASS Accepted job shows its card and PCB supply
+PASS Text fits: Customer
+PASS Text fits: Request
+PASS Text fits: ActionLabel
+PASS Quiet save does not close panels or move the board
+PASS Reload preserves accepted instance and opening acknowledgement
+PASS Reload does not replay acknowledged opening
+PASS Existing assembly works for a story order
+PASS Unchecked keyboard cannot be delivered
+PASS Checked and screwed first job delivers successfully
+PASS Delivery records its story event once and returns to selection
+PASS First matching order pays exactly once
+PASS Repeated delivery cannot repeat reward
+PASS Repeated narrative event is idempotent
+PASS Receipt snapshots customer, accepted instance and story letter
+PASS Three selectable keyboard offers unlock after first delivery
+PASS Text fits: Order selection hint
+PASS Text fits: Offer title
+PASS Text fits: Offer brief
+PASS Text fits: Offer payment
+PASS Text fits: Label
+PASS Text fits: Offer title
+PASS Text fits: Offer brief
+PASS Text fits: Offer payment
+PASS Text fits: Label
+PASS Text fits: Offer title
+PASS Text fits: Offer brief
+PASS Text fits: Offer payment
+PASS Text fits: Label
+PASS Text fits: Label
+PASS Player can choose Mina for delivery number two
+PASS Mina's requested switch set can be purchased
+PASS Shop requirements follow selected customer, not old rotation
+PASS Text fits: Customer
+PASS Text fits: Request
+PASS Text fits: ActionLabel
+PASS Evaluation uses Mina's request even on order two
+PASS Text fits: Sender
+PASS Text fits: Subject
+PASS Text fits: Customer letter
+PASS Text fits: Delivery summary
+PASS Text fits: Message count
+PASS Text fits: Label
+PASS Text fits: Label
+PASS Text fits: Label
+PASS Old mail still belongs to Ece while Mina is active
+PASS Reading mail does not pay again
+PASS Text fits: Story name
+PASS Text fits: Notebook heading
+PASS Text fits: Notebook letter
+PASS Text fits: Notebook progress
+PASS Text fits: Label
+PASS Reload retains independent customer, story and mail state
+PASS Unaccepted offer state survives reload without spawning materials
+PASS Failed acceptance save rolls back active job
+PASS One brush contact applies the selected colour directly
+PASS A new colour covers existing paint without wet mixing
+PASS Undo restores the previous direct brush colour
+PASS Redo restores the replacement colour
+PASS A tape strip can be laid across the key
+PASS Tape completely protects the surface beneath a brush stroke
+PASS Tape protection continues from the top onto the key side
+PASS Fill respects tape while colouring exposed surface
+PASS Peeling reveals a clean unpainted stripe
+PASS Undo restores peeled tape
+PASS Redo peels the tape again
+PASS Saving and loading preserve tape and protected artwork
+PASS Version 9 artwork loads without inventing masking tape
+PASS Direct side strokes do not bleed through to the opposite wall (base=RGBA(0.741, 0.463, 0.365, 1.000), side=RGBA(0.980, 0.000, 0.000, 1.000), opposite=RGBA(0.741, 0.463, 0.365, 1.000))
+PASS Version 1 preserves legacy order and assembly without forced opening
+PASS Version 2 preserves legacy order and assembly without forced opening
+PASS Version 3 preserves legacy order and assembly without forced opening
+PASS Version 4 preserves legacy order and assembly without forced opening
+PASS Version 5 preserves legacy order and assembly without forced opening
+PASS Version 6 preserves legacy order and assembly without forced opening
+PASS Version 7 preserves legacy order and assembly without forced opening
+PASS Version 8 preserves legacy order and assembly without forced opening
+PASS Version 9 preserves legacy order and assembly without forced opening
+PASS Version 10 preserves legacy order and assembly without forced opening
+PASS Legacy receipts retain original customer and generic reaction
+PASS Story letter does not claim silent typing for a mismatched switch
+PASS Failed delivery save restores assembly, wallet, mail and story transaction

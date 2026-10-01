@@ -25,7 +25,12 @@ namespace CozyBoard {
    Check(game.SavePath==Path.Combine(Application.temporaryCachePath,"variety-smoke-save.json"),"Variety verification cannot overwrite the user's save");
    game.StartStory();game.Story.openingRead=true;game.Story.Record(WorkshopStory.FirstEvent);game.Experience.Continue();game.Shop.OpenOrders();yield return null;
    Fits(GameObject.Find("Available orders").transform);GameObject.Find("Available orders/Offer 0/Accept offer").GetComponent<Button>().onClick.Invoke();yield return null;
-   Check(game.IsRepair&&game.Completed&&game.TestCount==3,"Repair offer button opens an assembled keyboard with three test targets");Fits(game.Menu.OrderPanel.transform);game.Menu.ClosePanels();
+   Check(game.IsRepair&&game.Completed&&game.TestCount==3,"Repair offer button opens an assembled keyboard with three test targets");Fits(game.Menu.OrderPanel.transform);game.Menu.ClosePanels();yield return null;
+   GameObject.Find("Visit repair desk").GetComponent<Button>().onClick.Invoke();
+   Check(game.RepairBench.Moving&&game.Experience.Blocking,"Station travel blocks product input during the camera movement");
+   for(float deadline=Time.realtimeSinceStartup+3;game.RepairBench.Moving&&Time.realtimeSinceStartup<deadline;)yield return null;
+   Check(game.RepairBench.AtRepair&&!game.RepairBench.Moving&&controller.ViewTarget==WorkshopRepairBench.Origin,"Smooth camera travel settles on repair workbench");
+   yield return null;Fits(GameObject.Find("Repair service note").transform);Fits(GameObject.Find("Workstation navigation").transform);
    var cap=controller.Lookup[game.Repair.capId];var sw=controller.Lookup[game.Repair.switchId];
    game.Tools.TrySelect(controller.Lookup["KeyPuller"]);Check(!game.Tools.TryRemove(cap),"Puller cannot remove the fault before diagnosis");game.Tools.Deselect();game.Testing.Begin();foreach(var key in game.TestKeys)game.Press(key);yield return null;
    Check(game.Repair.diagnosed&&game.Testing.Count==2,"Real key presses diagnose one faulty neighbour");Fits(GameObject.Find("Keyboard test card").transform);game.Testing.End();
@@ -37,6 +42,15 @@ namespace CozyBoard {
    game.Tools.TrySelect(controller.Lookup["Tweezers"]);Check(game.Tools.TryRemove(sw),"Switch puller begins removal of the faulty switch");
    for(float deadline=Time.realtimeSinceStartup+4;game.Tools.Busy&&Time.realtimeSinceStartup<deadline;)yield return null;
    Check(!game.Tools.Busy&&!sw.Fitted,"Animated switch removal completes");game.Tools.Deselect();
+   Check(cap.Visual.enabled&&cap.transform.position.x>12,"Recovered cap stays visible on repair tray while switch is removed");
+   game.TrySaveQuiet();game.LoadProgress();
+   Check(game.RepairBench.AtRepair&&game.ProductItems.Count(x=>x.Stage==4&&x.Fitted)==60,"Native repair reload keeps sixty intact caps and the repair station");
+   Check(!game.CanInstall(sw),"Native sealed spare cannot reuse the removed switch");
+   Check(game.RepairBench.OpenPartInspection(),"Native old switch inspection opens");game.RepairBench.TurnInspectedSwitch();yield return new WaitForSeconds(.55f);Fits(GameObject.Find("Repair part inspection").transform);game.RepairBench.ClosePartInspection();
+   Check(game.RepairBench.OpenReplacementPacket(),"Native sealed packet starts opening");yield return new WaitForSeconds(.55f);
+   Check(game.Repair.spareOpened&&!game.RepairBench.Unpacking,"Packet opening animation completes before the spare becomes available");
+   Check(game.RepairBench.OpenPartInspection(true),"Native fresh switch pin inspection opens");game.RepairBench.TurnInspectedSwitch();yield return new WaitForSeconds(.55f);Fits(GameObject.Find("Repair part inspection").transform);game.RepairBench.ClosePartInspection();
+   game.TrySaveQuiet();game.LoadProgress();Check(game.Repair.spareOpened&&game.Repair.spareChecked&&game.Repair.oldSwitchInspected,"Native reload preserves both inspections and the opened spare");
    Check(controller.PaintAt(3,controller.Lookup["Case"].transform.TransformPoint(sw.Slot)),"Replacement switch installs through normal placement");yield return new WaitForSeconds(.75f);
    Check(controller.PaintAt(4,controller.Lookup["Case"].transform.TransformPoint(cap.Slot)),"Recovered cap installs without buying another cap set");yield return new WaitForSeconds(.75f);
    Check(game.RepairReady&&game.Shop.Data.looseParts[3]==0&&game.Shop.Data.stock.Sum()==kits,"Only one purchased spare was consumed during repair");
@@ -49,7 +63,7 @@ namespace CozyBoard {
    foreach(var item in game.ProductItems.Where(x=>x.Stage>0).OrderBy(x=>x.Stage))Check(controller.PaintAt(item.Stage,controller.Lookup["Case"].transform.TransformPoint(item.Slot)),"Native macro placement: "+item.Id);yield return new WaitForSeconds(.8f);
    Check(game.Completed&&game.Shop.Data.looseParts[3]==55&&game.Shop.Data.looseParts[6]==55,"Macro assembly uses six parts from each set and keeps the rest");
    Check(controller.Items.Where(x=>x.Stage>0&&!game.BelongsToProduct(x)).All(x=>!x.Visual.enabled&&!x.Hitbox.enabled),"Unused keyboard keys are neither visible nor clickable");
-   for(int i=0;i<4;i++){Check(game.Tools.UseScrew(i),"Compact case screw starts: "+i);for(float deadline=Time.realtimeSinceStartup+4;game.Tools.Busy&&Time.realtimeSinceStartup<deadline;)yield return null;Check(!game.Tools.Busy,"Compact case screw finishes: "+i);}Check(game.Tools.Tightened==15,"All compact case screws fasten at the macro pad corners");
+   for(int i=0;i<4;i++){game.Tools.TakeScrew();Check(game.Tools.UseScrew(i),"Compact case screw starts: "+i);for(float deadline=Time.realtimeSinceStartup+4;game.Tools.Busy&&Time.realtimeSinceStartup<deadline;)yield return null;Check(!game.Tools.Busy,"Compact case screw finishes: "+i);}Check(game.Tools.Tightened==15,"All compact case screws fasten at the macro pad corners");
    game.Testing.Begin();yield return null;Check(GameObject.Find("Test keyboard inset").GetComponentsInChildren<Button>().Length==6,"Native macro test contains only six keys");
    for(int i=0;i<6;i++){
     GameObject.Find("Macro function "+i).GetComponent<Button>().onClick.Invoke();yield return null;

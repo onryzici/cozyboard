@@ -1,0 +1,20 @@
+{
+  "mac": {
+    "buildId": "build_e2189d582ba2",
+    "result": "Succeeded",
+    "platform": "StandaloneOSX",
+    "totalErrors": 0,
+    "totalWarnings": 29,
+    "buildEndedAt": "2026-10-01T10:46:44.1447980Z",
+    "outputPath": "Builds/UnderbodyQA/CozyBoardQA.app"
+  },
+  "windows": {
+    "buildId": "build_90fa7b19d054",
+    "result": "Succeeded",
+    "platform": "StandaloneWindows64",
+    "totalErrors": 0,
+    "totalWarnings": 99,
+    "buildEndedAt": "2026-10-01T10:48:22.3503390Z",
+    "outputPath": "Builds/UnderbodyQA/Windows/CozyBoard.exe"
+  }
+}

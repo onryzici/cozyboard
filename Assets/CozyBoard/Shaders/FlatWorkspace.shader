@@ -1,5 +1,5 @@
 Shader "CozyBoard/FlatWorkspace" {
- Properties { _Surface("Surface",Color)=(.84,.67,.55,1) _Mat("Mat",Color)=(.65,.70,.73,1) }
+ Properties { _WorkspaceOrigin("Workspace origin",Vector)=(0,0,0,0) _Surface("Surface",Color)=(.84,.67,.55,1) _Mat("Mat",Color)=(.65,.70,.73,1) }
  SubShader { Tags { "RenderType"="Opaque" "RenderPipeline"="UniversalPipeline" }
  Pass { Cull Off ZWrite On
  HLSLPROGRAM
@@ -8,14 +8,14 @@ Shader "CozyBoard/FlatWorkspace" {
  #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
  #include "WorkshopPaint.hlsl"
  CBUFFER_START(UnityPerMaterial)
- half4 _Surface; half4 _Mat;
+ half4 _Surface; half4 _Mat; float4 _WorkspaceOrigin;
  CBUFFER_END
  struct A {float4 positionOS:POSITION;float2 uv:TEXCOORD0;};
  struct V {float4 positionCS:SV_POSITION;float2 uv:TEXCOORD0;float3 world:TEXCOORD1;};
  V vert(A i){V o;o.positionCS=TransformObjectToHClip(i.positionOS.xyz);o.uv=i.uv;o.world=TransformObjectToWorld(i.positionOS.xyz);return o;}
  float rounded(float2 p,float2 b,float r){float2 q=abs(p)-b+r;return length(max(q,0))+min(max(q.x,q.y),0)-r;}
  half4 frag(V i):SV_Target {
-  float2 p=i.world.xz;
+  float2 p=i.world.xz-_WorkspaceOrigin.xy;
   // Pale honey oak, with quiet lengthwise grain and broad natural variation.
   float warp=paintNoise(float2(p.x*.32,p.y*.48))*.7;
   float grain=paintNoise(float2(p.x*.24,(p.y+warp)*21))-.5;

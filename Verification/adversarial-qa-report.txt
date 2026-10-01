@@ -1,0 +1,118 @@
+Cozy Board — gameplay QA, 1 October 2026
+
+RESULT
+577 passed / 0 failed in the complete macOS native player run at 1920×1080.
+35 passed / 0 failed in the additional native Pointer run at 1280×720.
+320 passed / 0 failed in Editor regression checks.
+Both macOS and Windows x64 development builds succeeded with zero build errors.
+Windows execution was not tested on this Mac.
+
+Native assertion counts:
+  Assembly       192
+  Transition     123
+  Repair         108
+  Progression    119
+  Pointer         35
+Editor checks: story 102, variety 102, repair desk 56, paint/tape 15,
+PCB geometry 33 and packing geometry 12.
+
+METHOD
+Three QA agents authored/reviewed repair, progression and transition scenarios.
+The coordinator ran and debugged them together in Unity 6000.5.6f1 and a separate
+macOS development player. This is automated gameplay QA, not a claim of exhaustive
+human playtesting. Assertions overlap deliberately between suites.
+
+Assembly performs the normal 124 placements of a 61-key keyboard, all distinct
+key tests, real puller/screw animations, painting checks and shipping. Progression
+plays keyboard → repair → macro pad → keyboard through the normal placement and
+tool paths. Negative cases reject premature parts, duplicate input, missing stock,
+incorrect bindings and premature deliveries.
+
+Transition interleaves carried parts, laptop movement, inspection, painting, tools,
+test cards, notebooks, settings, order cards, home, station travel, saves and each
+packing step. Native Input System keyboard events verify Escape and L; callbacks
+also probe repeated/reentrant and busy-state requests.
+
+Repair covers diagnosis, tool order, recovered cap, separate removed faulty switch,
+sealed fresh spare, opening animation, both pin inspections, refitting, partial and
+final measurements, legacy saves, stock refunds, packing and a second repair.
+
+Pointer queues real Input System mouse states through the player's Update,
+EventSystem and world raycasts. It picks up/cancels/drags a PCB, drops it over the
+laptop, installs PCB/plate, holds across six switch/cap sockets, switches inspection
+tools, selects all six functions, clicks all six tests, uses L/Escape, and opens and
+closes painting by mouse. Physical mice are temporarily disabled inside the test
+player's Input System to prevent desktop motion from competing with injected input;
+they are restored afterward. System mouse settings are not changed.
+
+Save fixtures use a separate path. The normal workshop-save.json was backed up and
+remained byte-identical after testing. Tutorial completion preference is restored.
+Both final native processes completed with exit code 0 and no captured console
+Error/Exception/Assert. Expected I/O and malformed-save warnings are deliberate
+negative cases, not silently ignored assertion failures.
+
+FIXED BEHAVIOURS
+1. Escape now closes one active layer instead of closing a detail and opening home
+   in the same frame. The macro function picker closes before the underlying test.
+2. Repeated inspection requests no longer overwrite the saved desk pose. Toolbar,
+   settings, order, shop and save exits restore the product before changing screens.
+3. Ending testing releases typing mode, so L opens the laptop afterward.
+4. Opening a spare packet, camera travel and working tools block conflicting screen
+   changes. Undo cannot remove a part while the screwdriver is working.
+5. Cancelling the final shipping curtain cancels its delayed callback too; it cannot
+   deliver the order or pay a reward after cancellation.
+6. Failed shipment saves restore the original tested product and desk pose, wallet,
+   order and mail instead of restoring the transient parcel position.
+7. Restarting assembly retains already-paid material reservations. Repeated repair
+   resets do not manufacture extra replacement switches.
+8. Refunding the last spare hides the fresh switch pins along with its body.
+9. Changing tools or opening catalogue/settings/order/home/notebook/another station,
+   inspection or testing cancels laptop dragging and restores its previous position.
+10. Undoing a fitted fresh repair switch asks for switch refitting before the cap;
+    refitting consumes no second spare and still requires fresh measurements.
+11. Inspection controls sit above the bottom toolbar instead of covering its actual
+    mouse hit targets. This was found by native pointer input, not callback tests.
+12. The laptop does not swallow the mouse release while a PCB is being carried.
+    Dropping it over the laptop returns it to supply instead of leaving it held.
+13. Main-menu settings dismiss a pending new-game confirmation. Escape then closes
+    the visible settings layer; cancel/continue keep the existing workshop intact.
+
+REPRODUCING
+Build Workbench.unity and pass these arguments to the native executable:
+  --cozy-scenarios --cozy-scenario-report <absolute-result-path>
+  -screen-fullscreen 0 -screen-width 1920 -screen-height 1080
+The runner is inactive in normal game sessions. Add
+  --cozy-scenario-suite Pointer
+or Assembly, Transition, Repair, Progression to isolate a suite.
+Exit status 1 means assertions or console failures were recorded.
+
+EVIDENCE
+adversarial-native-result.txt       Complete final 577-check run
+qa-pointer-720-result.txt            Smaller-window pointer run
+qa-story-result.txt                 102 story assertions
+qa-variety-result.txt               102 variety assertions
+qa-repair-bench-result.txt           56 repair-desk assertions
+qa-paint-result.txt                 15 paint/tape assertions
+qa-pcb-result.txt                   33 PCB geometry assertions
+qa-packing-result.txt               12 packing geometry assertions
+qa-native-macro-1920.png             Native 1920×1080 completed macro test
+qa-native-macro-1280.png             Native 1280×720 completed macro test
+qa-build-results.json               Build summaries, errors and warnings
+
+LIMITS
+This verifies the recorded scenario matrix, not every possible input permutation.
+Long-duration stress, performance profiling, real Windows hardware/drivers, 4:3 or
+ultrawide screens, mobile, accessibility and future mouse-product jobs are outside
+this run. Current mouse-product and additional repair fault types are not implemented.
+Builds have warnings (macOS 25, Windows 89), including deprecated Unity APIs, the
+unused runtime Pipeline configuration, WorkMat performance warnings and Unity
+lightmapping ray-tracing shaders unsupported by the Mac cross-compiler. Windows
+build success does not establish Windows rendering correctness. One macOS build
+warning concerns uncompiled Editor importer/postprocessor changes; no importer or
+postprocessor was changed for this QA pass and native runtime assertions passed.
+
+Earlier partial/domain-reload runs and QA fixture mistakes were kept in Logs for
+diagnosis. They are excluded from the final pass totals. In particular, a source
+reload during an early Editor play run invalidated its dictionaries; malformed null
+save input was not reproduced as a gameplay defect; and pointer screenshot-path
+and duplicate Settings-button fixture errors were corrected before the final run.

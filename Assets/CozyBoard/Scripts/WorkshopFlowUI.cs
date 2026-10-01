@@ -20,6 +20,7 @@ namespace CozyBoard {
  public sealed class WorkshopSceneCurtain:MonoBehaviour {
   Image curtain;
   public void Run(Transform root,System.Action action){curtain=WorkshopUI.Panel("Soft workshop transition",root,Vector2.zero,Vector2.zero,Vector2.zero,new Color(.12f,.18f,.15f,0));curtain.rectTransform.anchorMax=Vector2.one;curtain.rectTransform.offsetMax=Vector2.zero;StartCoroutine(Transition(action));}
+  public void Cancel(){StopAllCoroutines();if(curtain)Destroy(curtain.gameObject);Destroy(this);}
   IEnumerator Transition(System.Action action){for(float t=0;t<.35f;t+=Time.unscaledDeltaTime){curtain.color=new Color(.12f,.18f,.15f,Mathf.SmoothStep(0,1,t/.35f));yield return null;}curtain.color=new Color(.12f,.18f,.15f,1);action();curtain.transform.SetAsLastSibling();yield return new WaitForSecondsRealtime(.2f);for(float t=0;t<.45f;t+=Time.unscaledDeltaTime){curtain.color=new Color(.12f,.18f,.15f,1-Mathf.SmoothStep(0,1,t/.45f));yield return null;}Destroy(curtain.gameObject);Destroy(this);}
  }
 }

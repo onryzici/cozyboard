@@ -4,7 +4,7 @@ using System.Linq;
 namespace CozyBoard {
     public static class WorkshopStory {
         public const string FirstEvent="ece-first-delivery";
-        public const string RepairEvent="ece-repair-delivery",MacroEvent="deniz-macro-delivery",LegacyEvent="legacy-workshop";
+        public const string RepairEvent="ece-repair-delivery",MacroEvent="deniz-macro-delivery",MouseEvent="mina-mouse-delivery",LegacyEvent="legacy-workshop";
         public const string OpeningNote="Anahtar paspasın altında. Fincanı bıraktım; çayını sen tazele. Ece uğrayacak, bir klavye soracaktı. Her şeyi bir günde öğrenmeye çalışma. Önce sandalyeyi kendine göre çek. Gerisi gelir.\n\nP.S. Çekmecedeki kurabiyeler yedek parça değil. Gönül rahatlığıyla kullan.\n\n— Nermin";
         [Serializable] public sealed class State {
             public bool enabled,openingRead;
@@ -31,10 +31,12 @@ namespace CozyBoard {
         };
         public static readonly Definition FirstRepair=new("ece-repair","ece","Eskisi de kıymetli","Eski klavyemin sol üstteki harflerinden biri bazen çalışmıyor. Bunu atmak istemiyorum; ilk çizim masamda hep bu vardı. Üç komşu tuşu deneyip arızalı switch'i değiştirebilir misin?",RepairEvent,"repair");
         public static readonly Definition FirstMacro=new("deniz-macro","deniz","Altı küçük kolaylık","Metnimi düzenlerken kullanacağım altı tuşlu bir makro pad istiyorum. Geri al, yinele, kaydet, bul, önceki ve sonraki sayfa; tuşları bu sırayla ayarlayalım. Sesini ve tasarımını da seçelim.",MacroEvent,"macro");
+        public static readonly Definition FirstMouse=new("mina-mouse","mina","Avucumda küçük bir renk","Kayıt notları için kablolu bir mouse istiyorum. İki düğme dengeli tıklasın, tekerlek rahat dönsün. Rengini ve desenini sana bırakıyorum.",MouseEvent,"mouse");
+        static readonly Definition repeatMouse=new("mina-mouse-repeat","mina","Bir mouse daha","Radyodaki diğer masaya da bir mouse hazırlayalım. İki düğmede dengeli tıklama, akıcı bir tekerlek ve kaygan ayaklar. Desen yine sana ait.",null,"mouse");
         static readonly Definition repeatRepair=new("ece-repair-repeat","ece","Bir tuşluk tamir","Kitapçıdaki eski klavyelerden biri yanıt vermiyor. Üç komşu tuşu kontrol edip arızalı switch'i değiştirir misin? Sağlam parçalar yerinde kalsın.",null,"repair");
         static readonly Definition repeatMacro=new("deniz-macro-repeat","deniz","Yazı masasına altı tuş","Bir yazı masasına daha altı tuşlu bir pad hazırlayalım. İşlevler aynı sırada: geri al, yinele, kaydet, bul, önceki ve sonraki sayfa. Desen yine sana ait.",null,"macro");
-        public static Definition[] Offers(State state)=>state!=null&&state.enabled&&!state.OrdersUnlocked?new[]{First}:new[]{state!=null&&state.Has(RepairEvent)?repeatRepair:FirstRepair,state!=null&&state.Has(MacroEvent)?repeatMacro:FirstMacro,sideOrders[2]};
-        public static Definition Find(string id)=>new[]{First,FirstRepair,FirstMacro,repeatRepair,repeatMacro}.Concat(sideOrders).FirstOrDefault(x=>x.Id==id);
+        public static Definition[] Offers(State state)=>state!=null&&state.enabled&&!state.OrdersUnlocked?new[]{First}:new[]{state!=null&&state.Has(RepairEvent)?repeatRepair:FirstRepair,state!=null&&state.Has(MacroEvent)?repeatMacro:FirstMacro,state!=null&&state.Has(MouseEvent)?repeatMouse:FirstMouse,sideOrders[2]};
+        public static Definition Find(string id)=>new[]{First,FirstRepair,FirstMacro,FirstMouse,repeatRepair,repeatMacro,repeatMouse}.Concat(sideOrders).FirstOrDefault(x=>x.Id==id);
         public static string CustomerId(int legacyOrder)=>((Math.Max(1,legacyOrder)-1)%3) switch{0=>"ece",1=>"deniz",_=>"mina"};
         public static int PortraitIndex(string customer)=>customer switch{"deniz"=>1,"mina"=>2,_=>0};
     }
@@ -59,7 +61,7 @@ namespace CozyBoard {
         }
         // Does not close panels, move the board or cancel tools. Suitable for narrative/UI state.
         public bool TrySaveQuiet(){
-            if(Tools&&Tools.Busy)return false;
+            if(Tools&&Tools.Busy||MouseProduct&&MouseProduct.Busy)return false;
             try{
                 string path=SavePath;System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
                 string temporary=path+".tmp";System.IO.File.WriteAllText(temporary,SerializeProgress());
@@ -67,6 +69,6 @@ namespace CozyBoard {
                 return true;
             }catch(Exception e){UnityEngine.Debug.LogWarning("Workshop save failed: "+e.Message);if(Menu)Menu.Toast("Kayıt yazılamadı. Biraz sonra yeniden deneyelim.");return false;}
         }
-        public WorkshopOrders.Receipt CreateReceipt()=>ActiveOrder==null?WorkshopOrders.Evaluate(OrderNumber,Shop?Shop.Data.selected[1]:3):WorkshopOrders.EvaluateCustomer(OrderNumber,Shop?Shop.Data.selected[1]:3,ActiveOrder);
+        public WorkshopOrders.Receipt CreateReceipt()=>IsMouse?WorkshopOrders.EvaluateMouse(OrderNumber,ActiveOrder,MouseProduct.State.clickFeel):ActiveOrder==null?WorkshopOrders.Evaluate(OrderNumber,Shop?Shop.Data.selected[1]:3):WorkshopOrders.EvaluateCustomer(OrderNumber,Shop?Shop.Data.selected[1]:3,ActiveOrder);
     }
 }

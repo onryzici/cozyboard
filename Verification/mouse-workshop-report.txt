@@ -1,0 +1,21 @@
+Workshop verification — 2026-10-01
+
+The screwdriver has a separate authored power grip: palm and curled fingers surround the handle, the thumb opposes the fingers and the wrist extends behind the handle. Skin and sage sleeves retain the atelier palette.
+The screw bowl shares the exact round profile, cream glaze and sage rim with the repair parts dishes. Four loose screws are counted individually.
+Mouse feet use a distinct light PTFE surface with thin dark backing, covering the matching screws. Backings peel once; identical feet fit any open corner and retain their assigned installed positions across partial reload.
+Both keyboards fasten from below. The flip exposes four recessed sockets in the existing lower shell. Assembly and part removal pause while flipped; input cannot interrupt the flip or fastening. The saved top position/yaw and underside flag prevent repeated lifts. Modal screens, testing, painting, movement, inspection, desk travel and packing restore the top pose.
+
+Native player regression with graphics in batch mode and an isolated save:
+Assembly 197; Transition 126; Repair 108; Progression 119; Pointer 35; Tools 47; Mouse 113.
+TOTAL PASS 745 FAIL 0. Full log: workshop-native-result.txt.
+The Mouse and Tools result files are extracted from that same complete run.
+Both Mac and Windows builds succeeded with zero build errors. Build warnings and summaries: workshop-build-results.json.
+
+Current Editor renders verified at 1920×1080:
+keyboard-underbody-preview.png — macro pad underside, driver grip and screw dish
+keyboard-full-underbody-preview.png — full keyboard underside and mounted screws
+mouse-underbody-preview.png — optical opening and contrasting PTFE feet
+mouse-workbench-preview.png — assembled mouse and cable
+idle-workbench-preview.png — idle open laptop
+
+Batch runs omit window screenshots. Older native screenshot files record earlier visual checkpoints, not the latest model appearance. Tests do not use the player's workshop save.

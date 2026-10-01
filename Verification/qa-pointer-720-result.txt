@@ -1,0 +1,38 @@
+BEGIN Pointer
+PASS Pointer: Pointer scenarios use an isolated save
+PASS Pointer: Pointer fixture accepts a six-key order
+PASS Pointer: Real mouse click opens settings
+PASS Pointer: Escape closes mouse-opened settings without leaving the desk
+PASS Pointer: Real mouse click opens order
+PASS Pointer: Escape closes mouse-opened order
+PASS Pointer: Real supply click picks up PCB in click-carry mode
+PASS Pointer: Escape returns mouse-carried PCB to its original supply
+PASS Pointer: Outside drop fixture picks up PCB [current=True, held=True, pointer=(493.71, 586.80), dragged=PCB, ui=False]
+PASS Pointer: Dropping a dragged PCB over the laptop returns it to supply without swallowing release [current=True, held=False, pointer=(152.38, 133.96), dragged=none, ui=False]
+PASS Pointer: Real mouse starts stage 1 drag
+PASS Pointer: Real drag installs stage 1 (target=(624.76, 381.68, 20.05), source=(493.71, 586.80)) [current=True, held=False, pointer=(624.76, 381.68), dragged=none, ui=False]
+PASS Pointer: Real mouse starts stage 2 drag
+PASS Pointer: Real drag installs stage 2 (target=(624.76, 384.66, 19.86), source=(786.29, 586.80)) [current=True, held=False, pointer=(624.76, 384.66), dragged=none, ui=False]
+PASS Pointer: Real mouse picks up stage 3 supply
+PASS Pointer: Holding mouse across six sockets installs exactly six stage 3 parts
+PASS Pointer: Real mouse picks up stage 4 supply
+PASS Pointer: Holding mouse across six sockets installs exactly six stage 4 parts
+PASS Pointer: Real mouse assembly completes all fourteen macro parts
+PASS Pointer: Real rotate-button click opens inspection
+PASS Pointer: Real pointer-button click exits inspection
+PASS Pointer: Real mouse opens macro function selection
+PASS Pointer: Real mouse selects and closes the function picker
+PASS Pointer: Real mouse assigns and tests macro key 1 [count=1, binding=Geri al, measured=Keycap_01, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 2 [count=2, binding=Yinele, measured=Keycap_02, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 3 [count=3, binding=Kaydet, measured=Keycap_03, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 4 [count=4, binding=Bul, measured=Keycap_04, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 5 [count=5, binding=Önceki sayfa, measured=Keycap_05, hit=Atelier paper,Atelier paper]
+PASS Pointer: Real mouse assigns and tests macro key 6 [count=6, binding=Sonraki sayfa, measured=Keycap_06, hit=Atelier paper,Atelier paper]
+PASS Pointer: Six mouse-selected bindings and distinct clicks pass the macro test
+PASS Pointer: Real close-button click exits the test
+PASS Pointer: Keyboard laptop shortcut works after a mouse-completed test
+PASS Pointer: Escape closes laptop as the only active layer
+PASS Pointer: Real brush-button and physical key click open the prepared paint studio
+PASS Pointer: Real paint completion button returns to the desk
+END Pointer
+TOTAL PASS 35 FAIL 0
